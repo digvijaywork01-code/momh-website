@@ -15,6 +15,7 @@
     "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
     "lint:fix": "cross-env NODE_OPTIONS=--no-deprecation next lint --fix",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "payload:migrate": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-webstorage\" payload migrate && next build",
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
     "start": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-webstorage\" next start",
     "test": "pnpm run test:int && pnpm run test:e2e",
@@ -25,6 +26,7 @@
     "@gsap/react": "^2.1.2",
     "@payloadcms/admin-bar": "3.48.0",
     "@payloadcms/db-postgres": "3.48.0",
+    "@payloadcms/email-resend": "^3.84.1",
     "@payloadcms/live-preview-react": "3.48.0",
     "@payloadcms/next": "3.48.0",
     "@payloadcms/payload-cloud": "3.48.0",
@@ -34,6 +36,7 @@
     "@payloadcms/plugin-search": "3.48.0",
     "@payloadcms/plugin-seo": "3.48.0",
     "@payloadcms/richtext-lexical": "3.48.0",
+    "@payloadcms/storage-vercel-blob": "3.43.0",
     "@payloadcms/ui": "3.48.0",
     "@radix-ui/react-checkbox": "^1.0.4",
     "@radix-ui/react-label": "^2.0.2",
@@ -60,6 +63,7 @@
     "react-google-recaptcha": "^3.1.0",
     "react-hook-form": "7.45.4",
     "react-responsive-masonry": "^2.7.1",
+    "resend": "^6.12.4",
     "sharp": "0.34.2",
     "split-type": "^0.3.4",
     "swiper": "^11.2.10",
@@ -91,7 +95,7 @@
     "vitest": "3.2.3"
   },
   "engines": {
-    "node": "^18.20.2 || >=20.9.0",
+    "node": "^22",
     "pnpm": "^9 || ^10"
   },
   "pnpm": {

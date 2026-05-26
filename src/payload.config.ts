@@ -1,5 +1,6 @@
-// storage-adapter-import-placeholder
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import { resendAdapter } from '@payloadcms/email-resend'
 
 import sharp from 'sharp' // sharp-import
 import path from 'path'
@@ -66,10 +67,28 @@ export default buildConfig({
   }),
   collections: [Pages, Posts, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
+  email: resendAdapter({
+    defaultFromAddress: 'no-reply@momhindia.org',
+    defaultFromName: 'Museum of Meenakari Heritage',
+    apiKey: process.env.RESEND_API_KEY || '',
+  }),
   globals: [Header, Footer],
   plugins: [
     ...plugins,
-    // storage-adapter-placeholder
+    // Vercel Blob storage — production media uploads route here when
+    // BLOB_READ_WRITE_TOKEN is present. In dev (token unset) the
+    // adapter is `enabled: false` and Payload falls back to the Media
+    // collection's `staticDir` (`public/media/`). Matches the SS
+    // production config exactly so behaviour is identical across
+    // both sites.
+    vercelBlobStorage({
+      enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+      collections: { media: { disablePayloadAccessControl: true } },
+      token: process.env.BLOB_READ_WRITE_TOKEN || '',
+      addRandomSuffix: false,
+      cacheControlMaxAge: 365 * 24 * 60 * 60,
+      clientUploads: true,
+    }),
   ],
   secret: process.env.PAYLOAD_SECRET,
   sharp,

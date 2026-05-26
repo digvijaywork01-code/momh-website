@@ -27,6 +27,11 @@ const nextConfig = {
       { hostname: '*.trycloudflare.com', protocol: 'https' },
       { hostname: '*.ngrok-free.app', protocol: 'https' },
       { hostname: '*.ngrok.app', protocol: 'https' },
+      // Production media — Vercel Blob serves uploads from this
+      // subdomain pattern (e.g. `<hash>.public.blob.vercel-storage.com`).
+      // Without the whitelist, next/image refuses to optimise images
+      // served from Blob after the storage adapter is active.
+      { hostname: '*.public.blob.vercel-storage.com', protocol: 'https' },
     ],
   },
   webpack: (webpackConfig) => {
