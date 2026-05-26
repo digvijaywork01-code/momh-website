@@ -90,7 +90,7 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
       signatureRef.current,
       attributionRef.current,
       attributionRoleRef.current,
-    ].filter((el): el is HTMLElement => Boolean(el))
+    ].filter((el): el is NonNullable<typeof el> => Boolean(el))
     gsap.set(contentEls, { y: 40, opacity: 0 })
     // Scale the inner <img>, not the wrapper — wrapper's scale paint
     // extends beyond its layout box and bleeds into the previous

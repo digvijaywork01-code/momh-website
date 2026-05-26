@@ -110,7 +110,7 @@ export const CarouselBlock: React.FC<CarouselBlockProps> = ({
         ctaRef.current,
         noteRef.current,
       ] as (HTMLElement | null)[]
-    ).filter((el): el is HTMLElement => el !== null)
+    ).filter((el): el is NonNullable<typeof el> => el !== null)
     gsap.set(contentEls, { y: 35, opacity: 0 })
     if (carouselWrapRef.current) {
       gsap.set(carouselWrapRef.current, { opacity: 0.9 })

@@ -111,7 +111,7 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
         bodyRef.current,
         ctaRef.current,
       ] as (HTMLElement | null)[]
-    ).filter((el): el is HTMLElement => el !== null)
+    ).filter((el): el is NonNullable<typeof el> => el !== null)
     if (els.length === 0) return
 
     gsap.set(els, { y: 30, opacity: 0 })

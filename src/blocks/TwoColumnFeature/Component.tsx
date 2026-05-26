@@ -80,7 +80,7 @@ const Column: React.FC<{ column: Column; dark: boolean }> = ({ column, dark }) =
       headlineRef.current,
       bodyRef.current,
       ctaRef.current,
-    ].filter((el): el is HTMLElement => Boolean(el))
+    ].filter((el): el is NonNullable<typeof el> => Boolean(el))
     gsap.set(contentEls, { y: 35, opacity: 0 })
     // Scale the inner <img>, not the wrapper — wrapper scale paints
     // outside its layout box and bleeds into adjacent sections.

@@ -92,7 +92,7 @@ export const VisitInfoBlock: React.FC<VisitInfoBlockProps> = ({
         ctasRef.current,
         hoursRef.current,
       ] as (HTMLElement | null)[]
-    ).filter((el): el is HTMLElement => el !== null)
+    ).filter((el): el is NonNullable<typeof el> => el !== null)
     gsap.set(contentEls, { y: 35, opacity: 0 })
     if (mapWrapRef.current) gsap.set(mapWrapRef.current, { opacity: 0.85 })
 

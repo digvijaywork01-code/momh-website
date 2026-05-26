@@ -77,7 +77,7 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
 
     const headerEls = (
       [eyebrowRef.current, headlineRef.current, introRef.current] as (HTMLElement | null)[]
-    ).filter((el): el is HTMLElement => el !== null)
+    ).filter((el): el is NonNullable<typeof el> => el !== null)
     gsap.set(headerEls, { y: 30, opacity: 0 })
 
     const headerTl = gsap.timeline({

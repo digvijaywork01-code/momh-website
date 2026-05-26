@@ -192,7 +192,7 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
       headlineRef.current,
       bodyWrapRef.current,
       ctaRef.current,
-    ].filter((el): el is HTMLElement => Boolean(el))
+    ].filter((el): el is NonNullable<typeof el> => Boolean(el))
     gsap.set(contentEls, { y: 40, opacity: 0 })
     // Scale the inner <img>, NOT the wrapper. Scaling the wrapper makes
     // its painted area extend beyond its layout box, which bleeds into
