@@ -1,0 +1,191 @@
+/* MOMH brand tokens — single source of truth for color, type, spacing, motion. */
+@import url('../../styles/tokens.css');
+
+/* Self-hosted fonts are now loaded via <link rel="stylesheet"> tags in
+ * src/app/(frontend)/layout.tsx — CSS @import rules in this file get
+ * placed AFTER the tokens.css :root rules during bundling, which makes
+ * them invalid per the CSS spec (imports must precede all other rules)
+ * and the browser silently drops them. Loading via <link> sidesteps
+ * the ordering constraint entirely. */
+
+/* TODO(adobe-fonts-kit): Once the Typekit kit ID is provided, the Adobe Fonts
+ * <link> in app/(frontend)/layout.tsx will load Meno Banner. The
+ * --font-display token already lists "meno-banner" first; no change needed
+ * here when it goes live. */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Reduced-motion safety net — wins over any per-component animation. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Section snap is now driven entirely by JS (Observer + gsap.scrollTo
+ * in SmoothScrollProvider). CSS `scroll-behavior: smooth` and
+ * `scroll-snap-type` are intentionally OFF on the home page — they
+ * compete with gsap's tween over the same scrollTop value, producing
+ * a perceptible mid-animation jitter (looks like the motion gets
+ * "stuck" then catches up). One animator owning scrollTop = smooth
+ * motion. Inner routes without [data-snap-section] still get the
+ * default browser scroll, which is fine. */
+
+/* Custom form field styling */
+.form-field-rounded {
+  border-radius: 4px !important;
+}
+
+/* Custom font weights */
+.font-thinner {
+  font-weight: 100 !important;
+  font-family: 'Lato', sans-serif !important;
+}
+
+/* Alternative ultra-thin weight */
+.font-ultra-thin {
+  font-weight: 300 !important;
+  font-family: 'Lato', sans-serif !important;
+  /* letter-spacing: 0.05em; */
+}
+
+/* Prevent horizontal overflow without creating scroll containers.
+ * `overflow-x: clip` clips overflow but, unlike `hidden`, does NOT make the
+ * element a scroll container — so CSS `scroll-snap-type` on the html still
+ * applies to descendant sections without being intercepted by intermediate
+ * `overflow-y: auto` implicits.
+ *
+ * `overflow-anchor: none` disables Chrome/Edge's scroll-anchoring
+ * feature — when layout shifts (web fonts settling, late-loading
+ * images, ScrollTrigger pin spacer recalculations) the browser would
+ * otherwise jolt scrollTop to keep content visually stable, which
+ * fights our gsap.scrollTo tween and reads as a mid-animation hitch.
+ * With anchoring off, gsap is the sole source of scroll motion. */
+html, body {
+  overflow-x: clip;
+  max-width: 100vw;
+  overflow-anchor: none;
+}
+
+/* Default font weight: PDF uses GillSans-Light (300) for virtually all body
+ * text. Setting body's default weight to 300 means everything is light
+ * unless explicitly bumped — matches the design's airy, editorial feel. */
+body {
+  font-weight: 300;
+}
+
+/* Ensure all direct children of body respect viewport width */
+body > * {
+  max-width: 100vw;
+  overflow-x: clip;
+}
+
+/* Editorial display headlines used on PDF pages 4–10 + 11 + 12.
+ *
+ * The plain words use Gill Sans Light (sans-serif, 300), and italicized
+ * words switch to Cormorant Light Italic (serif, 300). This is the elegant
+ * sans/serif mix the designer uses for "The Art of *Craftsmanship*", "Our
+ * *Newsletter*", "M●MH In *News*", etc.
+ *
+ * Apply via `class="editorial-display text-display"` on the wrapping
+ * element. Inline `<em>`/`<i>` from Lexical's italic feature will
+ * automatically pick up Cormorant. */
+.editorial-display {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-style: normal;
+}
+.editorial-display em,
+.editorial-display i {
+  font-family: var(--font-script);
+  font-weight: 300;
+  font-style: italic;
+}
+
+.swiper-pagination-bullet-custom {
+  width: 8px;
+  height: 8px;
+  background-color: #d1d5db; /* gray-300 */
+  border-radius: 9999px;
+  opacity: 1;
+  transition: background-color 0.3s;
+}
+
+.swiper-pagination-bullet-active-custom {
+  background-color: #111827; /* gray-900 */
+}
+
+/* ─── ExpandableText (mobile Read More) ────────────────────────────
+ * Used by the `<ExpandableText>` component to truncate long body /
+ * quote text to a fixed line count on mobile. The line count is
+ * provided per-instance via the `--clamp-lines` CSS custom property
+ * (defaults to 4 if unset). On lg+ desktop the clamp is removed
+ * entirely — desktop visitors read the full text without interaction.
+ *
+ * Webkit prefixes are required because `line-clamp` is still
+ * implemented behind `-webkit-` on every shipping browser.
+ */
+.expandable-text-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: var(--clamp-lines, 4);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* Expanded mobile state — same vertical footprint as the collapsed
+ * clamp, but scrollable so the rest of the block (CTA, "View All"
+ * link, button) doesn't get pushed down when the user expands.
+ * Height is `clamp-lines × fs-body × 1.5` (1.5 == --lh-body line
+ * leading), so the scroll area visually matches the area the clamp
+ * was occupying before. Touch scrolling is enabled via the legacy
+ * -webkit prefix for older iOS. */
+.expandable-text-scroll {
+  max-height: calc(var(--clamp-lines, 4) * var(--fs-body, 18px) * 1.5);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* Visible affordance: the bottom 24px of the cage fades to
+   * transparent so visitors see the next line "tail off" rather than
+   * end abruptly. This is the same pattern used by article previews
+   * (NYT, Medium) to signal "there's more — scroll/tap to reveal" on
+   * touch devices where overlay scrollbars stay hidden until you
+   * actively start dragging. */
+  -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 24px), transparent 100%);
+          mask-image: linear-gradient(to bottom, black calc(100% - 24px), transparent 100%);
+  /* Slim, always-on scrollbar for desktop / Android Chrome where
+   * scrollbars are NOT overlay-only. iOS still shows nothing until
+   * the user scrolls, but the fade above is the primary cue there. */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.45) transparent;
+}
+.expandable-text-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.expandable-text-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.expandable-text-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 2px;
+}
+@media (min-width: 1024px) {
+  .expandable-text-clamp,
+  .expandable-text-scroll {
+    display: block;
+    max-height: none;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
+}
+
+/* Custom breakpoint for mobile padding */
+@media (min-width: 300px) and (max-width: 400px) {
+  .mobile-padding-custom {
+    padding-top: 18vh;
+  }
+}

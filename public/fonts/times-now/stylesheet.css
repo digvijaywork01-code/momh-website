@@ -1,0 +1,144 @@
+@font-face {
+    font-family: 'Times Now';
+    src: url('TimesNow-SemiLight.eot');
+    src: local('Times Now SemiLight'), local('TimesNow-SemiLight'),
+        url('TimesNow-SemiLight.eot?#iefix') format('embedded-opentype'),
+        url('TimesNow-SemiLight.woff2') format('woff2'),
+        url('TimesNow-SemiLight.woff') format('woff'),
+        url('TimesNow-SemiLight.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Times Now';
+    src: url('TimesNow-LightItalic.eot');
+    src: local('Times Now Light Italic'), local('TimesNow-LightItalic'),
+        url('TimesNow-LightItalic.eot?#iefix') format('embedded-opentype'),
+        url('TimesNow-LightItalic.woff2') format('woff2'),
+        url('TimesNow-LightItalic.woff') format('woff'),
+        url('TimesNow-LightItalic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Times Now';
+    src: url('TimesNow-Bold.eot');
+    src: local('Times Now Bold'), local('TimesNow-Bold'),
+        url('TimesNow-Bold.eot?#iefix') format('embedded-opentype'),
+        url('TimesNow-Bold.woff2') format('woff2'),
+        url('TimesNow-Bold.woff') format('woff'),
+        url('TimesNow-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Times Now';
+    src: url('TimesNow-BoldItalic.eot');
+    src: local('Times Now Bold Italic'), local('TimesNow-BoldItalic'),
+        url('TimesNow-BoldItalic.eot?#iefix') format('embedded-opentype'),
+        url('TimesNow-BoldItalic.woff2') format('woff2'),
+        url('TimesNow-BoldItalic.woff') format('woff'),
+        url('TimesNow-BoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Times Now';
+    src: url('TimesNow-SemiBoldItalic.eot');
+    src: local('Times Now SemiBold Italic'), local('TimesNow-SemiBoldItalic'),
+        url('TimesNow-SemiBoldItalic.eot?#iefix') format('embedded-opentype'),
+        url('TimesNow-SemiBoldItalic.woff2') format('woff2'),
+        url('TimesNow-SemiBoldItalic.woff') format('woff'),
+        url('TimesNow-SemiBoldItalic.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Times Now';
+    src: url('TimesNow-SemiLightItalic.eot');
+    src: local('Times Now SemiLight Italic'), local('TimesNow-SemiLightItalic'),
+        url('TimesNow-SemiLightItalic.eot?#iefix') format('embedded-opentype'),
+        url('TimesNow-SemiLightItalic.woff2') format('woff2'),
+        url('TimesNow-SemiLightItalic.woff') format('woff'),
+        url('TimesNow-SemiLightItalic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Times Now';
+    src: url('TimesNow-SemiBold.eot');
+    src: local('Times Now SemiBold'), local('TimesNow-SemiBold'),
+        url('TimesNow-SemiBold.eot?#iefix') format('embedded-opentype'),
+        url('TimesNow-SemiBold.woff2') format('woff2'),
+        url('TimesNow-SemiBold.woff') format('woff'),
+        url('TimesNow-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Times Now';
+    src: url('TimesNow-ExtraLightItalic.eot');
+    src: local('Times Now ExtraLight Italic'), local('TimesNow-ExtraLightItalic'),
+        url('TimesNow-ExtraLightItalic.eot?#iefix') format('embedded-opentype'),
+        url('TimesNow-ExtraLightItalic.woff2') format('woff2'),
+        url('TimesNow-ExtraLightItalic.woff') format('woff'),
+        url('TimesNow-ExtraLightItalic.ttf') format('truetype');
+    font-weight: 200;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Times Now';
+    src: url('TimesNow-ExtraLight.eot');
+    src: local('Times Now ExtraLight'), local('TimesNow-ExtraLight'),
+        url('TimesNow-ExtraLight.eot?#iefix') format('embedded-opentype'),
+        url('TimesNow-ExtraLight.woff2') format('woff2'),
+        url('TimesNow-ExtraLight.woff') format('woff'),
+        url('TimesNow-ExtraLight.ttf') format('truetype');
+    font-weight: 200;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Times Now';
+    src: url('TimesNow-ExtraBold.eot');
+    src: local('Times Now ExtraBold'), local('TimesNow-ExtraBold'),
+        url('TimesNow-ExtraBold.eot?#iefix') format('embedded-opentype'),
+        url('TimesNow-ExtraBold.woff2') format('woff2'),
+        url('TimesNow-ExtraBold.woff') format('woff'),
+        url('TimesNow-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Times Now';
+    src: url('TimesNow-ExtraBoldItalic.eot');
+    src: local('Times Now ExtraBold Italic'), local('TimesNow-ExtraBoldItalic'),
+        url('TimesNow-ExtraBoldItalic.eot?#iefix') format('embedded-opentype'),
+        url('TimesNow-ExtraBoldItalic.woff2') format('woff2'),
+        url('TimesNow-ExtraBoldItalic.woff') format('woff'),
+        url('TimesNow-ExtraBoldItalic.ttf') format('truetype');
+    font-weight: 800;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Times Now';
+    src: url('TimesNow-Light.eot');
+    src: local('Times Now Light'), local('TimesNow-Light'),
+        url('TimesNow-Light.eot?#iefix') format('embedded-opentype'),
+        url('TimesNow-Light.woff2') format('woff2'),
+        url('TimesNow-Light.woff') format('woff'),
+        url('TimesNow-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
