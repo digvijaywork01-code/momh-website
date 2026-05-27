@@ -15,7 +15,7 @@
     "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
     "lint:fix": "cross-env NODE_OPTIONS=--no-deprecation next lint --fix",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
-    "payload:migrate": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-webstorage\" payload migrate && next build",
+    "payload:migrate": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-webstorage\" next build",
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
     "start": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-webstorage\" next start",
     "test": "pnpm run test:int && pnpm run test:e2e",
