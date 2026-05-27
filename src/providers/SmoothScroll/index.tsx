@@ -83,37 +83,6 @@ const registerEases = () => {
  * Returns a cleanup function.
  */
 const installSectionSnapManager = (): (() => void) => {
-  // Touch devices get NATIVE scroll instead of GSAP Observer-driven snap.
-  //
-  // GSAP Observer has a well-documented quirk on touch: `onUp` /
-  // `onDown` refer to the GESTURE direction (finger movement), not the
-  // resulting scroll direction. On wheel `onDown` = wheel rolled down =
-  // page scrolls forward, which matches `goForward()`. On touch
-  // `onDown` = finger pushed DOWN the screen = the user expects the
-  // page to scroll BACKWARD (revealing content above), but our handler
-  // still calls `goForward()`. Net effect on mobile: swipe up sends
-  // you backward, swipe down sends you forward — the inverted scroll
-  // visitors reported.
-  //
-  // Even when the direction is corrected, Observer with
-  // `preventDefault: true` fights the browser's native touch momentum
-  // scroll, causing visitors to land mid-block (the "overflow" feel —
-  // adjacent blocks bleed into each other because the snap animation
-  // and the momentum animation race).
-  //
-  // Both pathologies disappear when we skip Observer on touch entirely
-  // and let the browser's native scroll handle phones / tablets. The
-  // editorial snap is a desktop convention — mobile users expect free
-  // scroll anyway. Desktop devices (mouse with hover support) keep
-  // the snap behaviour unchanged.
-  // See: https://gsap.com/community/forums/topic/35925-how-do-i-make-an-observer-move-in-opposite-directions-when-touch/
-  if (
-    typeof window !== 'undefined' &&
-    !window.matchMedia('(hover: hover) and (pointer: fine)').matches
-  ) {
-    return () => {}
-  }
-
   let isAnimating = false
 
   const getSections = () =>
@@ -233,9 +202,31 @@ const installSectionSnapManager = (): (() => void) => {
     animateTo(target, duration)
   }
 
-  const observer = Observer.create({
+  // TWO observers, one per input modality, because GSAP Observer's
+  // `onUp` / `onDown` semantics are INVERTED between wheel and touch:
+  //
+  //   - Wheel (desktop): rolling the wheel DOWN moves content up =
+  //     scrolling forward through the page. Observer fires `onDown` →
+  //     we call `goForward()`. ✅ matches user intent.
+  //
+  //   - Touch (mobile): pushing your finger DOWN the screen pulls the
+  //     previous content into view = scrolling BACKWARD. Observer
+  //     fires `onDown` for that gesture. If we called `goForward()`
+  //     here (the wheel mapping), swiping down would send the visitor
+  //     forward — the inverted scroll people complained about on the
+  //     first mobile launch. So for touch we swap the bindings.
+  //
+  // Using a single observer with `type: 'wheel,touch,pointer'` forces
+  // one shared mapping that's right for wheel and wrong for touch (or
+  // vice versa). Two observers with the same `tolerance` and snap
+  // animation give us the same editorial behaviour on every device
+  // with the correct direction for each modality.
+  //
+  // See: https://gsap.com/community/forums/topic/35925-how-do-i-make-an-observer-move-in-opposite-directions-when-touch/
+
+  const wheelObserver = Observer.create({
     target: window,
-    type: 'wheel,touch,pointer',
+    type: 'wheel,pointer',
     // Lower tolerance = Observer fires sooner during a gesture. 6 is
     // tight enough to feel instant on a trackpad but high enough that
     // accidental wiggles don't trigger a snap.
@@ -244,14 +235,27 @@ const installSectionSnapManager = (): (() => void) => {
     // suppressed so it can't fight gsap.to(). Keyboard, scrollbar drag,
     // and programmatic scrollTo from elsewhere still work.
     preventDefault: true,
-    // Wheel deltaY > 0 = scroll content up = "forward through the page".
-    // GSAP fires onDown for that direction.
     onDown: () => goForward(),
     onUp: () => goBackward(),
   })
 
+  const touchObserver = Observer.create({
+    target: window,
+    type: 'touch',
+    // Touch tolerance is a bit higher than wheel — phone users do
+    // accidental small drags that aren't real swipes (e.g. tap-and-hold
+    // before scrolling). 24px lifts that noise floor without making
+    // intentional swipes feel sluggish.
+    tolerance: 24,
+    preventDefault: true,
+    // SWAPPED relative to wheel — see comment block above.
+    onDown: () => goBackward(),
+    onUp: () => goForward(),
+  })
+
   return () => {
-    observer.kill()
+    wheelObserver.kill()
+    touchObserver.kill()
   }
 }
 
