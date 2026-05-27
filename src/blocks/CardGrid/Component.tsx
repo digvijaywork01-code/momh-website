@@ -239,7 +239,7 @@ export const CardGridBlock: React.FC<CardGridBlockProps> = ({
         // Tight vertical padding so the headline + 3-card row fits in
         // laptop-class viewports (~800-900px). On taller screens flex
         // justify-center keeps the layout vertically centered.
-        'w-full min-h-dvh flex flex-col justify-center py-10 lg:py-14 px-6 md:px-12 lg:px-20',
+        'w-full min-h-svh flex flex-col justify-center py-10 lg:py-14 px-6 md:px-12 lg:px-20',
         bgClass[bg],
       )}
       data-theme={dark ? 'dark' : 'light'}

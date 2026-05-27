@@ -13,7 +13,7 @@
  *    rise + fade + sharpen in a staggered cascade (eyebrow first,
  *    headline second, body trails). Total ~1.8s. Plays once per page
  *    load — no replay on re-scroll.
- *  - The section is a normal full-viewport (h-dvh) block. One
+ *  - The section is a normal full-viewport (h-svh) block. One
  *    natural scroll advances past it and the next block comes up — no
  *    pin, no scrub. Clicking anywhere on the hero (or the chevron)
  *    smoothly scrolls to the next sibling block as a convenience.
@@ -163,7 +163,7 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
       }}
       role="button"
       tabIndex={0}
-      /* Full viewport height — using `h-dvh` rather than the PDF's
+      /* Full viewport height — using `h-svh` rather than the PDF's
          original `aspect-[1920/945]` because on a 1080-tall viewport
          the 945-tall section left a 135px gap at the bottom where the
          next section visibly bled in when snapped. `object-cover` on
@@ -173,8 +173,8 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
       // phone screen to read; halving it lets the visitor see the
       // InfoHero cards on first scroll instead of having two
       // 100vh blocks stacked back-to-back.
-      // lg+: original h-dvh for the full editorial entrance.
-      className="relative w-full h-[50dvh] lg:h-dvh overflow-hidden text-offwhite cursor-pointer select-none focus:outline-none"
+      // lg+: original h-svh for the full editorial entrance.
+      className="relative w-full h-[50svh] lg:h-svh overflow-hidden text-offwhite cursor-pointer select-none focus:outline-none"
       data-theme="dark"
       data-hide-nav-when-visible
       data-snap-section

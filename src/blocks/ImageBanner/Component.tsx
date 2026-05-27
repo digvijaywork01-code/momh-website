@@ -21,9 +21,9 @@ import { cn } from '@/utilities/ui'
 type HeightKey = NonNullable<ImageBannerBlockProps['height']>
 
 const heightClass: Record<HeightKey, string> = {
-  screen: 'h-dvh',
-  tall: 'h-[80dvh]',
-  medium: 'h-[60dvh]',
+  screen: 'h-svh',
+  tall: 'h-[80svh]',
+  medium: 'h-[60svh]',
   // 'natural' is handled separately below — it sets aspect-ratio
   // from the image's intrinsic dimensions so the full image is
   // visible with no crop, regardless of viewport height.

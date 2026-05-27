@@ -80,29 +80,42 @@
  * unchanged.
  */
 @media (max-width: 1023px) {
-  html,
-  body {
-    height: 100dvh;
+  html {
+    height: 100svh;
     overflow: hidden;
-    /* `overscroll-behavior: none` blocks pull-to-refresh and
-     * rubber-band on iOS — neither makes sense for a
-     * scroll-snap editorial layout (refreshing mid-snap looks
-     * broken; rubber-band bounces the snap target away). */
     overscroll-behavior: none;
   }
+  /* `position: fixed` on body is the most reliable way to keep
+   * mobile browsers from collapsing the URL bar. Without it,
+   * Chrome Mobile + iOS Safari interpret any scroll gesture
+   * (even one targeting an inner container) as a hint to maximise
+   * content area by hiding chrome. With body fixed, the page
+   * surface itself is a fixed layer — the browser sees nothing to
+   * scroll out of the way, so the chrome stays put for the whole
+   * session. No layout shift, no chrome-collapse repaints. */
+  body {
+    position: fixed;
+    inset: 0;
+    height: 100svh;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+  /* The actual scroller. `100svh` (smallest viewport — the
+   * "viewport minus all browser chrome" value) is the height
+   * the user can actually see right now. Using `100dvh` here
+   * was the previous bug: dvh on first paint is the LARGEST
+   * value (because the chrome hasn't been measured yet), so the
+   * scroll container was bigger than the visible area and the
+   * bottom of each section sat below the fold — invisible. */
   #scroll-container {
-    height: 100dvh;
+    height: 100svh;
     overflow-y: auto;
     scroll-snap-type: y mandatory;
-    /* iOS native momentum scroll inside the container. */
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: none;
   }
   section[data-snap-section] {
     scroll-snap-align: start;
-    /* `scroll-snap-stop: always` forces the browser to stop at every
-     * snap point — without it, a flick gesture can skip multiple
-     * sections, breaking the "one swipe = one block" rhythm. */
     scroll-snap-stop: always;
   }
 }

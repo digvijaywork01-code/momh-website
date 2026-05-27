@@ -284,7 +284,7 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
   // section's full width. Its height = viewport-width ÷ aspect-ratio.
   // For landscape shots (aspect ≥ 1) the image is short enough that
   // the full content stack (icon + eyebrow + headline + 3-line body
-  // + CTA) still fits the single-viewport `min-h-dvh` section.
+  // + CTA) still fits the single-viewport `min-h-svh` section.
   // For SQUARE / PORTRAIT images (aspect < 1) the image consumes
   // half-or-more of the viewport, so a 3-line body overflows past
   // the fold — drop to 2 lines to reclaim ~27px and keep the whole
@@ -303,7 +303,7 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
         // capped at 30vh, body line-clamped, tight padding) ensure
         // the content stack actually fits in that one viewport
         // without cropping.
-        'w-full min-h-dvh',
+        'w-full min-h-svh',
         bgClass[bg],
         topSpacingClass[topSpacing as TopSpacingKey],
         bottomSpacingClass[bottomSpacing as BottomSpacingKey],
@@ -312,7 +312,7 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
       data-snap-section
       aria-label={typeof eyebrow === 'string' ? eyebrow : undefined}
     >
-      <div className="flex flex-col lg:flex-row min-h-dvh">
+      <div className="flex flex-col lg:flex-row min-h-svh">
         {/* Image column — height matches section, width = height × image
             aspect-ratio. On lg+ the column sits beside the content column;
             below lg it sits above with full width. */}
@@ -330,10 +330,10 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
             // <img> (already set below) crops the image cleanly
             // top-and-bottom to fit the 45vh box; the natural
             // aspect-ratio inline style is overridden by the explicit
-            // h-[45dvh] at this breakpoint.
+            // h-[45svh] at this breakpoint.
             // lg+: full-viewport height per the editorial 60/40 split,
             // unchanged.
-            'relative shrink-0 w-full lg:w-auto h-[45dvh] lg:h-dvh',
+            'relative shrink-0 w-full lg:w-auto h-[45svh] lg:h-svh',
             // overflow:hidden contains the 1.08 scale during entrance so
             // the image doesn't bleed past the column edge.
             'overflow-hidden',

@@ -107,14 +107,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Providers>
             {!hideGlobalElements && <Header />}
 
-            <div className={needsMobilePadding ? 'pt-[16dvh] mobile-padding-custom sm:pt-[20dvh]' : ''}>
+            <div className={needsMobilePadding ? 'pt-[16svh] mobile-padding-custom sm:pt-[20svh]' : ''}>
               {children}
             </div>
 
           {!hideGlobalElements && (
             // FlowerPaintings + Footer wrapped as a single snap section
             // so they participate in the section-snap rhythm like every
-            // other block. `min-h-dvh` makes the snap manager land
+            // other block. `min-h-svh` makes the snap manager land
             // its top at viewport top; `flex flex-col justify-between`
             // pins the flower row at top and the footer at bottom (with
             // black space between if the content is shorter than the
@@ -122,10 +122,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             // stays static per the desired behavior. */
             <div
               // On no-scroll-anim pages (e.g. /plan-your-visit) the snap
-              // attribute is omitted AND the min-h-dvh is dropped so
+              // attribute is omitted AND the min-h-svh is dropped so
               // the footer wrapper hugs its content (flower row +
               // footer) instead of leaving an awkward black slab
-              // above. On snap pages, min-h-dvh + justify-end keeps
+              // above. On snap pages, min-h-svh + justify-end keeps
               // the "you've reached the end" beat tied to a full
               // viewport.
               {...(noScrollAnim ? {} : { 'data-snap-section': true })}
@@ -138,7 +138,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     // previous block — gives the page a moment to
                     // breathe before transitioning into the footer.
                     'pt-10 lg:pt-14'
-                  : 'min-h-dvh justify-end',
+                  : 'min-h-svh justify-end',
               )}
             >
               <FlowerPaintings />
