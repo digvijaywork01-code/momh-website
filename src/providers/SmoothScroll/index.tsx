@@ -260,6 +260,29 @@ export const SmoothScrollProvider: React.FC<Props> = ({ children }) => {
 
     registerEases()
 
+    // Mobile uses a fixed body + #scroll-container scroller pattern
+    // (see globals.css mobile media query) instead of window-level
+    // scroll. ScrollTrigger defaults to observing `window`; without
+    // pointing it at the actual scroller, ScrollTrigger never fires
+    // for blocks whose entrance animations are scroll-triggered
+    // (EditorialSplit cascade, FounderQuote portrait + content,
+    // CardGrid, ProcessCarousel etc.). The visible symptom: content
+    // panels stuck at opacity 0 / translateY(40px) — visitors see
+    // the image at the top and a blank space where the content
+    // should be.
+    //
+    // Setting `ScrollTrigger.defaults({ scroller: ... })` once at
+    // boot makes every subsequent ScrollTrigger.create() inherit the
+    // right scroller on this device. On desktop the body itself
+    // scrolls so we leave the default (window).
+    if (typeof window !== 'undefined') {
+      const isMobile = window.matchMedia('(max-width: 1023px)').matches
+      const scrollContainer = document.getElementById('scroll-container')
+      if (isMobile && scrollContainer) {
+        ScrollTrigger.defaults({ scroller: scrollContainer })
+      }
+    }
+
     // `lagSmoothing(0)` disables GSAP's automatic time-adjustment
     // when a frame takes longer than the threshold (default 500ms).
     // With smoothing ON, a 100ms layout pause would cause GSAP to
