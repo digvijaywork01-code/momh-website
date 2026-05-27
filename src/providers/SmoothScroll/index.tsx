@@ -83,6 +83,37 @@ const registerEases = () => {
  * Returns a cleanup function.
  */
 const installSectionSnapManager = (): (() => void) => {
+  // Touch devices get NATIVE scroll instead of GSAP Observer-driven snap.
+  //
+  // GSAP Observer has a well-documented quirk on touch: `onUp` /
+  // `onDown` refer to the GESTURE direction (finger movement), not the
+  // resulting scroll direction. On wheel `onDown` = wheel rolled down =
+  // page scrolls forward, which matches `goForward()`. On touch
+  // `onDown` = finger pushed DOWN the screen = the user expects the
+  // page to scroll BACKWARD (revealing content above), but our handler
+  // still calls `goForward()`. Net effect on mobile: swipe up sends
+  // you backward, swipe down sends you forward — the inverted scroll
+  // visitors reported.
+  //
+  // Even when the direction is corrected, Observer with
+  // `preventDefault: true` fights the browser's native touch momentum
+  // scroll, causing visitors to land mid-block (the "overflow" feel —
+  // adjacent blocks bleed into each other because the snap animation
+  // and the momentum animation race).
+  //
+  // Both pathologies disappear when we skip Observer on touch entirely
+  // and let the browser's native scroll handle phones / tablets. The
+  // editorial snap is a desktop convention — mobile users expect free
+  // scroll anyway. Desktop devices (mouse with hover support) keep
+  // the snap behaviour unchanged.
+  // See: https://gsap.com/community/forums/topic/35925-how-do-i-make-an-observer-move-in-opposite-directions-when-touch/
+  if (
+    typeof window !== 'undefined' &&
+    !window.matchMedia('(hover: hover) and (pointer: fine)').matches
+  ) {
+    return () => {}
+  }
+
   let isAnimating = false
 
   const getSections = () =>
