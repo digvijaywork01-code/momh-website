@@ -53,20 +53,56 @@
  *   with gsap.scrollTo on the same scrollTop value and produce
  *   visible jitter).
  */
+/* ── Mobile scroll-container pattern (< lg) ──
+ *
+ * Lock `html` and `body` to the visible viewport with
+ * `overflow: hidden`. The actual scrolling happens inside
+ * `#scroll-container`, a fixed-height div mounted in layout.tsx.
+ *
+ * Why: mobile browsers (Chrome Mobile, iOS Safari) collapse the
+ * address bar when the PAGE scrolls — but they don't collapse it
+ * when an INNER container scrolls (the browser sees "no page
+ * scroll"). This keeps the address bar persistently visible, which
+ * is what Muse Atelier and most editorial luxury sites do; it also
+ * eliminates the layout-shift / "block size flickers as I scroll"
+ * complaint because every block can size to `100dvh` and that
+ * value is now stable for the lifetime of the page (body is
+ * locked, viewport doesn't resize mid-scroll).
+ *
+ * `scroll-snap-type: y mandatory` + `scroll-snap-align: start` +
+ * `scroll-snap-stop: always` on the scroller turns every
+ * `[data-snap-section]` into a forced snap point — one swipe =
+ * one block, native momentum and direction handled by the
+ * platform (no JS race conditions).
+ *
+ * Gated to `(max-width: 1023px)` so desktop keeps native body
+ * scroll + the GSAP wheel observer's animated transitions
+ * unchanged.
+ */
 @media (max-width: 1023px) {
-  html {
+  html,
+  body {
+    height: 100dvh;
+    overflow: hidden;
+    /* `overscroll-behavior: none` blocks pull-to-refresh and
+     * rubber-band on iOS — neither makes sense for a
+     * scroll-snap editorial layout (refreshing mid-snap looks
+     * broken; rubber-band bounces the snap target away). */
+    overscroll-behavior: none;
+  }
+  #scroll-container {
+    height: 100dvh;
+    overflow-y: auto;
     scroll-snap-type: y mandatory;
-    /* `scroll-padding-top` defaults to 0 — sections snap their TOP to
-     * the viewport TOP, which is what we want for full-bleed
-     * editorial blocks. If a future change adds a sticky header that
-     * eats viewport, bump this to the header height. */
+    /* iOS native momentum scroll inside the container. */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
   }
   section[data-snap-section] {
     scroll-snap-align: start;
     /* `scroll-snap-stop: always` forces the browser to stop at every
      * snap point — without it, a flick gesture can skip multiple
-     * sections, which breaks the "one swipe = one block" expectation
-     * the brand wants. */
+     * sections, breaking the "one swipe = one block" rhythm. */
     scroll-snap-stop: always;
   }
 }

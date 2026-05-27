@@ -84,12 +84,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* <link rel="stylesheet" href="https://use.typekit.net/KIT_ID.css" /> */}
       </head>
       <body className="overflow-x-hidden">
-        <Providers>
-          {!hideGlobalElements && <Header />}
+        {/* Mobile scroll container.
+         *
+         * Mobile browsers collapse the address bar when the page
+         * itself scrolls, which resizes the viewport mid-scroll and
+         * causes layout shift across the editorial blocks. Muse
+         * Atelier and similar luxury sites avoid this by locking
+         * the body and scrolling an inner container instead — the
+         * browser sees "no page scroll" and the address bar stays
+         * put.
+         *
+         * Implementation: `id="scroll-container"` is the actual
+         * scroller. CSS in globals.css gates the lock + snap rules
+         * to `< lg` (max-width 1023px), so desktop keeps native
+         * page-level scroll + the GSAP wheel observer unchanged.
+         *
+         * scroll-snap-type + scroll-snap-align on every
+         * [data-snap-section] turns each editorial block into a
+         * mandatory snap point — one swipe = one section.
+         */}
+        <div id="scroll-container">
+          <Providers>
+            {!hideGlobalElements && <Header />}
 
-          <div className={needsMobilePadding ? 'pt-[16dvh] mobile-padding-custom sm:pt-[20dvh]' : ''}>
-            {children}
-          </div>
+            <div className={needsMobilePadding ? 'pt-[16dvh] mobile-padding-custom sm:pt-[20dvh]' : ''}>
+              {children}
+            </div>
 
           {!hideGlobalElements && (
             // FlowerPaintings + Footer wrapped as a single snap section
@@ -125,7 +145,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Footer />
             </div>
           )}
-        </Providers>
+          </Providers>
+        </div>
       </body>
     </html>
   )
