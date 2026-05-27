@@ -352,7 +352,7 @@ export const TwoColumnFeatureBlock: React.FC<TwoColumnFeatureBlockProps> = ({
         // (~800-900px content area after browser chrome). On taller
         // viewports the flex `justify-center` keeps everything visually
         // balanced with whitespace above and below.
-        'w-full min-h-screen flex flex-col justify-center py-10 lg:py-14 px-6 md:px-12 lg:px-20',
+        'w-full min-h-dvh flex flex-col justify-center py-10 lg:py-14 px-6 md:px-12 lg:px-20',
         bgClass[bg],
       )}
       data-theme={dark ? 'dark' : 'light'}

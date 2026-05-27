@@ -118,7 +118,7 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
     <section
       ref={sectionRef}
       className={cn(
-        'w-full min-h-screen flex flex-col items-center justify-center py-20 lg:py-24 px-6 md:px-12',
+        'w-full min-h-dvh flex flex-col items-center justify-center py-20 lg:py-24 px-6 md:px-12',
         bgClass[bg],
       )}
       data-theme={dark ? 'dark' : 'light'}

@@ -49,7 +49,7 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
   // only, the snap manager skips InfoHero on the snap list — a
   // single Hero → Founder snap scrolls past BOTH blocks together,
   // exactly the "scrolled together" behaviour we want on phones.
-  // Desktop keeps the attribute (set in JSX below) so each h-screen
+  // Desktop keeps the attribute (set in JSX below) so each h-dvh
   // block remains its own editorial snap stop.
   useEffect(() => {
     const el = ref.current
@@ -75,13 +75,13 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
       ref={ref}
       /* Full viewport height. The PDF's 1920/945 aspect was 945 tall
          and left a viewport-bottom gap on 1080-tall displays where
-         the next section visibly bled in during snap. `h-screen`
+         the next section visibly bled in during snap. `h-dvh`
          keeps the section flush with the viewport; the background
          haveli image crops a few pixels top/bottom via object-cover. */
       // Mobile: 50vh so the haveli + info cards fit in half a phone
-      // screen, matching the Hero block above. lg+: original h-screen
+      // screen, matching the Hero block above. lg+: original h-dvh
       // for the full editorial info hero.
-      className="relative w-full h-[50vh] lg:h-screen overflow-hidden text-offwhite"
+      className="relative w-full h-[50dvh] lg:h-dvh overflow-hidden text-offwhite"
       data-theme="dark"
       data-snap-section
       aria-label="Information hero"

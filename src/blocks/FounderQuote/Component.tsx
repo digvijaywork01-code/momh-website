@@ -155,25 +155,25 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
       ref={sectionRef}
       /* Full viewport height on lg+ (was `aspect-[1920/945]` = 945px,
          which left a viewport-bottom gap on 1080-tall displays where
-         the next section bled in during snap). With `h-screen` the
+         the next section bled in during snap). With `h-dvh` the
          section fills the viewport exactly; the portrait column's
          aspect-ratio still drives its width, so the 50/50 split
          (portrait_w ≈ 960 at vh=1080) is preserved on a 1920-wide
          viewport. */
-      // `min-h-screen` (not `h-screen`) so the section grows when
+      // `min-h-dvh` (not `h-dvh`) so the section grows when
       // content needs more vertical room. On 6.5"+ phones (812vh+)
       // and desktops, the portrait (40vh) + content stack
       // (icon, eyebrow, title, quote, signature, attribution, role)
       // fits cleanly in one viewport and the block lands at exactly
       // 100vh. On smaller phones like iPhone SE (375×667), the same
-      // content needs ~800px; `min-h-screen` lets the block stretch
+      // content needs ~800px; `min-h-dvh` lets the block stretch
       // to ~120vh instead of bleeding the bottom of the quote into
       // the next section's background. The snap manager still
       // anchors transitions to each section's TOP, so the visitor
       // scrolls a tiny extra distance on small phones — far better
       // than seeing the founder's attribution overlap with the next
       // editorial split.
-      className={cn('w-full min-h-screen', bgClass[bg])}
+      className={cn('w-full min-h-dvh', bgClass[bg])}
       data-theme="light"
       data-snap-section
       aria-label={eyebrow ? `${eyebrow} ${title}` : 'Founder quote'}
@@ -205,7 +205,7 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
             // signature + attribution, keeping the home-page "one
             // block per screen" rule.
             // lg+: full section height per the editorial 50/50 split.
-            'relative shrink-0 w-full lg:w-auto max-h-[40vh] lg:max-h-none lg:h-full overflow-hidden',
+            'relative shrink-0 w-full lg:w-auto max-h-[40dvh] lg:max-h-none lg:h-full overflow-hidden',
             portraitFirst ? 'order-1' : 'order-1 lg:order-2',
           )}
           style={{ aspectRatio: portraitAspect }}
