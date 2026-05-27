@@ -64,15 +64,6 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },
-    // `push: true` makes Payload sync the schema directly from the
-    // collection/block configs on every connect, bypassing the
-    // migration files. The pre-existing `src/migrations/` file is
-    // stale (created July 2025 before AppointmentForm + recent block
-    // changes), so production queries reference columns the migration
-    // never created. Until a fresh migration is generated, push mode
-    // keeps the DB in sync with the live config — safe here because
-    // the production DB has no editor-created content yet.
-    push: true,
   }),
   collections: [Pages, Posts, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),

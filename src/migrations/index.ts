@@ -1,14 +1,15 @@
-// Migrations array intentionally empty — production uses `push: true` on
-// the postgresAdapter (see src/payload.config.ts) so schema is synced
-// directly from the live block/collection config. The pre-existing July
-// 2025 migration file in this folder predates major schema changes
-// (AppointmentForm + recent block additions) and would corrupt the DB
-// if re-applied. Switch back to migration-based deploys by:
-//   1. Running `pnpm payload migrate:create --name <name>` to generate
-//      a fresh migration from the current config
-//   2. Re-importing the generated migration here
-//   3. Setting `push: false` in postgresAdapter
-//   4. Restoring `payload migrate && next build` in package.json's
-//      `payload:migrate` script.
-export const migrations = []
+// The old 20250728_070911 migration is intentionally NOT registered
+// here. It was created in July 2025 before AppointmentForm + several
+// block additions; re-applying it would build tables missing today's
+// columns. The new `20260527_050504_initial_v2` migration was
+// generated against an empty DB capturing the current schema in full,
+// so applying it from a clean DB produces an exactly-correct schema.
+import * as migration_20260527_050504_initial_v2 from './20260527_050504_initial_v2'
 
+export const migrations = [
+  {
+    up: migration_20260527_050504_initial_v2.up,
+    down: migration_20260527_050504_initial_v2.down,
+    name: '20260527_050504_initial_v2',
+  },
+]
