@@ -216,71 +216,32 @@ const installSectionSnapManager = (): (() => void) => {
     onUp: () => goBackward(),
   })
 
-  // ── MOBILE / TOUCH — custom delta-based handler.
+  // ── MOBILE / TOUCH — native CSS scroll-snap, no JavaScript.
   //
-  // Why not GSAP Observer for touch:
-  //   GSAP Observer treats `onUp` / `onDown` as FINGER direction, not
-  //   scroll direction. Several attempts to use it (single observer
-  //   with swapped mappings, two observers with inverted handlers,
-  //   passive snap-on-scroll-end) all produced either the inverted
-  //   scroll bug OR a feel that didn't match the desktop snap.
+  // Every JS-driven approach we tried for touch (single Observer with
+  // shared mapping, two Observers with inverted handlers per modality,
+  // passive snap-on-scroll-end, hand-rolled touchmove delta tracker)
+  // produced one of:
+  //   - inverted scroll direction (Observer's onUp/onDown vs. wheel
+  //     semantics)
+  //   - mid-block landings (preventDefault racing native momentum)
+  //   - "soft" two-stage feel (settle-then-snap doesn't match the
+  //     deliberate desktop transition)
   //
-  // What works: track finger delta manually. The direction is then
-  // unambiguous (positive dy = finger moved up = scroll forward), and
-  // we can `preventDefault` to fully own the gesture, giving the same
-  // single-swipe-equals-one-section behaviour as the desktop wheel.
+  // CSS `scroll-snap-type: y mandatory` on the document + a
+  // `scroll-snap-align: start` on each section is what the browser
+  // platform was built for: one swipe = one section, native momentum
+  // and direction handled by the OS, no race conditions, no
+  // direction-inversion math. Applied globally via the mobile media
+  // query in `(frontend)/globals.css`; nothing to install here.
   //
-  // Threshold of 30px is the swipe-vs-tap boundary — accidental drags
-  // under 30px don't trigger snap. Once threshold is crossed we
-  // consume the gesture (clear touchStartY) so the same swipe can't
-  // double-fire.
-
-  let touchStartY: number | null = null
-
-  const onTouchStart = (e: TouchEvent) => {
-    if (e.touches.length === 1) {
-      touchStartY = e.touches[0].clientY
-    } else {
-      touchStartY = null
-    }
-  }
-
-  const onTouchMove = (e: TouchEvent) => {
-    if (touchStartY === null || isAnimating) return
-    if (e.touches.length !== 1) {
-      touchStartY = null
-      return
-    }
-    // Positive dy = finger moved UP = user wants to scroll forward.
-    const dy = touchStartY - e.touches[0].clientY
-    if (Math.abs(dy) < 30) return
-    // Significant swipe detected — own the gesture from here.
-    e.preventDefault()
-    if (dy > 0) goForward()
-    else goBackward()
-    // Consume gesture so subsequent touchmoves don't re-fire.
-    touchStartY = null
-  }
-
-  const onTouchEnd = () => {
-    touchStartY = null
-  }
-
-  // `passive: false` is REQUIRED for touchmove because we call
-  // `e.preventDefault()`. With `passive: true` (the modern default)
-  // preventDefault is silently ignored and the browser keeps scrolling
-  // natively, which would race with our gsap.scrollTo snap animation.
-  window.addEventListener('touchstart', onTouchStart, { passive: true })
-  window.addEventListener('touchmove', onTouchMove, { passive: false })
-  window.addEventListener('touchend', onTouchEnd, { passive: true })
-  window.addEventListener('touchcancel', onTouchEnd, { passive: true })
+  // The `wheelObserver` above remains for desktop because the snap
+  // animation we want there (1.4s inOutQuart slide) is more
+  // deliberate than CSS scroll-snap's instant snap, and wheel users
+  // don't have the touch-direction problem.
 
   return () => {
     wheelObserver.kill()
-    window.removeEventListener('touchstart', onTouchStart)
-    window.removeEventListener('touchmove', onTouchMove)
-    window.removeEventListener('touchend', onTouchEnd)
-    window.removeEventListener('touchcancel', onTouchEnd)
   }
 }
 

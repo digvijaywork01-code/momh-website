@@ -29,14 +29,47 @@
   }
 }
 
-/* Section snap is now driven entirely by JS (Observer + gsap.scrollTo
- * in SmoothScrollProvider). CSS `scroll-behavior: smooth` and
- * `scroll-snap-type` are intentionally OFF on the home page — they
- * compete with gsap's tween over the same scrollTop value, producing
- * a perceptible mid-animation jitter (looks like the motion gets
- * "stuck" then catches up). One animator owning scrollTop = smooth
- * motion. Inner routes without [data-snap-section] still get the
- * default browser scroll, which is fine. */
+/* Section snap is split by device:
+ *
+ * Desktop (lg+): JS-driven via GSAP Observer + gsap.scrollTo in
+ *   SmoothScrollProvider. A `wheelObserver` intercepts every wheel
+ *   gesture with preventDefault and animates a deliberate 1.4s
+ *   inOutQuart slide to the next `[data-snap-section]`. This is the
+ *   editorial pacing the brand wants on desktop — feels intentional,
+ *   not just instant.
+ *
+ * Mobile (< lg): NATIVE CSS scroll-snap. Every JS approach to mobile
+ *   snap (Observer with preventDefault, custom touch-delta tracker,
+ *   passive snap-on-scroll-end) produced direction-inversion or
+ *   mid-block landings because of how mobile browsers handle touch
+ *   momentum. `scroll-snap-type: y mandatory` lets the platform do
+ *   what it was designed for: one swipe = one section, native
+ *   momentum and direction preserved, no JS to race against the
+ *   browser's scroller. `scroll-snap-stop: always` prevents momentum
+ *   from skipping past a section on a hard swipe.
+ *
+ *   The mobile rule is gated to `(max-width: 1023px)` so it doesn't
+ *   conflict with the desktop GSAP scroll (CSS snap would compete
+ *   with gsap.scrollTo on the same scrollTop value and produce
+ *   visible jitter).
+ */
+@media (max-width: 1023px) {
+  html {
+    scroll-snap-type: y mandatory;
+    /* `scroll-padding-top` defaults to 0 — sections snap their TOP to
+     * the viewport TOP, which is what we want for full-bleed
+     * editorial blocks. If a future change adds a sticky header that
+     * eats viewport, bump this to the header height. */
+  }
+  section[data-snap-section] {
+    scroll-snap-align: start;
+    /* `scroll-snap-stop: always` forces the browser to stop at every
+     * snap point — without it, a flick gesture can skip multiple
+     * sections, which breaks the "one swipe = one block" expectation
+     * the brand wants. */
+    scroll-snap-stop: always;
+  }
+}
 
 /* Custom form field styling */
 .form-field-rounded {
