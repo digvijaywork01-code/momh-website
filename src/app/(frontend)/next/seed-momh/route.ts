@@ -13,9 +13,15 @@ import { seedMomhHome } from '@/endpoints/seed-momh'
 
 export const maxDuration = 60
 
-export async function POST(): Promise<Response> {
+export async function POST(req: Request): Promise<Response> {
+  // Production guard with PAYLOAD_SECRET bypass: in prod, allow only
+  // when Authorization: Bearer <PAYLOAD_SECRET>. Without it, returns
+  // 403 to prevent accidental data wipes.
   if (process.env.NODE_ENV === 'production') {
-    return new Response('Disabled in production.', { status: 403 })
+    const expected = `Bearer ${process.env.PAYLOAD_SECRET || ''}`
+    if (req.headers.get('authorization') !== expected) {
+      return new Response('Disabled in production (auth required).', { status: 403 })
+    }
   }
 
   const payload = await getPayload({ config })
