@@ -319,16 +319,21 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
         <div
           ref={imageWrapRef}
           className={cn(
-            // Mobile: NO height cap — the box uses the image's
-            // natural aspect ratio (via the inline `aspectRatio`
-            // style) so the image displays in full with no crop.
-            // For typical home-page landscape shots (16:9 → 16:10
-            // → 4:3) the image lands between ~210px and ~280px tall
-            // at 375px wide, leaving ample room for the icon +
-            // eyebrow + headline + 3-line clamped body + Read More +
-            // featured line + CTA underneath inside the viewport.
-            // lg+: full-viewport height per the editorial 60/40 split.
-            'relative shrink-0 w-full lg:w-auto lg:h-screen',
+            // Mobile: cap image at 45vh so the icon + eyebrow +
+            // headline + clamped body + Read More + CTA all fit in
+            // the remaining ~55vh, keeping the whole section to
+            // exactly one viewport. Without this cap, portrait/square
+            // images (aspect < 1) push the content stack past the
+            // fold and the block ends up 110-127vh tall on small
+            // phones like iPhone SE — the visible "blocks
+            // overflowing 100vh" complaint. `object-cover` on the
+            // <img> (already set below) crops the image cleanly
+            // top-and-bottom to fit the 45vh box; the natural
+            // aspect-ratio inline style is overridden by the explicit
+            // h-[45vh] at this breakpoint.
+            // lg+: full-viewport height per the editorial 60/40 split,
+            // unchanged.
+            'relative shrink-0 w-full lg:w-auto h-[45vh] lg:h-screen',
             // overflow:hidden contains the 1.08 scale during entrance so
             // the image doesn't bleed past the column edge.
             'overflow-hidden',
