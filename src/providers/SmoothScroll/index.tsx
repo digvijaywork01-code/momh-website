@@ -202,14 +202,11 @@ const installSectionSnapManager = (): (() => void) => {
     animateTo(target, duration)
   }
 
-  // ── DESKTOP / WHEEL — Observer with preventDefault.
+  // ── DESKTOP / WHEEL — Observer with preventDefault, unchanged.
   //
-  // On desktop we intercept the wheel completely so gsap.to(scrollTop)
-  // owns the animation timing and there's no race with native momentum.
-  // `type: 'wheel'` only (NOT 'pointer'): pointer events fire alongside
-  // touch on mobile browsers, so adding 'pointer' here would have the
-  // wheel observer firing on every phone swipe with the WRONG direction
-  // mapping — the inverted scroll bug.
+  // `type: 'wheel'` only (NOT 'pointer') — pointer events fire on touch
+  // devices alongside touch events; if the wheel observer captured
+  // pointer it would also fire on phone swipes with the wrong direction.
   const wheelObserver = Observer.create({
     target: window,
     type: 'wheel',
@@ -219,92 +216,71 @@ const installSectionSnapManager = (): (() => void) => {
     onUp: () => goBackward(),
   })
 
-  // ── MOBILE / TOUCH — passive snap on scroll-end.
+  // ── MOBILE / TOUCH — custom delta-based handler.
   //
-  // Earlier attempts used Observer with `preventDefault: true` on touch
-  // events. Two problems with that approach:
-  //   1. GSAP Observer's `onUp`/`onDown` refer to FINGER direction, not
-  //      scroll direction. Even swapping the handlers (onDown=backward,
-  //      onUp=forward) wasn't enough — pointer events also fire on
-  //      touch, so the wheel observer was firing too with the wrong
-  //      mapping. Net effect: still inverted.
-  //   2. `preventDefault: true` on a touch event suppresses the
-  //      browser's native momentum scroll. Our snap animation then
-  //      races against the browser's interrupted-but-still-coasting
-  //      momentum, producing the "blocks overflowing 100vh" feel where
-  //      visitors land mid-block.
+  // Why not GSAP Observer for touch:
+  //   GSAP Observer treats `onUp` / `onDown` as FINGER direction, not
+  //   scroll direction. Several attempts to use it (single observer
+  //   with swapped mappings, two observers with inverted handlers,
+  //   passive snap-on-scroll-end) all produced either the inverted
+  //   scroll bug OR a feel that didn't match the desktop snap.
   //
-  // The robust pattern for mobile is: LET THE BROWSER SCROLL NATIVELY,
-  // then snap to the nearest section AFTER the user stops touching +
-  // momentum settles. Direction is always correct (browser handles it),
-  // editorial snap still happens (we just animate the final correction).
+  // What works: track finger delta manually. The direction is then
+  // unambiguous (positive dy = finger moved up = scroll forward), and
+  // we can `preventDefault` to fully own the gesture, giving the same
+  // single-swipe-equals-one-section behaviour as the desktop wheel.
+  //
+  // Threshold of 30px is the swipe-vs-tap boundary — accidental drags
+  // under 30px don't trigger snap. Once threshold is crossed we
+  // consume the gesture (clear touchStartY) so the same swipe can't
+  // double-fire.
 
-  let scrollEndTimer: ReturnType<typeof setTimeout> | null = null
-  let isTouching = false
+  let touchStartY: number | null = null
 
-  const onTouchStart = () => {
-    isTouching = true
-    if (scrollEndTimer) clearTimeout(scrollEndTimer)
+  const onTouchStart = (e: TouchEvent) => {
+    if (e.touches.length === 1) {
+      touchStartY = e.touches[0].clientY
+    } else {
+      touchStartY = null
+    }
+  }
+
+  const onTouchMove = (e: TouchEvent) => {
+    if (touchStartY === null || isAnimating) return
+    if (e.touches.length !== 1) {
+      touchStartY = null
+      return
+    }
+    // Positive dy = finger moved UP = user wants to scroll forward.
+    const dy = touchStartY - e.touches[0].clientY
+    if (Math.abs(dy) < 30) return
+    // Significant swipe detected — own the gesture from here.
+    e.preventDefault()
+    if (dy > 0) goForward()
+    else goBackward()
+    // Consume gesture so subsequent touchmoves don't re-fire.
+    touchStartY = null
   }
 
   const onTouchEnd = () => {
-    isTouching = false
-    // Don't snap immediately — momentum may carry the page for another
-    // 200-600ms after the finger lifts. Wait for scroll to stop,
-    // THEN find the nearest section.
-    if (scrollEndTimer) clearTimeout(scrollEndTimer)
-    scrollEndTimer = setTimeout(snapToNearest, 150)
+    touchStartY = null
   }
 
-  const onScrollWhileTouching = () => {
-    // While the finger is down OR momentum is decaying, reset the
-    // settle timer. Once 150ms passes with no scroll event, we treat
-    // the gesture as finished and snap.
-    if (scrollEndTimer) clearTimeout(scrollEndTimer)
-    if (!isTouching) {
-      scrollEndTimer = setTimeout(snapToNearest, 150)
-    }
-  }
-
-  const snapToNearest = () => {
-    if (isAnimating || isTouching) return
-    const scrollY = window.scrollY
-    const pinEnd = getPinEnd()
-
-    // Inside the Hero pin range — snap to 0 or pinEnd, whichever closer.
-    if (scrollY < pinEnd - 4) {
-      const target = scrollY < pinEnd / 2 ? 0 : pinEnd
-      animateTo(target, HERO_PIN_DURATION)
-      return
-    }
-
-    const tops = getSectionTops(pinEnd)
-    if (tops.length === 0) return
-    // Find the section whose top is nearest to current scrollY.
-    let nearest = tops[0]
-    let bestDist = Math.abs(scrollY - tops[0])
-    for (const top of tops) {
-      const d = Math.abs(scrollY - top)
-      if (d < bestDist) {
-        bestDist = d
-        nearest = top
-      }
-    }
-    if (Math.abs(scrollY - nearest) > 4) {
-      animateTo(nearest, SECTION_DURATION)
-    }
-  }
-
+  // `passive: false` is REQUIRED for touchmove because we call
+  // `e.preventDefault()`. With `passive: true` (the modern default)
+  // preventDefault is silently ignored and the browser keeps scrolling
+  // natively, which would race with our gsap.scrollTo snap animation.
   window.addEventListener('touchstart', onTouchStart, { passive: true })
+  window.addEventListener('touchmove', onTouchMove, { passive: false })
   window.addEventListener('touchend', onTouchEnd, { passive: true })
-  window.addEventListener('scroll', onScrollWhileTouching, { passive: true })
+  window.addEventListener('touchcancel', onTouchEnd, { passive: true })
 
   return () => {
     wheelObserver.kill()
     window.removeEventListener('touchstart', onTouchStart)
+    window.removeEventListener('touchmove', onTouchMove)
     window.removeEventListener('touchend', onTouchEnd)
-    window.removeEventListener('scroll', onScrollWhileTouching)
-    if (scrollEndTimer) clearTimeout(scrollEndTimer)
+    window.removeEventListener('touchcancel', onTouchEnd)
   }
 }
 
