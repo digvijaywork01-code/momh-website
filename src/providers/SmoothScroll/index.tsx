@@ -33,6 +33,57 @@ import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer, CustomEase)
+
+  // Mobile uses a #scroll-container scroller pattern (see globals.css mobile
+  // media query). Block components create ScrollTriggers in their own
+  // useEffects which fire BEFORE this provider's useEffect (children-first).
+  // ScrollTrigger caches its scroller resolution at trigger-create time and
+  // does NOT re-resolve it on refresh() — so a proxy set up later in the
+  // provider's useEffect comes too late: the existing triggers never query
+  // the proxy and animations stay stuck at their initial hidden state.
+  //
+  // Fix: install the proxy at MODULE load, which happens during hydration
+  // BEFORE any child component's useEffect runs. By the time block triggers
+  // are created with the default `scroller: window`, the proxy is already
+  // intercepting window scroll queries and redirecting to #scroll-container.
+  const installMobileScrollerProxy = () => {
+    if (!window.matchMedia('(max-width: 1023px)').matches) return
+    const sc = document.getElementById('scroll-container')
+    if (!sc) return
+    ScrollTrigger.scrollerProxy(window, {
+      scrollTop(value) {
+        // Diagnostic counter so we can verify in production whether
+        // ScrollTrigger is actually querying the proxy.
+        ;(window as unknown as { __proxyHits: number }).__proxyHits =
+          ((window as unknown as { __proxyHits?: number }).__proxyHits || 0) + 1
+        if (arguments.length && value !== undefined) {
+          sc.scrollTop = value
+        }
+        return sc.scrollTop
+      },
+      getBoundingClientRect() {
+        return {
+          top: 0,
+          left: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        }
+      },
+    })
+    // Forward scroll-container scroll events so trigger states update as
+    // the inner scroller moves.
+    sc.addEventListener('scroll', () => ScrollTrigger.update(), { passive: true })
+  }
+
+  // #scroll-container is SSR'd by layout.tsx; in normal Next.js script
+  // order it's already in the DOM by the time this module executes. But
+  // guard with a readyState fallback in case scripts run before HTML
+  // finishes parsing.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', installMobileScrollerProxy, { once: true })
+  } else {
+    installMobileScrollerProxy()
+  }
 }
 
 type Props = { children: React.ReactNode }
@@ -260,51 +311,15 @@ export const SmoothScrollProvider: React.FC<Props> = ({ children }) => {
 
     registerEases()
 
-    // Mobile uses a fixed body + #scroll-container scroller pattern
-    // (see globals.css mobile media query) instead of window scroll.
-    // Block components' ScrollTriggers were created with the default
-    // scroller (window) BEFORE this provider's useEffect runs (React
-    // effect order: children first, then parents). So even if we set
-    // ScrollTrigger.defaults() here, it wouldn't apply to triggers
-    // that already exist — every block's entrance animation would
-    // stay stuck at its initial hidden state (opacity 0,
-    // translateY 40px). Visitors see the image at the top of an
-    // EditorialSplit and a completely blank space below it.
-    //
-    // Fix: ScrollTrigger.scrollerProxy(window, ...) — intercept
-    // window scroll queries and redirect them to #scroll-container.
-    // Existing triggers don't know anything changed; they think they
-    // still observe window, but window's scroll position is now
-    // delegated to the inner scroller. Combined with a scroll-event
-    // forwarder + a refresh(), every block's animation fires
-    // correctly on mobile without touching the block code.
-    if (typeof window !== 'undefined') {
-      const isMobile = window.matchMedia('(max-width: 1023px)').matches
-      const scrollContainer = document.getElementById('scroll-container')
-      if (isMobile && scrollContainer) {
-        ScrollTrigger.scrollerProxy(window, {
-          scrollTop(value) {
-            if (arguments.length && value !== undefined) {
-              scrollContainer.scrollTop = value
-            }
-            return scrollContainer.scrollTop
-          },
-          getBoundingClientRect() {
-            return {
-              top: 0,
-              left: 0,
-              width: window.innerWidth,
-              height: window.innerHeight,
-            }
-          },
-        })
-        // Forward scroll-container scroll events to ScrollTrigger so
-        // animations update as the inner scroller moves.
-        const onScroll = () => ScrollTrigger.update()
-        scrollContainer.addEventListener('scroll', onScroll, { passive: true })
-        // Recompute trigger positions now that the scroller is real.
-        ScrollTrigger.refresh()
-      }
+    // ScrollerProxy setup moved to module top (above) so it runs BEFORE
+    // child useEffects create their ScrollTriggers. Here we just trigger
+    // a refresh so trigger positions are recomputed against the now-
+    // proxied scroller. (Block useEffects already ran by this point; their
+    // triggers were created against the already-installed proxy, but
+    // start/end positions may still need recomputation if heights settled
+    // after first measurement.)
+    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 1023px)').matches) {
+      ScrollTrigger.refresh()
     }
 
     // `lagSmoothing(0)` disables GSAP's automatic time-adjustment
