@@ -160,12 +160,20 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
          aspect-ratio still drives its width, so the 50/50 split
          (portrait_w ≈ 960 at vh=1080) is preserved on a 1920-wide
          viewport. */
-      // Both mobile + desktop: section is exactly one viewport tall.
-      // The mobile image cap (max-h-[40vh]) + content panel together
-      // already fit in ~813px, so h-screen lands cleanly without
-      // cropping content; the explicit class keeps the next block
-      // from peeking even if content ever shrinks below viewport.
-      className={cn('w-full h-screen', bgClass[bg])}
+      // `min-h-screen` (not `h-screen`) so the section grows when
+      // content needs more vertical room. On 6.5"+ phones (812vh+)
+      // and desktops, the portrait (40vh) + content stack
+      // (icon, eyebrow, title, quote, signature, attribution, role)
+      // fits cleanly in one viewport and the block lands at exactly
+      // 100vh. On smaller phones like iPhone SE (375×667), the same
+      // content needs ~800px; `min-h-screen` lets the block stretch
+      // to ~120vh instead of bleeding the bottom of the quote into
+      // the next section's background. The snap manager still
+      // anchors transitions to each section's TOP, so the visitor
+      // scrolls a tiny extra distance on small phones — far better
+      // than seeing the founder's attribution overlap with the next
+      // editorial split.
+      className={cn('w-full min-h-screen', bgClass[bg])}
       data-theme="light"
       data-snap-section
       aria-label={eyebrow ? `${eyebrow} ${title}` : 'Founder quote'}
