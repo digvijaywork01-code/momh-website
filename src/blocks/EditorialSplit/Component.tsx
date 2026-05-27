@@ -303,7 +303,13 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
         // capped at 30vh, body line-clamped, tight padding) ensure
         // the content stack actually fits in that one viewport
         // without cropping.
-        'w-full min-h-svh',
+        // Mobile (<lg): min-h-svh — at least one visible viewport,
+        // can grow if content needs more room on very small phones.
+        // Desktop (lg+): lg:h-screen — EXPLICIT height required so
+        // the inner flex-row's `min-h-svh` chain doesn't collapse;
+        // the desktop 60/40 split needs both columns to fill the
+        // viewport. Same pattern as the FounderQuote fix.
+        'w-full min-h-svh lg:h-screen',
         bgClass[bg],
         topSpacingClass[topSpacing as TopSpacingKey],
         bottomSpacingClass[bottomSpacing as BottomSpacingKey],
@@ -333,7 +339,7 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
             // h-[45svh] at this breakpoint.
             // lg+: full-viewport height per the editorial 60/40 split,
             // unchanged.
-            'relative shrink-0 w-full lg:w-auto h-[45svh] lg:h-svh',
+            'relative shrink-0 w-full lg:w-auto h-[40svh] lg:h-screen',
             // overflow:hidden contains the 1.08 scale during entrance so
             // the image doesn't bleed past the column edge.
             'overflow-hidden',
