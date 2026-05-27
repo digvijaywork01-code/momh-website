@@ -254,7 +254,7 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
               // for the quote without sacrificing the icon's role as
               // a delicate section ornament. lg+ keeps the original
               // ~80px treatment per PDF p3.
-              className="w-10 h-10 md:w-14 md:h-14 lg:w-20 lg:h-20 object-contain mb-4 lg:mb-6"
+              className="w-8 h-8 md:w-14 md:h-14 lg:w-20 lg:h-20 object-contain mb-2 lg:mb-6"
             />
           )}
 
@@ -269,7 +269,7 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
           {eyebrow && (
             <p
               ref={eyebrowRef}
-              className="font-script font-normal text-founder-eyebrow uppercase text-founder-red mb-4"
+              className="font-script font-normal text-founder-eyebrow uppercase text-founder-red mb-2 lg:mb-4"
             >
               {eyebrow}
             </p>
@@ -286,7 +286,7 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
           {title && (
             <h2
               ref={titleRef}
-              className="font-display font-medium text-founder-title uppercase text-founder-red mb-12"
+              className="font-display font-medium text-founder-title uppercase text-founder-red mb-4 lg:mb-12"
             >
               {title}
             </h2>
@@ -322,7 +322,7 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
               // Mobile: tighter top margin (mt-4) to claw back ~24px
               // so the attribution stays inside the viewport. lg+:
               // original mt-10 for the airy editorial layout.
-              className="relative w-40 h-16 md:w-48 md:h-20 mt-4 lg:mt-10 mb-2"
+              className="relative w-32 h-12 md:w-48 md:h-20 mt-2 lg:mt-10 mb-1 lg:mb-2"
             >
               <Media fill loading="eager" imgClassName="object-contain" resource={signature} />
             </div>
@@ -336,7 +336,7 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
           {attribution && (
             <p
               ref={attributionRef}
-              className="font-display font-normal text-founder-attribution uppercase text-founder-red mt-6"
+              className="font-display font-normal text-founder-attribution uppercase text-founder-red mt-3 lg:mt-6"
             >
               {attribution}
             </p>
