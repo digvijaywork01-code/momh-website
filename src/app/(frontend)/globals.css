@@ -110,13 +110,27 @@
   #scroll-container {
     height: 100svh;
     overflow-y: auto;
-    scroll-snap-type: y mandatory;
+    /* `proximity` (not `mandatory`) so the user CAN scroll within a
+     * section that's taller than svh — needed because some editorial
+     * blocks (Founder on small phones, Events At MoMH with its extra
+     * featured line) have content that won't fit a tiny iPhone SE
+     * viewport. With `mandatory`, the browser refuses to land between
+     * snap points and the overflow content becomes unreachable. With
+     * `proximity`, the browser snaps when the scroll position is near
+     * a snap point, but lets the user free-scroll inside a tall block.
+     * Net effect for typical blocks (fit svh): identical to mandatory.
+     * For oversized blocks: content stays reachable. */
+    scroll-snap-type: y proximity;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: none;
   }
   section[data-snap-section] {
     scroll-snap-align: start;
-    scroll-snap-stop: always;
+    /* `scroll-snap-stop: always` removed. With proximity snap the
+     * stop:always combination forces the browser to halt mid-flick
+     * AND refuse to skip sections, which on tall blocks creates a
+     * deadlock — user can't get past or into. Default (normal) lets
+     * momentum carry naturally while still snapping at section tops. */
   }
 }
 

@@ -173,7 +173,16 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
       // scrolls a tiny extra distance on small phones — far better
       // than seeing the founder's attribution overlap with the next
       // editorial split.
-      className={cn('w-full min-h-svh', bgClass[bg])}
+      // SEPARATE mobile vs desktop sizing on purpose:
+      //   - Mobile (<lg): `min-h-svh` — at least one visible viewport,
+      //     can grow when content needs more room on smaller phones.
+      //   - Desktop (lg+): `lg:h-screen` — EXPLICIT height required so
+      //     the inner flex-row's `h-full` and the portrait column's
+      //     `lg:h-full` actually resolve to a real number. With only
+      //     `min-h-*` the h-full chain collapses to content height and
+      //     the portrait wrapper renders 0×0 (image invisible). h-screen
+      //     gives the chain its anchor.
+      className={cn('w-full min-h-svh lg:h-screen', bgClass[bg])}
       data-theme="light"
       data-snap-section
       aria-label={eyebrow ? `${eyebrow} ${title}` : 'Founder quote'}
