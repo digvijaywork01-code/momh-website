@@ -11,7 +11,7 @@ import config from '@payload-config'
 
 import { seedMomhHome } from '@/endpoints/seed-momh'
 
-export const maxDuration = 60
+export const maxDuration = 300
 
 export async function POST(req: Request): Promise<Response> {
   // Production guard with PAYLOAD_SECRET bypass: in prod, allow only
