@@ -87,7 +87,16 @@ export default buildConfig({
       token: process.env.BLOB_READ_WRITE_TOKEN || '',
       addRandomSuffix: false,
       cacheControlMaxAge: 365 * 24 * 60 * 60,
-      clientUploads: true,
+      // clientUploads: true would let the admin upload directly from
+      // browser to Blob (bypassing Vercel function size limits), but
+      // it requires UploadHandlersProvider in the admin React tree
+      // which isn't wiring correctly in this Payload version —
+      // throws "useUploadHandlers must be used within
+      // UploadHandlersProvider" and blanks the admin. Falling back to
+      // server-routed uploads (admin → /api/media → Blob) which works
+      // for files under the 4.5 MB Vercel serverless body limit (more
+      // than enough for our editorial JPEGs).
+      clientUploads: false,
     }),
   ],
   secret: process.env.PAYLOAD_SECRET,
