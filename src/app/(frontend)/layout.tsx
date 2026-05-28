@@ -114,20 +114,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {!hideGlobalElements && (
             // FlowerPaintings + Footer wrapped as a single snap section
             // so they participate in the section-snap rhythm like every
-            // other block. `min-h-svh` makes the snap manager land
-            // its top at viewport top; `flex flex-col justify-between`
-            // pins the flower row at top and the footer at bottom (with
-            // black space between if the content is shorter than the
-            // viewport). No entrance animation here — inner content
-            // stays static per the desired behavior. */
+            // other block. `min-h-svh` gives the wrapper a full-viewport
+            // presence; `justify-end` pushes the content to the wrapper's
+            // bottom edge; `[scroll-snap-align:end]` overrides the
+            // global `start` alignment so the wrapper's BOTTOM (== the
+            // bottom of the footer) lands at the viewport bottom when
+            // snapped.
+            //
+            // End-alignment matters: on small phones the flowers +
+            // footer content together (~700px) is slightly TALLER than
+            // a viewport (~667px). With the default start-alignment,
+            // the bottom ~30px of the footer (copyright row) was
+            // permanently below the fold under mandatory snap — there's
+            // no further snap target to scroll into. End-alignment puts
+            // the footer fully in view; the flowers row above shows a
+            // small sliver at the top, which reads as the intended
+            // "you've reached the end" visual punctuation.
             <div
               // On no-scroll-anim pages (e.g. /plan-your-visit) the snap
               // attribute is omitted AND the min-h-svh is dropped so
               // the footer wrapper hugs its content (flower row +
               // footer) instead of leaving an awkward black slab
-              // above. On snap pages, min-h-svh + justify-end keeps
-              // the "you've reached the end" beat tied to a full
-              // viewport.
+              // above.
               {...(noScrollAnim ? {} : { 'data-snap-section': true })}
               className={cn(
                 'flex flex-col bg-black',
@@ -138,7 +146,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     // previous block — gives the page a moment to
                     // breathe before transitioning into the footer.
                     'pt-10 lg:pt-14'
-                  : 'min-h-svh justify-end',
+                  : 'min-h-svh justify-end [scroll-snap-align:end]',
               )}
             >
               <FlowerPaintings />

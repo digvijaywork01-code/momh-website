@@ -125,7 +125,16 @@
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: none;
   }
-  section[data-snap-section] {
+  /* Element-agnostic snap selector — most blocks render as <section>
+   * but the footer wrapper in layout.tsx is a <div> (it groups
+   * FlowerPaintings + the <footer> together as one snap unit). The
+   * older `section[data-snap-section]` selector silently skipped the
+   * footer wrapper, making the footer unreachable under mandatory
+   * snap: the last reachable snap point was the previous section
+   * and the browser refused to land any further. Using a broader
+   * attribute selector treats every [data-snap-section] node as a
+   * first-class snap target regardless of tag name. */
+  [data-snap-section] {
     scroll-snap-align: start;
     /* Forced stop at every section top — the browser must land here
      * even on a hard flick, no skipping. Required to make the "one
