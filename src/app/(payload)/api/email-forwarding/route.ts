@@ -24,7 +24,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Lazy-init: the Resend constructor throws if called with no API key,
+// which happens during `next build` (Vercel statically analyses route
+// files before env vars are resolved). Construct on first request
+// instead so a missing key produces a clean runtime error rather than
+// a build failure.
+let _resend: Resend | null = null
+const getResend = (): Resend => {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY || 're_placeholder')
+  }
+  return _resend
+}
 
 // Operational addresses.
 const OWNER_EMAILS = ['info@momhindia.org']
@@ -452,7 +463,7 @@ export async function POST(request: NextRequest) {
     if (customerEmail) {
       const customerSubject = 'Thank you for writing to the Museum of Meenakari Heritage'
       try {
-        await resend.emails.send({
+        await getResend().emails.send({
           from: FROM_ADDRESS,
           to: customerEmail,
           subject: customerSubject,
@@ -474,7 +485,7 @@ export async function POST(request: NextRequest) {
 
     for (const ownerEmail of OWNER_EMAILS) {
       try {
-        await resend.emails.send({
+        await getResend().emails.send({
           from: FROM_ADDRESS,
           to: ownerEmail,
           subject: ownerSubject,
