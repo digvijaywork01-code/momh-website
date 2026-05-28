@@ -34,6 +34,7 @@ import type { HeroBlock as HeroBlockProps } from '@/payload-types'
 
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
+import { ExpandableText } from '@/components/ExpandableText'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 
 export const HeroBlock: React.FC<HeroBlockProps> = ({
@@ -87,16 +88,23 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
       return split
     }
 
+    // Body is INTENTIONALLY not word-split. The body is wrapped in
+    // <ExpandableText> so the visitor can tap Read More on mobile to
+    // expand the description into a scrollable cage — and that
+    // pattern relies on `-webkit-line-clamp` to count visible lines.
+    // SplitType rewrites the body into inline-block word spans, which
+    // breaks line-clamp's line-counting algorithm (each word becomes
+    // its own laid-out box). So the eyebrow + headline get the
+    // editorial word-by-word reveal, and the body fades in as a
+    // single block — same visual rhythm at a slightly larger grain.
     const eyebrowSplit = splitWords(eyebrowRef.current)
     const headlineSplit = splitWords(headlineRef.current)
-    const bodySplit = splitWords(bodyRef.current)
 
     const allWords: HTMLElement[] = [
       ...((eyebrowSplit?.words ?? []) as HTMLElement[]),
       ...((headlineSplit?.words ?? []) as HTMLElement[]),
-      ...((bodySplit?.words ?? []) as HTMLElement[]),
     ]
-    if (allWords.length === 0) {
+    if (allWords.length === 0 && !bodyRef.current) {
       // Nothing to animate (no text on this hero variant) — bail
       // before scheduling a no-op timeline.
       return
@@ -105,7 +113,12 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
     // Initial hidden state — set synchronously so first paint shows
     // the pre-animation state, not a flash of fully-visible words
     // before the timeline starts.
-    gsap.set(allWords, { y: 32, opacity: 0, filter: 'blur(6px)' })
+    if (allWords.length) {
+      gsap.set(allWords, { y: 32, opacity: 0, filter: 'blur(6px)' })
+    }
+    if (bodyRef.current) {
+      gsap.set(bodyRef.current, { y: 20, opacity: 0 })
+    }
 
     const tl = gsap.timeline({ defaults: { ease: 'power2.out' } })
 
@@ -123,10 +136,12 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
         0.2,
       )
     }
-    if (bodySplit?.words?.length) {
+    if (bodyRef.current) {
+      // Single-block fade-up for the body (no word split — see comment
+      // above re: line-clamp interference).
       tl.to(
-        bodySplit.words,
-        { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.7, stagger: 0.015 },
+        bodyRef.current,
+        { y: 0, opacity: 1, duration: 0.8 },
         0.9,
       )
     }
@@ -239,28 +254,56 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
         </div>
 
         {body && (
+          // Wrapper div carries the GSAP entrance fade (bodyRef) AND
+          // the max-width constraint. ExpandableText (inside) provides
+          // the mobile clamp + Read More UX — same pattern as the
+          // EditorialSplit blocks so the homepage reads with a single
+          // consistent "tap to expand long copy" behaviour everywhere.
+          // On lg+ the clamp / toggle are auto-disabled by
+          // ExpandableText's own breakpoint rule, so the full body
+          // renders untruncated in the editorial wide-screen hero.
+          //
+          // mobileLineClamp={4} matches the EditorialSplit default
+          // (visually equivalent to the previous hand-rolled 5.5rem
+          // clip, plus one extra line of breathing room now that the
+          // mobile Hero is full svh rather than the old 50svh).
+          //
+          // --fs-body is shadowed locally so ExpandableText's scroll-
+          // cage formula (`lines * fs-body * 1.5`) sizes for the
+          // hero-body type scale instead of the standard body scale
+          // — otherwise the expanded cage would be ~30% too short on
+          // mobile and the scroll affordance would feel cramped.
           <div
             ref={bodyRef}
-            // Mobile: cap body to ~3 lines (81px = 3 × 27px line
-            // height) and clip overflow so the title + body stack
-            // fits in the 50vh section ABOVE the bottom edge —
-            // without this the 5-line body pushes the title up
-            // behind the persistent top nav (logo + burger).
-            // `line-clamp` doesn't work here because SplitType's
-            // mount animation rewrites the body into inline-block
-            // word-spans, which prevents `-webkit-box` line clamping
-            // from truncating cleanly; a fixed max-height +
-            // overflow-hidden clips deterministically regardless of
-            // the inner structure. Desktop (md+): full body renders
-            // in the editorial full-viewport hero, no truncation.
-            className="font-body text-hero-body text-offwhite/90 max-h-[5.5rem] overflow-hidden md:max-h-none md:overflow-visible"
-            style={{ maxWidth: 'min(100%, 1571px)' }}
+            // The Hero section's `onClick={scrollToNextBlock}` covers
+            // the entire viewport — without this guard, tapping the
+            // Read More toggle (or even just selecting body text)
+            // would scroll the user past the Hero before they could
+            // read the expanded copy. stopPropagation contains taps
+            // inside the body region to the body region.
+            onClick={(e) => e.stopPropagation()}
+            // onKeyDown on a non-button div is unusual, but the
+            // parent section is `role="button"` with a Space/Enter
+            // handler that ALSO scrolls — keyboard users hitting
+            // Space to scroll an expanded body would jump to the
+            // next block. Stop that too.
+            onKeyDown={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: 'min(100%, 1571px)',
+              ['--fs-body' as string]: 'var(--fs-hero-body, 18px)',
+            }}
           >
-            <RichText
-              data={body}
-              enableGutter={false}
-              enableProse={false}
-            />
+            <ExpandableText
+              mobileLineClamp={4}
+              className="font-body text-hero-body text-offwhite/90"
+              toggleClassName="text-offwhite/85 hover:text-offwhite"
+            >
+              <RichText
+                data={body}
+                enableGutter={false}
+                enableProse={false}
+              />
+            </ExpandableText>
           </div>
         )}
       </div>
