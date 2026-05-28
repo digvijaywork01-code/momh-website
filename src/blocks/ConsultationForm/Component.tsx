@@ -130,7 +130,10 @@ const UploadIcon: React.FC = () => (
 
 export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
   submitLabel,
-  endpoint,
+  // `endpoint` is retained on the block schema for backward compat but
+  // unused — submissions now route through /api/email-forwarding for
+  // the customer + owner email pair.
+  endpoint: _endpoint,
   successRedirect,
   backgroundColor,
 }) => {
@@ -147,20 +150,34 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
     e.preventDefault()
     if (status === 'submitting') return
 
+    // Build the `{ field, value }` payload shape expected by
+    // /api/email-forwarding. File uploads (reference image) aren't
+    // attached to the email yet — the file name is forwarded as text
+    // so the owner knows one was provided. Persisting the file itself
+    // requires a Payload-managed upload, which is a separate task.
     const formEl = e.currentTarget
     const fd = new FormData(formEl)
-
-    if (!endpoint) {
-      // No endpoint wired — skip the POST and go straight to the
-      // confirmation page so the UX is still demonstrable end-to-end
-      // (useful for staging / demos before Payload Forms is wired).
-      router.push(redirectTarget)
-      return
+    const submissionData: Array<{ field: string; value: string }> = []
+    for (const [key, value] of fd.entries()) {
+      if (value instanceof File) {
+        if (value.size > 0) {
+          submissionData.push({ field: key, value: value.name })
+        }
+      } else {
+        submissionData.push({ field: key, value })
+      }
     }
 
     try {
       setStatus('submitting')
-      const res = await fetch(endpoint, { method: 'POST', body: fd })
+      const res = await fetch('/api/email-forwarding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          formType: 'consultation',
+          submissionData,
+        }),
+      })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       router.push(redirectTarget)
     } catch (err) {

@@ -121,7 +121,10 @@ const resolveFaqHref = (
 
 export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
   submitLabel,
-  endpoint,
+  // `endpoint` is retained on the block schema for backward compat but
+  // no longer used — submissions go through /api/email-forwarding so
+  // both the visitor and info@momhindia.org get their respective emails.
+  endpoint: _endpoint,
   successRedirect,
   backgroundColor,
   faqLink,
@@ -145,21 +148,28 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
       return
     }
 
+    // Convert FormData entries into the `{ field, value }` array shape
+    // expected by /api/email-forwarding (same shape Payload's form-
+    // submissions endpoint uses, so the email template logic stays the
+    // same across hand-rolled and Payload-managed forms).
     const formEl = e.currentTarget
     const fd = new FormData(formEl)
-    fd.append('recaptchaToken', recaptchaToken)
-
-    if (!endpoint) {
-      // No endpoint wired — skip the POST and go straight to the
-      // confirmation page so the UX is still demonstrable end-to-end
-      // (useful for staging / demos before Payload Forms is wired).
-      router.push(redirectTarget)
-      return
+    const submissionData: Array<{ field: string; value: string }> = []
+    for (const [key, value] of fd.entries()) {
+      submissionData.push({ field: key, value: typeof value === 'string' ? value : '' })
     }
+    submissionData.push({ field: 'recaptchaToken', value: recaptchaToken })
 
     try {
       setStatus('submitting')
-      const res = await fetch(endpoint, { method: 'POST', body: fd })
+      const res = await fetch('/api/email-forwarding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          formType: 'appointment',
+          submissionData,
+        }),
+      })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       router.push(redirectTarget)
     } catch (err) {
