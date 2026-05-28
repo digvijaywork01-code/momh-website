@@ -236,12 +236,22 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
             // Rectangular button (filled-red OR outlined).
             const filled = style === 'filled-red'
             return (
-              <div ref={ctaRef} className="mt-8 flex justify-center">
+              <div ref={ctaRef} className="mt-8 flex justify-center w-full max-w-full">
                 <Link
                   href={href}
                   {...targetProps}
                   className={cn(
-                    'inline-flex items-center justify-center px-8 py-3 font-body uppercase whitespace-nowrap',
+                    // Mobile: smaller horizontal padding (px-6) + allow
+                    // the label to wrap so long CTAs like "Book Your
+                    // Personal Consultation" don't push the button (and
+                    // its containing block) past the 375px viewport on
+                    // iPhone SE. `text-center` keeps wrapped labels
+                    // visually centered. `max-w-full` is the hard cap
+                    // so the button can never exceed its parent width.
+                    // lg+: original generous padding + nowrap (plenty
+                    // of horizontal room on desktop, the editorial
+                    // single-line CTA is intentional).
+                    'inline-flex items-center justify-center px-6 py-3 lg:px-8 font-body uppercase text-center max-w-full lg:whitespace-nowrap',
                     'text-sm md:text-base tracking-wider transition-colors duration-200',
                     filled
                       ? 'bg-brand-red text-white border border-brand-red hover:bg-brand-red/90'

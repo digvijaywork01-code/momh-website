@@ -508,7 +508,12 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
                       ? { rel: 'noopener noreferrer' as const, target: '_blank' as const }
                       : {})}
                     className={cn(
-                      'inline-flex items-center justify-center px-8 py-3 font-body uppercase whitespace-nowrap',
+                      // Mobile: smaller padding + allow wrap so long CTA
+                      // labels (e.g. "Book Your Personal Consultation")
+                      // don't push the button past the 375px viewport.
+                      // lg+: original padding + nowrap (plenty of room
+                      // on desktop, single-line CTA is intentional).
+                      'inline-flex items-center justify-center px-6 py-3 lg:px-8 font-body uppercase text-center max-w-full lg:whitespace-nowrap',
                       'text-sm md:text-base tracking-wider transition-colors duration-200',
                       ctaStyle === 'filled-red'
                         ? 'bg-brand-red text-white border border-brand-red hover:bg-brand-red/90'
