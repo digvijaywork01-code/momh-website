@@ -169,12 +169,17 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
          next section visibly bled in when snapped. `object-cover` on
          the background asset crops a few pixels top/bottom on tall
          viewports, which is a far cleaner visual than the bleed. */
-      // Mobile: 50vh — the haveli/video opener doesn't need a full
-      // phone screen to read; halving it lets the visitor see the
-      // InfoHero cards on first scroll instead of having two
-      // 100vh blocks stacked back-to-back.
-      // lg+: original h-svh for the full editorial entrance.
-      className="relative w-full h-[50svh] lg:h-svh overflow-hidden text-offwhite cursor-pointer select-none focus:outline-none"
+      // Mobile: full svh too. The previous 50svh treatment was a
+      // hold-over from when the next block was a short InfoHero with
+      // peek-able cards — that block is gone, and with `mandatory`
+      // section snap on mobile a 50svh Hero would share its viewport
+      // with the next snap section (FounderQuote portrait), so the
+      // visitor saw "half Hero + half Founder" in one frame. Full
+      // h-svh + the section-snap means: one swipe = one block, every
+      // block gets its own viewport. The Hero text reveal already
+      // sizes its body around svh so this only grows the bottom
+      // padding, not the content footprint.
+      className="relative w-full h-svh overflow-hidden text-offwhite cursor-pointer select-none focus:outline-none"
       data-theme="dark"
       data-hide-nav-when-visible
       data-snap-section

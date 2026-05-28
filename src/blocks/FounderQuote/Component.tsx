@@ -45,6 +45,10 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
   const sectionRef = useRef<HTMLDivElement | null>(null)
   // Per-element refs for the entrance cascade.
   const portraitWrapRef = useRef<HTMLDivElement | null>(null)
+  // Content panel ref — on mobile this is its own snap target, so the
+  // editorial cascade has its own ScrollTrigger anchored to this wrap
+  // (fires when content scrolls in, not when portrait scrolls in).
+  const contentWrapRef = useRef<HTMLDivElement | null>(null)
   const iconRef = useRef<HTMLImageElement | null>(null)
   const eyebrowRef = useRef<HTMLParagraphElement | null>(null)
   const titleRef = useRef<HTMLHeadingElement | null>(null)
@@ -73,10 +77,22 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
     return () => observer.disconnect()
   }, [setHeaderTheme])
 
-  // Staggered entrance timeline — portrait zooms gently out while the
-  // content panel cascades up: icon → eyebrow → title → quote →
-  // signature → attribution → role. Fires once when the section enters
-  // the viewport.
+  // Entrance animations — split into TWO independent triggers so they
+  // fire when each visual panel actually enters the viewport:
+  //
+  //  Portrait timeline (image zoom + opacity wash-in) is bound to the
+  //  portrait wrap. On mobile, where portrait is its own h-svh snap
+  //  target, this fires when the visitor swipes INTO the portrait. On
+  //  desktop, portrait + content are side-by-side, so portrait's wrap
+  //  enters the viewport simultaneously with content's wrap; both
+  //  timelines fire together — same effect as the old single-timeline.
+  //
+  //  Content cascade (icon → eyebrow → title → quote → signature →
+  //  attribution → role) is bound to the content wrap. On mobile this
+  //  means the cascade plays the moment the visitor swipes INTO the
+  //  content viewport (after they leave portrait), not while they're
+  //  still looking at the portrait — so the editorial reveal stays
+  //  intentional, not pre-played and invisible.
   useEffect(() => {
     if (prefersReducedMotion()) return
     const section = sectionRef.current
@@ -104,40 +120,50 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
       gsap.set(portraitWrapRef.current, { opacity: 0.88 })
     }
 
-    const tl = gsap.timeline({
+    // Portrait timeline — fires when portrait wrap enters viewport.
+    const portraitTl = gsap.timeline({
       scrollTrigger: {
-        trigger: section,
+        trigger: portraitWrapRef.current || section,
         start: 'top 70%',
-        // Replay the cascade on every entry (down or up). `reset` on
-        // leave fires while the section is off-screen, so the jump-
-        // to-hidden state is invisible.
         toggleActions: 'play reset play reset',
       },
     })
-
     if (innerPortraitImg) {
-      tl.to(
+      portraitTl.to(
         innerPortraitImg,
         { scale: 1, duration: 1.6, ease: 'power2.out' },
         0,
       )
     }
     if (portraitWrapRef.current) {
-      tl.to(
+      portraitTl.to(
         portraitWrapRef.current,
         { opacity: 1, duration: 1.6, ease: 'power2.out' },
         0,
       )
     }
-    tl.to(
+
+    // Content cascade — fires when content wrap enters viewport.
+    // (On mobile, content is its own h-svh snap target — this fires
+    // when the visitor lands on the content viewport, not earlier.)
+    const contentTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: contentWrapRef.current || section,
+        start: 'top 70%',
+        toggleActions: 'play reset play reset',
+      },
+    })
+    contentTl.to(
       contentEls,
       { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', stagger: 0.1 },
-      0.25,
+      0,
     )
 
     return () => {
-      tl.scrollTrigger?.kill()
-      tl.kill()
+      portraitTl.scrollTrigger?.kill()
+      portraitTl.kill()
+      contentTl.scrollTrigger?.kill()
+      contentTl.kill()
     }
   }, [])
 
@@ -203,18 +229,21 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
             width auto-computed from `height × portrait aspect`. */}
         <div
           ref={portraitWrapRef}
+          data-mobile-snap-target
           className={cn(
-            // Mobile: cap the founder portrait at 40vh (~325px on a
-            // 812 viewport). Bigger than the EditorialSplit images
-            // (30vh) because this image is a portrait of the founder
-            // — at 30vh her head was being cropped above the chin.
-            // Combined with `object-top` on the img, the crop stays
-            // below her shoulders. The remaining 60vh still fits the
-            // eyebrow + title + 4-line clamped quote + Read More +
-            // signature + attribution, keeping the home-page "one
-            // block per screen" rule.
-            // lg+: full section height per the editorial 50/50 split.
-            'relative shrink-0 w-full lg:w-auto max-h-[40svh] lg:max-h-none lg:h-full overflow-hidden',
+            // Mobile: full viewport. Portrait is its OWN snap target
+            // on small screens — "one swipe = portrait, next swipe =
+            // content." The brand reference (Musee Atelier) treats
+            // founder spreads exactly this way: portrait alone fills
+            // the phone screen, swipe lands on the editorial copy.
+            // `snap-start snap-always` makes it a forced snap point;
+            // the section's own snap-align at the same y-position is
+            // harmless (browsers de-duplicate overlapping snap points).
+            // lg+: full section height per the editorial 50/50 split
+            // (aspect-ratio drives width from h-full).
+            'relative shrink-0 overflow-hidden',
+            'w-full h-svh snap-start snap-always',
+            'lg:w-auto lg:h-full',
             portraitFirst ? 'order-1' : 'order-1 lg:order-2',
           )}
           style={{ aspectRatio: portraitAspect }}
@@ -236,16 +265,22 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
           )}
         </div>
 
-        {/* Cream content panel — fills remaining horizontal space,
-            vertically centered around the quote. */}
+        {/* Cream content panel — vertically centered around the quote. */}
         <div
+          ref={contentWrapRef}
+          data-mobile-snap-target
           className={cn(
-            // Mobile: very tight vertical padding (py-4) so the
-            // quote block (eyebrow + title + 3-line clamped quote +
-            // Read More + signature + attribution) fits in one
-            // viewport view alongside the 40vh capped portrait.
-            // lg+: keep generous padding.
-            'flex-1 flex flex-col items-center justify-center text-center px-6 md:px-16 py-4 lg:py-12',
+            // Mobile: own full-viewport snap target. Now that the
+            // portrait has its own svh above, the content panel
+            // gets a whole second svh to itself — generous breathing
+            // room (py-12 instead of py-4) and proper vertical
+            // centering on the editorial stack.
+            // lg+: flex-1 fills the horizontal remainder beside the
+            // portrait; height comes from the parent section's
+            // h-screen via flex stretch.
+            'flex flex-col items-center justify-center text-center px-6 md:px-16',
+            'h-svh py-12 snap-start snap-always',
+            'lg:h-auto lg:flex-1 lg:py-12',
             portraitFirst ? 'order-2' : 'order-2 lg:order-1',
           )}
         >

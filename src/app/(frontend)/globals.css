@@ -110,27 +110,38 @@
   #scroll-container {
     height: 100svh;
     overflow-y: auto;
-    /* `proximity` (not `mandatory`) so the user CAN scroll within a
-     * section that's taller than svh — needed because some editorial
-     * blocks (Founder on small phones, Events At MoMH with its extra
-     * featured line) have content that won't fit a tiny iPhone SE
-     * viewport. With `mandatory`, the browser refuses to land between
-     * snap points and the overflow content becomes unreachable. With
-     * `proximity`, the browser snaps when the scroll position is near
-     * a snap point, but lets the user free-scroll inside a tall block.
-     * Net effect for typical blocks (fit svh): identical to mandatory.
-     * For oversized blocks: content stays reachable. */
-    scroll-snap-type: y proximity;
+    /* `mandatory` snap — every swipe MUST land at a section top, no
+     * in-between landings. Combined with `scroll-snap-stop: always`
+     * on each snap target the browser is also prevented from skipping
+     * past a snap point on a hard flick. This is the "one swipe = one
+     * block" pattern the brand asked for (Musee Atelier mobile feel).
+     *
+     * Trade-off: tall blocks become unreachable if their content
+     * exceeds the viewport. Resolved per-block by splitting overflowing
+     * blocks into multiple internal snap targets — see
+     * `[data-mobile-snap-target]` below, used by FounderQuote to put
+     * its portrait and content panel on their own full-svh viewports. */
+    scroll-snap-type: y mandatory;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: none;
   }
   section[data-snap-section] {
     scroll-snap-align: start;
-    /* `scroll-snap-stop: always` removed. With proximity snap the
-     * stop:always combination forces the browser to halt mid-flick
-     * AND refuse to skip sections, which on tall blocks creates a
-     * deadlock — user can't get past or into. Default (normal) lets
-     * momentum carry naturally while still snapping at section tops. */
+    /* Forced stop at every section top — the browser must land here
+     * even on a hard flick, no skipping. Required to make the "one
+     * swipe = one block" promise hold. (Removed previously when we
+     * tried proximity snap; restored now that mandatory + per-block
+     * sizing keep all content reachable.) */
+    scroll-snap-stop: always;
+  }
+  /* Inner snap targets — for blocks (like FounderQuote) that need to
+   * split their content into multiple full-viewport panels on mobile.
+   * The Tailwind utilities `snap-start snap-always` on the element
+   * itself do the same job; this rule keeps the data attribute as a
+   * machine-readable marker for the pattern. */
+  [data-mobile-snap-target] {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 }
 
