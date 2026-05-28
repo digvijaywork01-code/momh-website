@@ -26,6 +26,7 @@ import { EditorialCta } from '@/components/EditorialCta'
 import { NewsletterWidget } from '@/components/NewsletterWidget'
 import { FormBlock } from '@/blocks/Form/Component'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
 
 const prefersReducedMotion = () =>
@@ -68,10 +69,18 @@ const Column: React.FC<{ column: Column; dark: boolean }> = ({ column, dark }) =
   const imageWrapRef = useRef<HTMLDivElement | null>(null)
   const bodyRef = useRef<HTMLDivElement | null>(null)
   const ctaRef = useRef<HTMLDivElement | null>(null)
+  // On no-anim (inner) pages we skip the entrance cascade entirely
+  // so content renders at its natural opacity. Without this guard
+  // the gsap.set(opacity: 0) below would pin everything hidden and
+  // the ScrollTrigger would never fire (snap-free pages don't have
+  // ScrollTrigger's normal viewport-cross events working the same
+  // way under our scroll-container proxy).
+  const noScrollAnim = useNoScrollAnimations()
 
   // Staggered entrance — eyebrow → headline → image (zoom) → body → CTA.
   useEffect(() => {
     if (prefersReducedMotion()) return
+    if (noScrollAnim) return
     const root = ref.current
     if (!root) return
 
@@ -127,7 +136,7 @@ const Column: React.FC<{ column: Column; dark: boolean }> = ({ column, dark }) =
       tl.scrollTrigger?.kill()
       tl.kill()
     }
-  }, [])
+  }, [noScrollAnim])
 
   return (
     <div ref={ref} className="flex flex-col">

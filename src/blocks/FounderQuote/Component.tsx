@@ -16,6 +16,7 @@ import type { FounderQuoteBlock as FounderQuoteBlockProps } from '@/payload-type
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
 
 const prefersReducedMotion = () =>
@@ -42,6 +43,11 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
   backgroundColor,
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
+  // Inner pages skip the entrance cascade — same pattern as every
+  // other animated block. Currently FounderQuote is only rendered on
+  // the home page, but the guard is here for symmetry so the block
+  // is safe to drop into any page without surprise animation.
+  const noScrollAnim = useNoScrollAnimations()
   const sectionRef = useRef<HTMLDivElement | null>(null)
   // Per-element refs for the entrance cascade.
   const portraitWrapRef = useRef<HTMLDivElement | null>(null)
@@ -95,6 +101,7 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
   //  intentional, not pre-played and invisible.
   useEffect(() => {
     if (prefersReducedMotion()) return
+    if (noScrollAnim) return
     const section = sectionRef.current
     if (!section) return
 
@@ -165,7 +172,7 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
       contentTl.scrollTrigger?.kill()
       contentTl.kill()
     }
-  }, [])
+  }, [noScrollAnim])
 
   // Same pattern as EditorialSplit: portrait column's WIDTH is computed
   // from `section height × portrait aspect-ratio`. Cream content panel

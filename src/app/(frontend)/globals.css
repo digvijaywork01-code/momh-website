@@ -110,20 +110,31 @@
   #scroll-container {
     height: 100svh;
     overflow-y: auto;
-    /* `mandatory` snap — every swipe MUST land at a section top, no
-     * in-between landings. Combined with `scroll-snap-stop: always`
-     * on each snap target the browser is also prevented from skipping
-     * past a snap point on a hard flick. This is the "one swipe = one
-     * block" pattern the brand asked for (Musee Atelier mobile feel).
-     *
-     * Trade-off: tall blocks become unreachable if their content
-     * exceeds the viewport. Resolved per-block by splitting overflowing
-     * blocks into multiple internal snap targets — see
-     * `[data-mobile-snap-target]` below, used by FounderQuote to put
-     * its portrait and content panel on their own full-svh viewports. */
-    scroll-snap-type: y mandatory;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: none;
+  }
+  /* `mandatory` snap — every swipe MUST land at a section top, no
+   * in-between landings. Combined with `scroll-snap-stop: always`
+   * on each snap target the browser is also prevented from skipping
+   * past a snap point on a hard flick. This is the "one swipe = one
+   * block" pattern the brand asked for (Musee Atelier mobile feel).
+   *
+   * Gated to `[data-snap-enabled="true"]` so only the home page
+   * (and other snap-enabled routes) get this rhythm. Internal pages
+   * — Plan Your Visit, Personal Consultation, Museum Guidelines,
+   * Book An Appointment, Thank You — render with `data-snap-enabled`
+   * false on the same #scroll-container, which leaves scroll-snap-type
+   * unset there and turns every block's `scroll-snap-align: start`
+   * into a no-op. Visitors scroll those dense-text pages naturally,
+   * no forced snapping, no entrance gating per block needed.
+   *
+   * Trade-off on home: tall blocks become unreachable if their content
+   * exceeds the viewport. Resolved per-block by splitting overflowing
+   * blocks into multiple internal snap targets — see
+   * `[data-mobile-snap-target]` below, used by FounderQuote to put
+   * its portrait and content panel on their own full-svh viewports. */
+  #scroll-container[data-snap-enabled='true'] {
+    scroll-snap-type: y mandatory;
   }
   /* Element-agnostic snap selector — most blocks render as <section>
    * but the footer wrapper in layout.tsx is a <div> (it groups

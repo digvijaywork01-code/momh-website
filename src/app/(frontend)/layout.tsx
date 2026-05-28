@@ -103,7 +103,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
          * [data-snap-section] turns each editorial block into a
          * mandatory snap point — one swipe = one section.
          */}
-        <div id="scroll-container">
+        {/* `data-snap-enabled` toggles the mobile mandatory scroll-snap.
+         *
+         * Home page (and any other path NOT in useNoScrollAnimations'
+         * NO_ANIM_PATHS list) sets it to `true` — the CSS in globals.css
+         * gates `scroll-snap-type: y mandatory` on this attribute, so
+         * snap activates only when wanted.
+         *
+         * Internal pages (Plan Your Visit, Personal Consultation,
+         * Museum Guidelines, Book An Appointment, Thank You, etc.) set
+         * it to `false`. These pages are dense reads — visitor needs to
+         * scroll naturally through long-form content, not be force-
+         * snapped block-by-block. With snap-type off, every block's
+         * `scroll-snap-align: start` becomes inert (no snap container,
+         * no snap behaviour), and no block-level code changes are
+         * needed to opt into the natural-scroll mode. */}
+        <div id="scroll-container" data-snap-enabled={!noScrollAnim}>
           <Providers>
             {!hideGlobalElements && <Header />}
 
