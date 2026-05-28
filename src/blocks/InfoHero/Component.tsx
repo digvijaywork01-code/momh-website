@@ -8,7 +8,7 @@
  * renderer from the mimeType of the uploaded asset.
  */
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import Link from 'next/link'
 
 import type { InfoHeroBlock as InfoHeroBlockProps, Media as MediaType } from '@/payload-types'
@@ -36,52 +36,35 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
   infoCards,
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
-  const ref = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     setHeaderTheme('dark')
   }, [setHeaderTheme])
 
-  // On mobile, Hero + InfoHero together fit in one viewport (50vh
-  // each). The desktop snap manager would otherwise treat each as
-  // its own snap stop, forcing two swipes to traverse them. By
-  // removing this section's `data-snap-section` attribute on mobile
-  // only, the snap manager skips InfoHero on the snap list — a
-  // single Hero → Founder snap scrolls past BOTH blocks together,
-  // exactly the "scrolled together" behaviour we want on phones.
-  // Desktop keeps the attribute (set in JSX below) so each h-svh
-  // block remains its own editorial snap stop.
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const sync = () => {
-      const isMobile = window.matchMedia('(max-width: 1023px)').matches
-      if (isMobile) {
-        el.removeAttribute('data-snap-section')
-      } else {
-        el.setAttribute('data-snap-section', '')
-      }
-    }
-    sync()
-    window.addEventListener('resize', sync)
-    return () => window.removeEventListener('resize', sync)
-  }, [])
+  // The Hero+InfoHero pair used to share one viewport on mobile (50vh
+  // each, InfoHero's data-snap-section removed so they snapped as a
+  // single unit). That stacking-into-one-screen pattern doesn't fit
+  // the brand's current "one swipe = one block" mobile rhythm — with
+  // Hero now at full h-svh and mandatory scroll-snap, a 50svh InfoHero
+  // without snap-section would be unreachable (the mandatory snap
+  // would jump straight from Hero to Founder, skipping InfoHero
+  // entirely). So: InfoHero is now its own full-svh snap target on
+  // every breakpoint, no mobile attribute juggling needed.
 
   const overlayOpacity = Math.max(0, Math.min(100, overlayDarkness ?? 40)) / 100
   const isVideo = isVideoResource(backgroundMedia)
 
   return (
     <section
-      ref={ref}
-      /* Full viewport height. The PDF's 1920/945 aspect was 945 tall
-         and left a viewport-bottom gap on 1080-tall displays where
-         the next section visibly bled in during snap. `h-svh`
-         keeps the section flush with the viewport; the background
-         haveli image crops a few pixels top/bottom via object-cover. */
-      // Mobile: 50vh so the haveli + info cards fit in half a phone
-      // screen, matching the Hero block above. lg+: original h-svh
-      // for the full editorial info hero.
-      className="relative w-full h-[50svh] lg:h-svh overflow-hidden text-offwhite"
+      /* Full viewport height on every breakpoint. The PDF's 1920/945
+         aspect left a bottom gap on 1080-tall displays where the next
+         section bled in during snap; `h-svh` keeps the section flush
+         with the viewport. On mobile this used to be h-[50svh] to
+         share a viewport with Hero, but mandatory scroll-snap requires
+         every block to be its own full-screen snap target — half-
+         viewport blocks get skipped over by hard flicks. The haveli
+         background image crops a few pixels top/bottom via object-cover. */
+      className="relative w-full h-svh overflow-hidden text-offwhite"
       data-theme="dark"
       data-snap-section
       aria-label="Information hero"
