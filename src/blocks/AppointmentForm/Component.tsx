@@ -42,12 +42,17 @@ const bgClass: Record<BgKey, string> = {
   white: 'bg-white text-ink',
 }
 
-/** reCAPTCHA site key — same key the previous standalone form used.
+/** reCAPTCHA v2 "I'm not a robot" checkbox site key, registered
+ *  against `momhindia.org` + `www.momhindia.org` + `localhost` in the
+ *  Google reCAPTCHA admin owned by support@sunitashekhawat.com.
  *  Hardcoded here rather than env-driven to match the existing
  *  behaviour (env-driven keys would require wiring + docs to be
  *  worth swapping in). If the site key needs to rotate, change this
- *  one constant. */
-const RECAPTCHA_SITE_KEY = '6LexzY4rAAAAAEP1XpZegtgjiB6-6dbwx95vMchH'
+ *  one constant. Site keys are public by design (visible in page
+ *  source) so committing it is fine — the SECRET key is the one to
+ *  guard, and we don't store that today since the form does
+ *  client-side verification only. */
+const RECAPTCHA_SITE_KEY = '6LfkzwAtAAAAAMZzsPRnfpZR4A9ubzzRw5Qq24AE'
 
 const Asterisk: React.FC = () => (
   <span className="text-brand-red ml-0.5" aria-hidden="true">
