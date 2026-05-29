@@ -169,6 +169,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               // footer) instead of leaving an awkward black slab
               // above.
               {...(noScrollAnim ? {} : { 'data-snap-section': true })}
+              // Force scroll-snap-align: end via INLINE style on snap
+              // pages. The Tailwind arbitrary class `[scroll-snap-align:end]`
+              // has the same specificity (0,1,0) as the global
+              // `[data-snap-section] { scroll-snap-align: start }` rule in
+              // globals.css, so the winner depended on stylesheet source
+              // order — fragile, and it silently flipped to `start`,
+              // which top-aligned the footer and cut the copyright row
+              // off the bottom on shorter iPhones. An inline style beats
+              // any non-!important selector, so end-alignment now holds
+              // unconditionally. (Inert on desktop — no scroll-snap there.)
+              style={noScrollAnim ? undefined : { scrollSnapAlign: 'end' }}
               className={cn(
                 'flex flex-col bg-black',
                 noScrollAnim
@@ -178,7 +189,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     // previous block — gives the page a moment to
                     // breathe before transitioning into the footer.
                     'pt-10 lg:pt-14'
-                  : 'min-h-svh justify-end [scroll-snap-align:end] lg:min-h-0 lg:justify-start lg:pt-14',
+                  : 'min-h-svh justify-end lg:min-h-0 lg:justify-start lg:pt-14',
               )}
             >
               <FlowerPaintings />
