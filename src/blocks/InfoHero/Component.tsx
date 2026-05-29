@@ -215,21 +215,29 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
           natural touch scroll is the obvious affordance, plus a
           bottom-center button would crowd the stacked CTAs. Clicking
           smooth-scrolls to the next block (the Hero). z-30 sits above
-          the z-20 content + z-10 overlay so it stays clickable. */}
+          the z-20 content + z-10 overlay so it stays clickable.
+
+          Visibility treatment: a semi-opaque dark scrim (`bg-black/40`)
+          guarantees the circle reads against the bright/busy haveli
+          image, a full-opacity 2px white ring + thicker arrow make it
+          legible, and `animate-bounce` adds the motion that the eye
+          catches first. (`animate-bounce` is auto-neutralised for
+          prefers-reduced-motion visitors by the global reduced-motion
+          rule in globals.css.) */}
       <button
         type="button"
         onClick={scrollToNextBlock}
-        className="hidden md:flex absolute bottom-10 left-1/2 -translate-x-1/2 z-30 w-12 h-12 rounded-full border border-offwhite/60 items-center justify-center text-offwhite/80 hover:text-offwhite hover:border-offwhite transition-colors"
+        className="hidden md:flex absolute bottom-10 left-1/2 -translate-x-1/2 z-30 w-14 h-14 rounded-full border-2 border-offwhite bg-black/40 shadow-lg animate-bounce items-center justify-center text-offwhite hover:bg-black/60 transition-colors"
         aria-label="Scroll down"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
+          width="28"
+          height="28"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          strokeWidth="1.5"
+          strokeWidth="2.25"
           strokeLinecap="round"
           strokeLinejoin="round"
           aria-hidden="true"
