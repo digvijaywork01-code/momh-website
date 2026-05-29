@@ -230,6 +230,26 @@ const installSectionSnapManager = (): (() => void) => {
     const tops = getSectionTops(pinEnd)
     const target = tops.find((y) => y > scrollY + 8)
     if (target == null) return
+
+    // If the target is the LAST snap section (the footer) and that
+    // section is taller than the viewport, top-aligning it would push
+    // its bottom (the copyright row) below the fold — and since there's
+    // no further section, the wheel observer can't scroll any further,
+    // so the bottom would be unreachable. Snap to the document's max
+    // scroll instead, which aligns the section's BOTTOM with the
+    // viewport bottom (desktop mirror of the mobile scroll-snap-align:
+    // end fix). For sections shorter than the viewport this still lands
+    // correctly — gsap.scrollTo clamps to max and the footer shows in
+    // full with a peek of the prior block above.
+    const isLastSection = target === tops[tops.length - 1]
+    if (isLastSection) {
+      const maxScroll = Math.max(
+        0,
+        document.documentElement.scrollHeight - window.innerHeight,
+      )
+      animateTo(maxScroll, SECTION_DURATION)
+      return
+    }
     animateTo(target, SECTION_DURATION)
   }
 
@@ -244,7 +264,13 @@ const installSectionSnapManager = (): (() => void) => {
     }
 
     const tops = getSectionTops(pinEnd)
-    const above = [...tops].reverse().find((y) => y < scrollY - 8)
+    // Exclude the LAST section's top (the footer) as a backward target.
+    // The footer is shown bottom-aligned on the way down (see goForward),
+    // so its top is not a resting point — scrolling up from the footer
+    // should go straight to the section before it rather than pausing on
+    // a top-aligned footer with its bottom cut off.
+    const backwardTops = tops.length > 1 ? tops.slice(0, -1) : tops
+    const above = [...backwardTops].reverse().find((y) => y < scrollY - 8)
     const target = above != null && above >= pinEnd ? above : 0
     // If we're returning from the first post-pin section back into
     // the Hero, that's a scrub-reverse — same duration as forward
