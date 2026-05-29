@@ -219,15 +219,12 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
 
           Visibility treatment: a semi-opaque dark scrim (`bg-black/40`)
           guarantees the circle reads against the bright/busy haveli
-          image, a full-opacity 2px white ring + thicker arrow make it
-          legible, and `animate-bounce` adds the motion that the eye
-          catches first. (`animate-bounce` is auto-neutralised for
-          prefers-reduced-motion visitors by the global reduced-motion
-          rule in globals.css.) */}
+          image, and a full-opacity 2px white ring + thicker arrow make
+          it legible. (Static — no bounce animation.) */}
       <button
         type="button"
         onClick={scrollToNextBlock}
-        className="hidden md:flex absolute bottom-10 left-1/2 -translate-x-1/2 z-30 w-14 h-14 rounded-full border-2 border-offwhite bg-black/40 shadow-lg animate-bounce items-center justify-center text-offwhite hover:bg-black/60 transition-colors"
+        className="hidden md:flex absolute bottom-10 left-1/2 -translate-x-1/2 z-30 w-14 h-14 rounded-full border-2 border-offwhite bg-black/40 shadow-lg items-center justify-center text-offwhite hover:bg-black/60 transition-colors"
         aria-label="Scroll down"
       >
         <svg
