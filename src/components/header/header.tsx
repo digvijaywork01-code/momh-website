@@ -163,10 +163,6 @@ export const Header = () => {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
-  // Initialize `isHeroInView` so that on home-page first paint the nav is
-  // already hidden (before JS has a chance to observe). Updated by the
-  // IntersectionObserver below.
-  const [isHeroInView, setIsHeroInView] = useState(true)
   // Hover-to-expand: the full nav (logo + links) shows when the cursor
   // is near the top of the viewport; otherwise a minimized version
   // (just the small logo) is rendered. Removes nav chrome from the
@@ -235,28 +231,9 @@ export const Header = () => {
     }
   }, [isMobile])
 
-  // Hide the nav whenever a block marked with `data-hide-nav-when-visible`
-  // (the HeroBlock) is intersecting the viewport. As soon as it scrolls past,
-  // the nav fades in. Only applies to pages that actually contain such a
-  // block (home page).
-  useEffect(() => {
-    const heroEl = document.querySelector('[data-hide-nav-when-visible]')
-    if (!heroEl) {
-      // No editorial hero on this route — nav should be shown normally.
-      setIsHeroInView(false)
-      return
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          setIsHeroInView(entry.isIntersecting)
-        }
-      },
-      { threshold: 0, rootMargin: '-1px 0px 0px 0px' },
-    )
-    observer.observe(heroEl)
-    return () => observer.disconnect()
-  }, [pathname])
+  // (Removed: the hero-in-view IntersectionObserver that used to hide
+  // the nav while `data-hide-nav-when-visible` blocks were on screen.
+  // The nav is now always visible — see the <header> className below.)
 
   // Suppress unused warnings — kept for backward-compat with the
   // existing scroll-driven mobile behavior below.
@@ -308,18 +285,17 @@ export const Header = () => {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 w-full z-50 flex flex-col items-center transition-all duration-500 ${bgClass} ${
-          // Hide nav while the hero is visible — DESKTOP ONLY. On
-          // mobile the hero is only 50vh and the visitor expects the
-          // standard top-of-screen logo + burger as wayfinding even
-          // while scrolling through the hero. Hiding it on phones
-          // left the home page feeling chrome-less and made the
-          // burger menu unreachable until they scrolled past the
-          // hero. `!isMobile && isHeroInView` keeps the editorial
-          // full-bleed entrance on desktop while restoring expected
-          // navigation chrome on touch devices.
-          !isMobile && isHeroInView ? 'opacity-0 -translate-y-full pointer-events-none' : 'opacity-100 translate-y-0'
-        }`}
+        // Nav is ALWAYS visible across the whole page now. The minimized
+        // floating nav (small logo + burger) used to hide on desktop
+        // while the editorial Hero was in view (`data-hide-nav-when-visible`
+        // + an IntersectionObserver driving an `isHeroInView` flag). That
+        // gave a full-bleed entrance when the Hero was the FIRST block,
+        // but the homepage order is editable in the Payload admin and the
+        // Hero now sits second behind the InfoHero — both full-svh blocks,
+        // so the nav was hidden across the entire top of the page. The
+        // hide behaviour (state + observer) has been removed; the nav
+        // stays pinned and visible at every scroll position on every route.
+        className={`fixed top-0 left-0 w-full z-50 flex flex-col items-center transition-all duration-500 ${bgClass} opacity-100 translate-y-0`}
         style={{ fontFamily: 'HelveticaNeueCyr, Helvetica, Arial, sans-serif' }}
       >
         {/* Desktop Header */}
