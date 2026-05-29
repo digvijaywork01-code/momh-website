@@ -268,10 +268,19 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
           // md+: full `text-hero` clamp (48px → 80px) for the wide
           // editorial entrance.
           className="font-display text-[2.5rem] leading-tight md:text-hero md:leading-[unset] mb-6"
-          /* Splits the difference between the tight 700 and the looser
-             780 settings — enough room to breathe but still compact
-             enough to read as an editorial pull-quote. */
-          style={{ maxWidth: 'min(100%, 740px)' }}
+          /* The headline font scales with the viewport
+             (`--fs-hero: clamp(48px, 4.167vw, 80px)` — hits 80px at
+             1920px wide), so the max-width has to scale too. A FIXED
+             740px was fine on Mac laptops (~1440px, font ~60px → the
+             intended 3-line break) but on large Windows monitors the
+             font grows to 80px while the box stays 740px, forcing the
+             title into 4–5 short lines — a cramped, narrow column.
+             `clamp(740px, 51vw, 1000px)` keeps small laptops at 740px
+             (≤~1450px → clamp floor, unchanged) and widens the box on
+             larger screens (≈980px at 1920px) so the bigger font keeps
+             the same airy 3-line layout. `min(100%, …)` still caps it
+             to the content area on any width. */
+          style={{ maxWidth: 'min(100%, clamp(740px, 51vw, 1000px))' }}
         >
           {headline && (
             <RichText
