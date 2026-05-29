@@ -145,6 +145,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             // the footer fully in view; the flowers row above shows a
             // small sliver at the top, which reads as the intended
             // "you've reached the end" visual punctuation.
+            //
+            // DESKTOP (lg+): `lg:min-h-0 lg:justify-start` drops the
+            // full-viewport sizing so the wrapper HUGS its content
+            // (flowers + footer ≈ 550px). On desktop there is no
+            // scroll-snap (it's gated to <lg in globals.css), so the
+            // full-viewport "end beat" served no purpose there — it
+            // just left a tall black slab of empty space above the
+            // footer on monitors taller than the content (very visible
+            // on 1080p+ Windows displays; barely noticeable on shorter
+            // Mac laptops, which is why it looked fine there). The
+            // mobile snap sizing (min-h-svh + justify-end +
+            // scroll-snap-align:end) stays as the base classes.
             <div
               // On no-scroll-anim pages (e.g. /plan-your-visit) the snap
               // attribute is omitted AND the min-h-svh is dropped so
@@ -161,7 +173,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     // previous block — gives the page a moment to
                     // breathe before transitioning into the footer.
                     'pt-10 lg:pt-14'
-                  : 'min-h-svh justify-end [scroll-snap-align:end]',
+                  : 'min-h-svh justify-end [scroll-snap-align:end] lg:min-h-0 lg:justify-start',
               )}
             >
               <FlowerPaintings />
