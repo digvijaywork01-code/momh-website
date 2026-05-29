@@ -54,10 +54,22 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
     setHeaderTheme('dark')
   }, [setHeaderTheme])
 
-  // One-shot text cascade on mount. Each word starts slightly below
-  // its final position, faded out, and soft-blurred. They rise + fade
-  // + sharpen in sequence: eyebrow → headline → body. Pure entrance —
-  // no ScrollTrigger, no pin, no scrub. Plays once per page load.
+  // Editorial text cascade — eyebrow → headline → body rise + fade +
+  // sharpen in sequence. Driven by a ScrollTrigger so it fires when
+  // the Hero scrolls INTO the viewport, NOT on mount.
+  //
+  // Why scroll-triggered, not mount-triggered: this block is no longer
+  // guaranteed to be the first block on the page. The homepage order is
+  // editable in the Payload admin, and the Hero now sits SECOND (after
+  // the InfoHero). A mount-triggered cascade plays on page load while
+  // the visitor is still looking at the first block — by the time they
+  // scroll to the Hero, the reveal has already finished and they see
+  // static text. Anchoring the timeline to `sectionRef` via
+  // ScrollTrigger makes the cascade fire whenever the Hero enters the
+  // viewport, regardless of its position in the page order. When the
+  // Hero IS the first block (in view on load), the trigger's start
+  // condition is already satisfied so it fires immediately — same felt
+  // behaviour as the old mount cascade.
   //
   // Uses `useLayoutEffect` rather than `useEffect` so the SplitType
   // split + `gsap.set(...hidden)` run SYNCHRONOUSLY before the
@@ -120,7 +132,21 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
       gsap.set(bodyRef.current, { y: 20, opacity: 0 })
     }
 
-    const tl = gsap.timeline({ defaults: { ease: 'power2.out' } })
+    // ScrollTrigger-driven: the cascade plays when the Hero section
+    // enters the viewport (`top 70%` matches the other editorial
+    // blocks). `play reset play reset` replays the reveal each time
+    // the visitor scrolls into the Hero — the `reset` on leave fires
+    // while the section is off-screen so the jump-to-hidden state is
+    // invisible. ScrollTrigger is registered globally by
+    // SmoothScrollProvider, so no per-block import/registration here.
+    const tl = gsap.timeline({
+      defaults: { ease: 'power2.out' },
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top 70%',
+        toggleActions: 'play reset play reset',
+      },
+    })
 
     if (eyebrowSplit?.words?.length) {
       tl.to(
@@ -147,6 +173,7 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
     }
 
     return () => {
+      tl.scrollTrigger?.kill()
       tl.kill()
       splits.forEach((s) => s.revert())
     }
