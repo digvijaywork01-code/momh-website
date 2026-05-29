@@ -8,7 +8,7 @@
  * renderer from the mimeType of the uploaded asset.
  */
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import Link from 'next/link'
 
 import type { InfoHeroBlock as InfoHeroBlockProps, Media as MediaType } from '@/payload-types'
@@ -36,10 +36,25 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
   infoCards,
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
+  const sectionRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     setHeaderTheme('dark')
   }, [setHeaderTheme])
+
+  // Smooth-scroll to the next block. InfoHero is the first block on the
+  // home page now, so it carries the down-arrow "scroll for more" cue
+  // (relocated from the Hero, which used to be first). Falls back to a
+  // one-viewport scroll if there's no next sibling.
+  const scrollToNextBlock = () => {
+    const el = sectionRef.current
+    const next = el?.nextElementSibling as HTMLElement | null
+    if (next?.scrollIntoView) {
+      next.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else {
+      window.scrollBy({ top: window.innerHeight, behavior: 'smooth' })
+    }
+  }
 
   // The Hero+InfoHero pair used to share one viewport on mobile (50vh
   // each, InfoHero's data-snap-section removed so they snapped as a
@@ -64,6 +79,7 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
          every block to be its own full-screen snap target — half-
          viewport blocks get skipped over by hard flicks. The haveli
          background image crops a few pixels top/bottom via object-cover. */
+      ref={sectionRef}
       className="relative w-full h-svh overflow-hidden text-offwhite"
       data-theme="dark"
       data-snap-section
@@ -192,6 +208,35 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
           </div>
         )}
       </div>
+
+      {/* Scroll-down chevron — relocated from the Hero now that InfoHero
+          is the first block (landing screen). Desktop-only (hidden
+          md:flex): on a phone the info cards + CTAs fill the screen and
+          natural touch scroll is the obvious affordance, plus a
+          bottom-center button would crowd the stacked CTAs. Clicking
+          smooth-scrolls to the next block (the Hero). z-30 sits above
+          the z-20 content + z-10 overlay so it stays clickable. */}
+      <button
+        type="button"
+        onClick={scrollToNextBlock}
+        className="hidden md:flex absolute bottom-10 left-1/2 -translate-x-1/2 z-30 w-12 h-12 rounded-full border border-offwhite/60 items-center justify-center text-offwhite/80 hover:text-offwhite hover:border-offwhite transition-colors"
+        aria-label="Scroll down"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
     </section>
   )
 }

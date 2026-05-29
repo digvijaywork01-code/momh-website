@@ -42,7 +42,10 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
   eyebrow,
   headline,
   body,
-  showScrollIndicator,
+  // `showScrollIndicator` intentionally not destructured — the Hero's
+  // scroll-down chevron was relocated to the InfoHero (now the first
+  // block). The field remains in the schema for when/if the Hero
+  // becomes the landing block again.
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
   const sectionRef = useRef<HTMLElement | null>(null)
@@ -335,42 +338,14 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
         )}
       </div>
 
-      {/* Scroll chevron — visual cue. The whole section is also clickable
-          (see scrollToNextBlock on the parent). stopPropagation avoids
-          double-firing the section's onClick when the chevron itself is
-          clicked. */}
-      {showScrollIndicator !== false && (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            scrollToNextBlock()
-          }}
-          // Mobile: hide the chevron (`hidden md:flex`). On a phone
-          // the hero is only 50vh + paired with InfoHero below, so
-          // there's no need for a "scroll for more" indicator —
-          // natural touch scroll handles it. Desktop still gets the
-          // chevron as an editorial cue at the bottom of the
-          // full-viewport hero.
-          className="hidden md:flex absolute bottom-10 left-1/2 -translate-x-1/2 z-20 w-12 h-12 rounded-full border border-offwhite/60 items-center justify-center text-offwhite/80 hover:text-offwhite hover:border-offwhite transition-colors"
-          aria-label="Scroll down"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </button>
-      )}
+      {/* Scroll-down chevron removed: the Hero is no longer the first
+          block on the home page (the InfoHero is). A "scroll for more"
+          cue belongs on the landing screen, so it's been relocated to
+          InfoHero. The whole Hero section is still clickable to advance
+          (see scrollToNextBlock on the parent <section>). The
+          `showScrollIndicator` CMS field is left in the schema; if the
+          Hero is ever moved back to first, the chevron can be restored
+          here. */}
     </section>
   )
 }
