@@ -157,6 +157,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             // Mac laptops, which is why it looked fine there). The
             // mobile snap sizing (min-h-svh + justify-end +
             // scroll-snap-align:end) stays as the base classes.
+            //
+            // `lg:pt-14` adds breathing room above the flowers row so
+            // the black footer doesn't slam flush against the previous
+            // (cream) block once it's hugging its content — matches the
+            // pt-14 the no-anim inner pages already use.
             <div
               // On no-scroll-anim pages (e.g. /plan-your-visit) the snap
               // attribute is omitted AND the min-h-svh is dropped so
@@ -173,7 +178,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     // previous block — gives the page a moment to
                     // breathe before transitioning into the footer.
                     'pt-10 lg:pt-14'
-                  : 'min-h-svh justify-end [scroll-snap-align:end] lg:min-h-0 lg:justify-start',
+                  : 'min-h-svh justify-end [scroll-snap-align:end] lg:min-h-0 lg:justify-start lg:pt-14',
               )}
             >
               <FlowerPaintings />
