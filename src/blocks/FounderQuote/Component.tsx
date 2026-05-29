@@ -1,11 +1,29 @@
 'use client'
 
 /**
- * FounderQuoteBlock — 50/50 portrait + quote panel.
+ * FounderQuoteBlock — 50/50 portrait + quote panel on desktop, two
+ * vertically stacked full-svh sections on mobile.
  *
- * The quote text is wrapped with large curly quote marks (a left mark before
- * the quote, right mark after). The content panel uses cream or ivory bg per
- * the schema's backgroundColor field.
+ * Desktop renders a single <section> with portrait on one side and
+ * the editorial content panel on the other (50/50 split). Mobile
+ * renders TWO independent top-level <section data-snap-section>
+ * siblings — portrait gets its own full-svh snap target, the
+ * editorial content gets its own.
+ *
+ * The sibling pattern on mobile is intentional. The previous nested
+ * implementation (one parent section with two `scroll-snap-align`
+ * children) worked perfectly on Android/Blink but iOS WebKit
+ * (Safari, Chrome, Firefox on iPhone — all WebKit) silently ignored
+ * the inner snap targets and skipped portrait → next block, missing
+ * the content entirely. Top-level sibling sections are the only
+ * scroll-snap pattern WebKit handles reliably with mandatory snap;
+ * every other working block on the site uses it.
+ *
+ * Visual + animation parity is preserved across both layouts — the
+ * portrait gets the same gentle zoom-in, the content gets the same
+ * cascade (icon → eyebrow → title → quote → signature → attribution
+ * → role) in both markups. Animations are scoped per breakpoint via
+ * `gsap.matchMedia`, so only the currently-visible markup runs.
  */
 
 import React, { useEffect, useRef } from 'react'
@@ -30,6 +48,113 @@ const bgClass: Record<BgKey, string> = {
   ivory: 'bg-ivory',
 }
 
+/* Inner editorial content panel — used by BOTH the mobile content
+ * section and the desktop content column. Marks each animatable
+ * element with `data-cascade` so the entrance animation can grab
+ * them via querySelector inside whichever content wrap is currently
+ * visible per breakpoint — saves maintaining two parallel sets of
+ * per-element refs. */
+type ContentPanelProps = {
+  icon: FounderQuoteBlockProps['icon']
+  eyebrow?: string | null
+  title?: string | null
+  quote: FounderQuoteBlockProps['quote']
+  signature: FounderQuoteBlockProps['signature']
+  attribution?: string | null
+  attributionRole?: string | null
+}
+
+const ContentPanel: React.FC<ContentPanelProps> = ({
+  icon,
+  eyebrow,
+  title,
+  quote,
+  signature,
+  attribution,
+  attributionRole,
+}) => (
+  <>
+    {/* Floral icon — PDF p3 renders the icon at ~88px tall on a
+        945pt-tall page. Smaller on mobile (~32px) so the icon reads
+        as a delicate signature ornament rather than a section marker. */}
+    {icon && typeof icon === 'object' && icon.url && (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        data-cascade
+        src={icon.url}
+        alt={icon.alt || ''}
+        className="w-8 h-8 md:w-14 md:h-14 lg:w-20 lg:h-20 object-contain mb-2 lg:mb-6"
+      />
+    )}
+
+    {/* PDF-exact: all colors here are the founder colorway (#A60B1A).
+        Sizes use the founder-* fluid type tokens. */}
+    {eyebrow && (
+      <p
+        data-cascade
+        className="font-script font-normal text-founder-eyebrow uppercase text-founder-red mb-2 lg:mb-4"
+      >
+        {eyebrow}
+      </p>
+    )}
+
+    {title && (
+      <h2
+        data-cascade
+        className="font-display font-medium text-founder-title uppercase text-founder-red mb-4 lg:mb-12"
+      >
+        {title}
+      </h2>
+    )}
+
+    {/* Quote with large decorative curly marks anchored to corners. */}
+    <div data-cascade className="relative max-w-2xl mx-auto px-12 md:px-16">
+      <span
+        aria-hidden="true"
+        className="absolute left-0 -top-12 font-display text-[5em] md:text-[7em] leading-none text-founder-red select-none"
+      >
+        &ldquo;
+      </span>
+      <div className="font-body text-founder-quote !leading-tight text-founder-red text-justify">
+        <RichText data={quote} enableGutter={false} enableProse={false} />
+      </div>
+      <span
+        aria-hidden="true"
+        className="absolute right-0 -bottom-16 font-display text-[5em] md:text-[7em] leading-none text-founder-red select-none"
+      >
+        &rdquo;
+      </span>
+    </div>
+
+    {signature && typeof signature === 'object' && (
+      <div
+        data-cascade
+        className="relative w-32 h-12 md:w-48 md:h-20 mt-2 lg:mt-10 mb-1 lg:mb-2"
+      >
+        <Media fill loading="eager" imgClassName="object-contain" resource={signature} />
+      </div>
+    )}
+
+    {attribution && (
+      <p
+        data-cascade
+        className="font-display font-normal text-founder-attribution uppercase text-founder-red mt-3 lg:mt-6"
+      >
+        {attribution}
+      </p>
+    )}
+
+    {attributionRole && (
+      <p
+        data-cascade
+        className="font-body font-light italic text-founder-role uppercase text-founder-red/80 mt-1"
+      >
+        {attributionRole}
+      </p>
+    )}
+  </>
+)
+
 export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
   portrait,
   portraitPosition = 'left',
@@ -48,364 +173,265 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
   // the home page, but the guard is here for symmetry so the block
   // is safe to drop into any page without surprise animation.
   const noScrollAnim = useNoScrollAnimations()
-  const sectionRef = useRef<HTMLDivElement | null>(null)
-  // Per-element refs for the entrance cascade.
-  const portraitWrapRef = useRef<HTMLDivElement | null>(null)
-  // Content panel ref — on mobile this is its own snap target, so the
-  // editorial cascade has its own ScrollTrigger anchored to this wrap
-  // (fires when content scrolls in, not when portrait scrolls in).
-  const contentWrapRef = useRef<HTMLDivElement | null>(null)
-  const iconRef = useRef<HTMLImageElement | null>(null)
-  const eyebrowRef = useRef<HTMLParagraphElement | null>(null)
-  const titleRef = useRef<HTMLHeadingElement | null>(null)
-  const quoteWrapRef = useRef<HTMLDivElement | null>(null)
-  const signatureRef = useRef<HTMLDivElement | null>(null)
-  const attributionRef = useRef<HTMLParagraphElement | null>(null)
-  const attributionRoleRef = useRef<HTMLParagraphElement | null>(null)
+
+  // Refs to all three sections + their content/portrait wrappers.
+  // Both mobile sections and the desktop section are in the DOM at
+  // all times (Tailwind's `lg:hidden` / `hidden lg:block` controls
+  // visibility per breakpoint), so refs attach to all three.
+  // Animations + IntersectionObserver pick the right targets at
+  // runtime via `gsap.matchMedia` + the observer's per-element fire.
+  const mobilePortraitSecRef = useRef<HTMLElement | null>(null)
+  const mobileContentSecRef = useRef<HTMLElement | null>(null)
+  const mobilePortraitWrapRef = useRef<HTMLDivElement | null>(null)
+  const mobileContentWrapRef = useRef<HTMLDivElement | null>(null)
+  const desktopSecRef = useRef<HTMLElement | null>(null)
+  const desktopPortraitWrapRef = useRef<HTMLDivElement | null>(null)
+  const desktopContentWrapRef = useRef<HTMLDivElement | null>(null)
 
   const bg = (backgroundColor || 'cream') as BgKey
   const portraitFirst = portraitPosition === 'left'
 
+  // Header theme switches to "light" while ANY of the founder sections
+  // are in view. We observe all three because only the breakpoint-
+  // appropriate one has a layout box at any given moment — `display:
+  // none` elements never intersect the viewport, so the observer
+  // naturally fires only for the currently-visible section.
   useEffect(() => {
-    const el = sectionRef.current
-    if (!el || typeof IntersectionObserver === 'undefined') return
+    const targets = [
+      mobilePortraitSecRef.current,
+      mobileContentSecRef.current,
+      desktopSecRef.current,
+    ].filter((el): el is HTMLElement => Boolean(el))
+    if (targets.length === 0 || typeof IntersectionObserver === 'undefined') return
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setHeaderTheme('light')
-          }
+          if (entry.isIntersecting) setHeaderTheme('light')
         })
       },
       { threshold: 0.3 },
     )
-    observer.observe(el)
+    targets.forEach((t) => observer.observe(t))
     return () => observer.disconnect()
   }, [setHeaderTheme])
 
-  // Entrance animations — split into TWO independent triggers so they
-  // fire when each visual panel actually enters the viewport:
+  // Entrance animations — scoped per breakpoint via `gsap.matchMedia`
+  // so only the currently-visible markup runs its ScrollTriggers.
+  // `mm.revert()` on teardown (and on breakpoint change) restores the
+  // pre-animation state cleanly, so a window resize across the lg
+  // boundary doesn't leave stale opacity/transform on hidden elements.
   //
-  //  Portrait timeline (image zoom + opacity wash-in) is bound to the
-  //  portrait wrap. On mobile, where portrait is its own h-svh snap
-  //  target, this fires when the visitor swipes INTO the portrait. On
-  //  desktop, portrait + content are side-by-side, so portrait's wrap
-  //  enters the viewport simultaneously with content's wrap; both
-  //  timelines fire together — same effect as the old single-timeline.
-  //
-  //  Content cascade (icon → eyebrow → title → quote → signature →
-  //  attribution → role) is bound to the content wrap. On mobile this
-  //  means the cascade plays the moment the visitor swipes INTO the
-  //  content viewport (after they leave portrait), not while they're
-  //  still looking at the portrait — so the editorial reveal stays
-  //  intentional, not pre-played and invisible.
+  // Two timelines per breakpoint:
+  //  - Portrait timeline: image zoom-in + opacity wash-in. Trigger is
+  //    the portrait section (mobile) or the portrait wrap (desktop).
+  //  - Content cascade: icon → eyebrow → title → quote → signature →
+  //    attribution → role. Trigger is the content section (mobile) or
+  //    the content wrap (desktop). On mobile they're two separate
+  //    snap targets, so each cascade plays as the visitor lands on
+  //    its respective viewport.
   useEffect(() => {
     if (prefersReducedMotion()) return
     if (noScrollAnim) return
-    const section = sectionRef.current
-    if (!section) return
 
-    const contentEls = [
-      iconRef.current,
-      eyebrowRef.current,
-      titleRef.current,
-      quoteWrapRef.current,
-      signatureRef.current,
-      attributionRef.current,
-      attributionRoleRef.current,
-    ].filter((el): el is NonNullable<typeof el> => Boolean(el))
-    gsap.set(contentEls, { y: 40, opacity: 0 })
-    // Scale the inner <img>, not the wrapper — wrapper's scale paint
-    // extends beyond its layout box and bleeds into the previous
-    // section. Scaling the img stays clipped by the wrapper's
-    // overflow-hidden.
-    const innerPortraitImg = portraitWrapRef.current?.querySelector('img') as HTMLImageElement | null
-    if (innerPortraitImg) {
-      gsap.set(innerPortraitImg, { scale: 1.06 })
-    }
-    if (portraitWrapRef.current) {
-      gsap.set(portraitWrapRef.current, { opacity: 0.88 })
-    }
+    const mm = gsap.matchMedia()
 
-    // Portrait timeline — fires when portrait wrap enters viewport.
-    const portraitTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: portraitWrapRef.current || section,
-        start: 'top 70%',
-        toggleActions: 'play reset play reset',
-      },
-    })
-    if (innerPortraitImg) {
-      portraitTl.to(
-        innerPortraitImg,
-        { scale: 1, duration: 1.6, ease: 'power2.out' },
+    mm.add('(max-width: 1023px)', () => {
+      const portraitSec = mobilePortraitSecRef.current
+      const contentSec = mobileContentSecRef.current
+      const portraitWrap = mobilePortraitWrapRef.current
+      const contentWrap = mobileContentWrapRef.current
+      if (!portraitSec || !contentSec || !portraitWrap || !contentWrap) return
+
+      const portraitImg = portraitWrap.querySelector<HTMLImageElement>('img')
+      const cascadeEls = Array.from(
+        contentWrap.querySelectorAll<HTMLElement>('[data-cascade]'),
+      )
+
+      if (portraitImg) gsap.set(portraitImg, { scale: 1.06 })
+      gsap.set(portraitWrap, { opacity: 0.88 })
+      gsap.set(cascadeEls, { y: 40, opacity: 0 })
+
+      const portraitTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: portraitSec,
+          start: 'top 70%',
+          toggleActions: 'play reset play reset',
+        },
+      })
+      if (portraitImg) {
+        portraitTl.to(portraitImg, { scale: 1, duration: 1.6, ease: 'power2.out' }, 0)
+      }
+      portraitTl.to(portraitWrap, { opacity: 1, duration: 1.6, ease: 'power2.out' }, 0)
+
+      const contentTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: contentSec,
+          start: 'top 70%',
+          toggleActions: 'play reset play reset',
+        },
+      })
+      contentTl.to(
+        cascadeEls,
+        { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', stagger: 0.1 },
         0,
       )
-    }
-    if (portraitWrapRef.current) {
-      portraitTl.to(
-        portraitWrapRef.current,
-        { opacity: 1, duration: 1.6, ease: 'power2.out' },
+    })
+
+    mm.add('(min-width: 1024px)', () => {
+      const sec = desktopSecRef.current
+      const portraitWrap = desktopPortraitWrapRef.current
+      const contentWrap = desktopContentWrapRef.current
+      if (!sec || !portraitWrap || !contentWrap) return
+
+      const portraitImg = portraitWrap.querySelector<HTMLImageElement>('img')
+      const cascadeEls = Array.from(
+        contentWrap.querySelectorAll<HTMLElement>('[data-cascade]'),
+      )
+
+      if (portraitImg) gsap.set(portraitImg, { scale: 1.06 })
+      gsap.set(portraitWrap, { opacity: 0.88 })
+      gsap.set(cascadeEls, { y: 40, opacity: 0 })
+
+      const portraitTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: portraitWrap,
+          start: 'top 70%',
+          toggleActions: 'play reset play reset',
+        },
+      })
+      if (portraitImg) {
+        portraitTl.to(portraitImg, { scale: 1, duration: 1.6, ease: 'power2.out' }, 0)
+      }
+      portraitTl.to(portraitWrap, { opacity: 1, duration: 1.6, ease: 'power2.out' }, 0)
+
+      const contentTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: contentWrap,
+          start: 'top 70%',
+          toggleActions: 'play reset play reset',
+        },
+      })
+      contentTl.to(
+        cascadeEls,
+        { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', stagger: 0.1 },
         0,
       )
-    }
-
-    // Content cascade — fires when content wrap enters viewport.
-    // (On mobile, content is its own h-svh snap target — this fires
-    // when the visitor lands on the content viewport, not earlier.)
-    const contentTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: contentWrapRef.current || section,
-        start: 'top 70%',
-        toggleActions: 'play reset play reset',
-      },
     })
-    contentTl.to(
-      contentEls,
-      { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', stagger: 0.1 },
-      0,
-    )
 
     return () => {
-      portraitTl.scrollTrigger?.kill()
-      portraitTl.kill()
-      contentTl.scrollTrigger?.kill()
-      contentTl.kill()
+      mm.revert()
     }
   }, [noScrollAnim])
 
-  // Same pattern as EditorialSplit: portrait column's WIDTH is computed
-  // from `section height × portrait aspect-ratio`. Cream content panel
-  // takes whatever's left (flex-1). Image fills its column edge-to-edge
-  // with no crop and no L/R gap.
   const portraitObj = typeof portrait === 'object' && portrait ? portrait : null
   const portraitW = portraitObj?.width ?? 1
   const portraitH = portraitObj?.height ?? 1
   const portraitAspect = `${portraitW} / ${portraitH}`
 
+  const contentProps: ContentPanelProps = {
+    icon,
+    eyebrow,
+    title,
+    quote,
+    signature,
+    attribution,
+    attributionRole,
+  }
+
   return (
-    <section
-      ref={sectionRef}
-      /* Full viewport height on lg+ (was `aspect-[1920/945]` = 945px,
-         which left a viewport-bottom gap on 1080-tall displays where
-         the next section bled in during snap). With `h-svh` the
-         section fills the viewport exactly; the portrait column's
-         aspect-ratio still drives its width, so the 50/50 split
-         (portrait_w ≈ 960 at vh=1080) is preserved on a 1920-wide
-         viewport. */
-      // `min-h-svh` (not `h-svh`) so the section grows when
-      // content needs more vertical room. On 6.5"+ phones (812vh+)
-      // and desktops, the portrait (40vh) + content stack
-      // (icon, eyebrow, title, quote, signature, attribution, role)
-      // fits cleanly in one viewport and the block lands at exactly
-      // 100vh. On smaller phones like iPhone SE (375×667), the same
-      // content needs ~800px; `min-h-svh` lets the block stretch
-      // to ~120vh instead of bleeding the bottom of the quote into
-      // the next section's background. The snap manager still
-      // anchors transitions to each section's TOP, so the visitor
-      // scrolls a tiny extra distance on small phones — far better
-      // than seeing the founder's attribution overlap with the next
-      // editorial split.
-      // SEPARATE mobile vs desktop sizing on purpose:
-      //   - Mobile (<lg): `min-h-svh` — at least one visible viewport,
-      //     can grow when content needs more room on smaller phones.
-      //   - Desktop (lg+): `lg:h-screen` — EXPLICIT height required so
-      //     the inner flex-row's `h-full` and the portrait column's
-      //     `lg:h-full` actually resolve to a real number. With only
-      //     `min-h-*` the h-full chain collapses to content height and
-      //     the portrait wrapper renders 0×0 (image invisible). h-screen
-      //     gives the chain its anchor.
-      className={cn('w-full min-h-svh lg:h-screen', bgClass[bg])}
-      data-theme="light"
-      data-snap-section
-      aria-label={eyebrow ? `${eyebrow} ${title}` : 'Founder quote'}
-    >
-      {/*
-        `h-full` on mobile (instead of just lg:h-full) so the inner
-        flex column fills the section's full viewport height. Without
-        it, the column's height collapses to its content and the
-        content panel's `flex-1 justify-center` has no parent height
-        to grow into — the eyebrow + title + quote + signature stack
-        lands directly under the 40vh portrait with no vertical
-        centring. With h-full, the content panel fills the remaining
-        ~60vh below the portrait and `justify-center` actually
-        centres the editorial stack inside that space.
-      */}
-      <div className="flex flex-col lg:flex-row h-full">
-        {/* Portrait column — h-full of (aspect-ratio-locked) section,
-            width auto-computed from `height × portrait aspect`. */}
+    <>
+      {/* ─── MOBILE: portrait section (top-level snap target) ───────
+       *  Full-svh standalone section. Sibling — not nested child — of
+       *  the content section below; this is the only scroll-snap
+       *  pattern WebKit handles reliably under mandatory snap.
+       *  Hidden on lg+ where the desktop 50/50 split takes over. */}
+      <section
+        ref={mobilePortraitSecRef}
+        className={cn('lg:hidden w-full h-svh overflow-hidden', bgClass[bg])}
+        data-theme="light"
+        data-snap-section
+        aria-label={eyebrow ? `${eyebrow} portrait` : 'Founder portrait'}
+      >
         <div
-          ref={portraitWrapRef}
-          data-mobile-snap-target
-          className={cn(
-            // Mobile: full viewport. Portrait is its OWN snap target
-            // on small screens — "one swipe = portrait, next swipe =
-            // content." The brand reference (Musee Atelier) treats
-            // founder spreads exactly this way: portrait alone fills
-            // the phone screen, swipe lands on the editorial copy.
-            // `snap-start snap-always` makes it a forced snap point;
-            // the section's own snap-align at the same y-position is
-            // harmless (browsers de-duplicate overlapping snap points).
-            // lg+: full section height per the editorial 50/50 split
-            // (aspect-ratio drives width from h-full).
-            'relative shrink-0 overflow-hidden',
-            'w-full h-svh snap-start snap-always',
-            'lg:w-auto lg:h-full',
-            portraitFirst ? 'order-1' : 'order-1 lg:order-2',
-          )}
-          style={{ aspectRatio: portraitAspect }}
+          ref={mobilePortraitWrapRef}
+          className="relative w-full h-svh overflow-hidden"
         >
           {portraitObj && (
             <Media
               fill
               loading="eager"
               // `object-top` so the crop happens from the BOTTOM of
-              // the portrait (legs / chair) rather than the center —
-              // preserves the founder's head + face when the image
-              // box is shorter than the image's natural aspect
-              // (especially on mobile where the column is capped at
-              // 40vh). Without this, the default object-position
-              // (center) would cut off her head on a 40vh-capped box.
+              // the portrait (legs/chair) — preserves the founder's
+              // head + face when the image box is more vertical than
+              // the portrait's natural aspect.
               imgClassName="absolute inset-0 w-full h-full object-cover object-top"
               resource={portraitObj}
             />
           )}
         </div>
+      </section>
 
-        {/* Cream content panel — vertically centered around the quote. */}
+      {/* ─── MOBILE: editorial content section (top-level snap target) ─
+       *  Sibling to the portrait section above. Visitor swipes past
+       *  the portrait and lands here cleanly. Hidden on lg+. */}
+      <section
+        ref={mobileContentSecRef}
+        className={cn('lg:hidden w-full h-svh', bgClass[bg])}
+        data-theme="light"
+        data-snap-section
+        aria-label={eyebrow ? `${eyebrow} note` : 'Founder note'}
+      >
         <div
-          ref={contentWrapRef}
-          data-mobile-snap-target
-          className={cn(
-            // Mobile: own full-viewport snap target. Now that the
-            // portrait has its own svh above, the content panel
-            // gets a whole second svh to itself — generous breathing
-            // room (py-12 instead of py-4) and proper vertical
-            // centering on the editorial stack.
-            // lg+: flex-1 fills the horizontal remainder beside the
-            // portrait; height comes from the parent section's
-            // h-screen via flex stretch.
-            'flex flex-col items-center justify-center text-center px-6 md:px-16',
-            'h-svh py-12 snap-start snap-always',
-            'lg:h-auto lg:flex-1 lg:py-12',
-            portraitFirst ? 'order-2' : 'order-2 lg:order-1',
-          )}
+          ref={mobileContentWrapRef}
+          className="flex flex-col items-center justify-center text-center px-6 h-svh py-12"
         >
-          {/* Floral icon — PDF p3 renders the icon at ~88px tall on a
-              945pt-tall page. Sized smaller than the EditorialSplit
-              icons so it reads as a delicate signature ornament rather
-              than a section-marker glyph. */}
-          {icon && typeof icon === 'object' && icon.url && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              ref={iconRef}
-              src={icon.url}
-              alt={icon.alt || ''}
-              // Smaller floral marker on mobile (40px) — leaves room
-              // for the quote without sacrificing the icon's role as
-              // a delicate section ornament. lg+ keeps the original
-              // ~80px treatment per PDF p3.
-              className="w-8 h-8 md:w-14 md:h-14 lg:w-20 lg:h-20 object-contain mb-2 lg:mb-6"
-            />
-          )}
-
-          {/* PDF-exact: all colors here are the founder colorway (#A60B1A).
-              Sizes use the founder-* fluid type tokens (23/36/34/36/20 at 1920).
-              Weights match PDF:
-                eyebrow  → Cormorant Regular   (font-normal 400)
-                title    → MenoBanner-Regular  (font-normal 400)
-                quote    → GillSans-Light      (font-light 300, body default)
-                attrib.  → MenoBanner-Light    (font-light 300)
-                role     → GillSans-LightItalic(font-light 300, body default) */}
-          {eyebrow && (
-            <p
-              ref={eyebrowRef}
-              className="font-script font-normal text-founder-eyebrow uppercase text-founder-red mb-2 lg:mb-4"
-            >
-              {eyebrow}
-            </p>
-          )}
-
-          {/* PDF spec: MenoBanner-Regular 36pt. We're falling back to
-              Cormorant (Adobe Fonts kit for MenoBanner isn't wired yet
-              — see TODO in tokens.css). Cormorant's "Regular" 400 is
-              visually thinner than MenoBanner's 400, so we render at
-              Cormorant Medium (500) to approximate MenoBanner Regular's
-              heft. When MenoBanner loads, this same `font-medium` will
-              render as MenoBanner Medium — which is also OK (very close
-              to MenoBanner Regular in MenoBanner's own weight axis). */}
-          {title && (
-            <h2
-              ref={titleRef}
-              className="font-display font-medium text-founder-title uppercase text-founder-red mb-4 lg:mb-12"
-            >
-              {title}
-            </h2>
-          )}
-
-          {/* Quote with large decorative curly marks anchored to corners. */}
-          <div ref={quoteWrapRef} className="relative max-w-2xl mx-auto px-12 md:px-16">
-            <span
-              aria-hidden="true"
-              className="absolute left-0 -top-12 font-display text-[5em] md:text-[7em] leading-none text-founder-red select-none"
-            >
-              &ldquo;
-            </span>
-            {/* Quote body — PDF: GillSans-Light 34pt, NOT italic.
-                Only "MUSEUM DIRECTOR & FOUNDER" is italic on this page.
-                `!leading-tight` (1.25) overrides the text-founder-quote
-                token's default 1.5 line-height for a tighter editorial
-                feel that matches the PDF spacing. */}
-            <div className="font-body text-founder-quote !leading-tight text-founder-red text-justify">
-              <RichText data={quote} enableGutter={false} enableProse={false} />
-            </div>
-            <span
-              aria-hidden="true"
-              className="absolute right-0 -bottom-16 font-display text-[5em] md:text-[7em] leading-none text-founder-red select-none"
-            >
-              &rdquo;
-            </span>
-          </div>
-
-          {signature && typeof signature === 'object' && (
-            <div
-              ref={signatureRef}
-              // Mobile: tighter top margin (mt-4) to claw back ~24px
-              // so the attribution stays inside the viewport. lg+:
-              // original mt-10 for the airy editorial layout.
-              className="relative w-32 h-12 md:w-48 md:h-20 mt-2 lg:mt-10 mb-1 lg:mb-2"
-            >
-              <Media fill loading="eager" imgClassName="object-contain" resource={signature} />
-            </div>
-          )}
-
-          {/* PDF spec: MenoBanner-Light 36pt. With Cormorant fallback,
-              we render at `font-normal` (400) — one step lighter than
-              the title above so the Light/Regular hierarchy is
-              preserved, while still matching MenoBanner-Light's visual
-              heft (Cormorant 400 ≈ MenoBanner 300 in stroke contrast). */}
-          {attribution && (
-            <p
-              ref={attributionRef}
-              className="font-display font-normal text-founder-attribution uppercase text-founder-red mt-3 lg:mt-6"
-            >
-              {attribution}
-            </p>
-          )}
-
-          {attributionRole && (
-            // PDF: GillSans-LightItalic — the only italic span on page 3.
-            // `font-body` (Gill Sans), `font-light` (300), `italic`.
-            <p
-              ref={attributionRoleRef}
-              className="font-body font-light italic text-founder-role uppercase text-founder-red/80 mt-1"
-            >
-              {attributionRole}
-            </p>
-          )}
+          <ContentPanel {...contentProps} />
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* ─── DESKTOP: single section with 50/50 portrait + content ──
+       *  Identical to the previous (pre-iOS-fix) implementation —
+       *  portrait column's width auto-computed from `height × aspect`,
+       *  content column fills the remaining horizontal space. Hidden
+       *  on mobile so the two sibling sections above own that
+       *  breakpoint. */}
+      <section
+        ref={desktopSecRef}
+        className={cn('hidden lg:block w-full lg:h-screen', bgClass[bg])}
+        data-theme="light"
+        data-snap-section
+        aria-label={eyebrow ? `${eyebrow} ${title}` : 'Founder quote'}
+      >
+        <div className="flex flex-row h-full">
+          <div
+            ref={desktopPortraitWrapRef}
+            className={cn(
+              'relative shrink-0 overflow-hidden lg:w-auto lg:h-full',
+              portraitFirst ? 'order-1' : 'order-2',
+            )}
+            style={{ aspectRatio: portraitAspect }}
+          >
+            {portraitObj && (
+              <Media
+                fill
+                loading="eager"
+                imgClassName="absolute inset-0 w-full h-full object-cover object-top"
+                resource={portraitObj}
+              />
+            )}
+          </div>
+          <div
+            ref={desktopContentWrapRef}
+            className={cn(
+              'flex flex-col items-center justify-center text-center px-6 md:px-16 lg:flex-1 lg:py-12',
+              portraitFirst ? 'order-2' : 'order-1',
+            )}
+          >
+            <ContentPanel {...contentProps} />
+          </div>
+        </div>
+      </section>
+    </>
   )
 }
 
