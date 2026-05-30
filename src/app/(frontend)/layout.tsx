@@ -54,6 +54,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Favicons — the MOMH brand mark (red "MOMH" + parrot in the
+            "O"). Generated from the master logo into a lean multi-res
+            .ico (16/32/48), PNG icons for modern browsers, an Apple
+            touch icon (180), and a web manifest for installable icons.
+            All live in /public. */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
         {/* Self-hosted font stylesheets — loaded as <link> tags because
             CSS @import rules must precede all other CSS, which can't be
             guaranteed once globals.css is bundled with tokens.css and
