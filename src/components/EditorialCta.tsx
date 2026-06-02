@@ -14,6 +14,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { cn } from '@/utilities/ui'
+import { isCtaTargetLive } from '@/utilities/validRoutes'
 
 type ArrowPosition = 'left' | 'right'
 
@@ -60,6 +61,15 @@ export const EditorialCta: React.FC<Props> = ({
   className,
 }) => {
   const targetProps = newTab ? { rel: 'noopener noreferrer', target: '_blank' } : {}
+
+  // Auto-hide any arrow CTA whose internal target doesn't exist yet
+  // (e.g. /about, /architecture, /collections, /blog/* were seeded but
+  // never built — they 404). Because every editorial arrow button across
+  // the site routes through this component, this one guard covers them
+  // all. External links + same-page anchors always render. The CTA data
+  // stays in the CMS and the button reappears the moment its page is
+  // built and added to VALID_ROUTES. See src/utilities/validRoutes.ts.
+  if (!isCtaTargetLive(href)) return null
 
   return (
     // PDF spec for "Explore Our Story", "View All Events", "Read Full
