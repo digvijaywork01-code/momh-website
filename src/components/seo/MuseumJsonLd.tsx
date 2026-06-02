@@ -1,0 +1,72 @@
+import React from 'react'
+import { getServerSideURL } from '@/utilities/getURL'
+
+/**
+ * Museum / Organization structured data (JSON-LD).
+ *
+ * Rendered once on the home page so Google can build a rich result /
+ * knowledge panel for the museum (name, address, founder, logo, socials).
+ *
+ * Server component — emits a plain <script type="application/ld+json">.
+ *
+ * Opening hours: Mon–Sat 11:00–18:00 — confirmed canonical by the owner.
+ * The footer previously showed a stale "10am–4pm"; that was corrected to
+ * match (see footer.tsx OPENING_HOURS), so the site and the schema now
+ * agree.
+ *
+ * Data sources (all from the live site / footer — not fabricated):
+ *  - Address: footer ADDRESS_LINES
+ *  - Socials: footer SocialLinks (the dead `twitter.com` placeholder is
+ *    deliberately excluded)
+ *  - Positioning: homepage InfoHero / About copy
+ */
+export const MuseumJsonLd: React.FC = () => {
+  const url = getServerSideURL()
+
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Museum',
+    name: 'Museum of Meenakari Heritage',
+    alternateName: 'MOMH',
+    description:
+      "India's first museum devoted entirely to the centuries-old art of enamelling on gold. Housed within Shekhawat Haveli, the permanent gallery traces meenakari's journey from Renaissance Europe to the royal courts of Jaipur.",
+    url,
+    logo: `${url}/momh-logo.jpg`,
+    image: `${url}/og-momh.jpg`,
+    founder: {
+      '@type': 'Organization',
+      name: 'The House of Sunita Shekhawat',
+    },
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Shekhawat Haveli, E141, Sardar Patel Marg, Durgadas Colony, C Scheme, Ashok Nagar',
+      addressLocality: 'Jaipur',
+      addressRegion: 'Rajasthan',
+      postalCode: '302001',
+      addressCountry: 'IN',
+    },
+    sameAs: [
+      'https://www.instagram.com/momh_india/',
+      'https://www.linkedin.com/company/museum-of-meenakari-heritage-momh/',
+      'https://www.facebook.com/sunitashekhawatjaipur',
+      'https://www.youtube.com/channel/UCVDcqrqm62CcaPe1O5iJiVg',
+      'https://in.pinterest.com/shekhawatsunita/',
+    ],
+    openingHoursSpecification: {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      opens: '11:00',
+      closes: '18:00',
+    },
+  }
+
+  return (
+    <script
+      type="application/ld+json"
+      // JSON.stringify output is safe to inject; no user input is interpolated.
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  )
+}
+
+export default MuseumJsonLd

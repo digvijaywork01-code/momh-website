@@ -75,12 +75,12 @@ const VISIT_LINKS: LinkColumn = {
 }
 
 const OPENING_HOURS: { day: string; time: string }[] = [
-  { day: 'Monday', time: '10am – 4pm' },
-  { day: 'Tuesday', time: '10am – 4pm' },
-  { day: 'Wednesday', time: '10am – 4pm' },
-  { day: 'Thursday', time: '10am – 4pm' },
-  { day: 'Friday', time: '10am – 4pm' },
-  { day: 'Saturday', time: '10am – 4pm' },
+  { day: 'Monday', time: '11am – 6pm' },
+  { day: 'Tuesday', time: '11am – 6pm' },
+  { day: 'Wednesday', time: '11am – 6pm' },
+  { day: 'Thursday', time: '11am – 6pm' },
+  { day: 'Friday', time: '11am – 6pm' },
+  { day: 'Saturday', time: '11am – 6pm' },
   { day: 'Sunday', time: 'Holiday' },
 ]
 
