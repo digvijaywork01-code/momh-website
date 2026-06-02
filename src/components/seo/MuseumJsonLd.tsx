@@ -25,7 +25,12 @@ export const MuseumJsonLd: React.FC = () => {
 
   const schema = {
     '@context': 'https://schema.org',
-    '@type': 'Museum',
+    // Multi-typed: Museum (a Place) makes `address` + `openingHoursSpecification`
+    // valid, while Organization makes `founder` + `logo` + `sameAs` valid. A bare
+    // "Museum" would flag those Org-only props as unknown in Google's Rich
+    // Results Test (harmless, but it reads as a mistake). A museum legitimately
+    // IS both an organization and a place, so this is the correct modelling.
+    '@type': ['Museum', 'Organization'],
     name: 'Museum of Meenakari Heritage',
     alternateName: 'MOMH',
     description:
