@@ -19,6 +19,15 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
+    // AVIF first (≈30–50% smaller than WebP), then WebP fallback. The
+    // optimizer negotiates format via the Accept header — these do NOT
+    // change the rendered <img> srcSet, so they're hydration-safe.
+    formats: ['image/avif', 'image/webp'],
+    // Next 15.5+: declare the quality values used so server + client
+    // agree (Media defaults to 80; some non-Media images use Next's
+    // default 75). Without this, a custom quality can desync SSR vs
+    // client and trigger a hydration mismatch.
+    qualities: [75, 80],
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL /* 'https://example.com' */].map((item) => {
         const url = new URL(item)
