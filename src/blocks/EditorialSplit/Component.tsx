@@ -29,6 +29,7 @@ import { EditorialCta } from '@/components/EditorialCta'
 import { ExpandableText } from '@/components/ExpandableText'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
+import { isCtaTargetLive } from '@/utilities/validRoutes'
 import { cn } from '@/utilities/ui'
 
 const prefersReducedMotion = () =>
@@ -489,8 +490,15 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
                   - 'filled-red': solid brand-red rectangular button (Museum Guidelines "Book An Appointment")
                   - 'outlined':   transparent border-only rectangular button
                 The arrow style stays default so existing home-page
-                blocks render unchanged. */}
-            {ctaLabel && ctaHref && (
+                blocks render unchanged.
+
+                `isCtaTargetLive(ctaHref)` auto-hides buttons whose internal
+                target doesn't exist yet (e.g. /about, /architecture,
+                /collections were seeded but never built — they 404). The
+                CTA data stays in the CMS; the button just doesn't render
+                until the page exists. External links + same-page anchors
+                always render. See src/utilities/validRoutes.ts. */}
+            {ctaLabel && ctaHref && isCtaTargetLive(ctaHref) && (
               <div ref={ctaRef}>
                 {(!ctaStyle || ctaStyle === 'arrow') && (
                   <EditorialCta
