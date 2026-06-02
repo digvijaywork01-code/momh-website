@@ -19,6 +19,11 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
+    // Serve AVIF first (≈30–50% smaller than WebP at equal quality),
+    // falling back to WebP, then the original. next/image picks the
+    // best format the browser's Accept header supports. Array order
+    // matters — AVIF must come first to be preferred.
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL /* 'https://example.com' */].map((item) => {
         const url = new URL(item)

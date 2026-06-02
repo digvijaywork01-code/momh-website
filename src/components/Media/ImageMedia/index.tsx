@@ -24,6 +24,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     pictureClassName,
     imgClassName,
     priority,
+    quality: qualityFromProps,
     resource,
     size: sizeFromProps,
     src: srcFromProps,
@@ -66,7 +67,12 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         placeholder="blur"
         blurDataURL={placeholderBlur}
         priority={priority}
-        quality={100}
+        // Default 80 (was a hard-coded 100). At 100, next/image produced
+        // near-lossless, multi-MB images and the homepage shipped ~23 MB;
+        // 80 is visually near-identical but roughly halves the bytes.
+        // Per-context overrides are passed via the `quality` prop
+        // (e.g. 85 for hero/feature jewellery, 60 for footer flowers).
+        quality={qualityFromProps ?? 80}
         loading={loading}
         sizes={sizes}
         src={src}
