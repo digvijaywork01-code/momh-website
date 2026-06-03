@@ -11,6 +11,8 @@ import Footer from '@/components/footer/footer'
 import FlowerPaintings from '@/components/body/FlowerPaintings'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 // import { draftMode } from 'next/headers'
 
 import './globals.css'
@@ -208,6 +210,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           )}
           </Providers>
         </div>
+        {/* Real-user Core Web Vitals + page analytics. Mounted OUTSIDE
+            #scroll-container so they never interact with the GSAP/Lenis
+            scroll-snap machinery. Both render nothing visible. Data flows
+            once the corresponding toggles are enabled in the Vercel
+            project dashboard (Analytics + Speed Insights tabs). */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
