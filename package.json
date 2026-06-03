@@ -67,7 +67,6 @@
     "resend": "^6.12.4",
     "sharp": "0.34.2",
     "split-type": "^0.3.4",
-    "swiper": "^11.2.10",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7"
   },

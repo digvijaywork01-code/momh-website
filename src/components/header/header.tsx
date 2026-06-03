@@ -13,7 +13,7 @@ const NAV_LINKS = [
 ]
 
 // Mobile Nav Specifics
-const MOBILE_NAV_LINKS = [
+const MOBILE_NAV_LINKS: { label: string; href: string; hasArrow?: boolean }[] = [
   { label: 'Visit', href: '/book-an-appointment' },
   { label: 'Plan Your Visit', href: '/plan-your-visit' },
   { label: 'Museum Guidelines', href: '/museum-guidelines' },

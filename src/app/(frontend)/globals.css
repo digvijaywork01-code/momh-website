@@ -236,19 +236,6 @@ body > * {
   font-style: italic;
 }
 
-.swiper-pagination-bullet-custom {
-  width: 8px;
-  height: 8px;
-  background-color: #d1d5db; /* gray-300 */
-  border-radius: 9999px;
-  opacity: 1;
-  transition: background-color 0.3s;
-}
-
-.swiper-pagination-bullet-active-custom {
-  background-color: #111827; /* gray-900 */
-}
-
 /* ─── ExpandableText (mobile Read More) ────────────────────────────
  * Used by the `<ExpandableText>` component to truncate long body /
  * quote text to a fixed line count on mobile. The line count is
