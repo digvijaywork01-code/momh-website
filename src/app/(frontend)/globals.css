@@ -300,21 +300,21 @@ body > * {
   }
 }
 
-/* Short-viewport RE-CLAMP — landscape tablets + any narrow short window.
+/* Short narrow-window RE-CLAMP (768–1023px wide × ≤840px tall ONLY).
  *
- * From md the editorial split is side-by-side and the body runs full. But
- * each block pins to ONE viewport height, so on a SHORT viewport (≤840px
- * tall) whose content column is NARROW (768–1279px wide), the full body
- * wraps into more lines than the height allows and gets CUT OFF — most
- * visibly on iPad landscape (1024×768) and short tablet-portrait windows.
+ * Below lg the editorial block STACKS (image on top, content below) and
+ * pins to ONE viewport height. A window that's both NARROW (<1024px) and
+ * SHORT (≤840px) — e.g. a desktop window dragged to ~1000×700 — can't fit
+ * the stacked image + full body, so clamp + show Read More there.
  *
- * Re-apply the clamp + Read More there so content always fits, reusing the
- * exact mechanism that makes mobile fit. The 1279px width ceiling is
- * deliberate: wide laptops (≥1280px) have a wide enough column that the
- * full text wraps short and FITS (verified 1280×720, 1366×768), so they
- * stay on the uncut desktop reading flow — the don't-break-PC rule. The
- * toggle, hidden by `md:hidden`, is re-shown here via its class. */
-@media (min-width: 768px) and (max-width: 1279px) and (max-height: 840px) {
+ * This deliberately STOPS at 1023px. At lg+ (≥1024 = landscape tablets) the
+ * 55/45 side-by-side gives the content a wide-enough column that the FULL
+ * body wraps short and FITS (verified every block at 1024×768), so landscape
+ * shows the full body with NO Read More — clamping a panel that has plenty
+ * of empty room would be a pointless toggle. (Real iPad portrait is ≥1024px
+ * TALL, so it never matches this rule either.) Toggle (md:hidden) re-shown
+ * here via its class. */
+@media (min-width: 768px) and (max-width: 1023px) and (max-height: 840px) {
   .expandable-text-clamp {
     display: -webkit-box;
     -webkit-line-clamp: var(--clamp-lines, 4);
