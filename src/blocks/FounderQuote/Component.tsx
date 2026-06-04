@@ -406,7 +406,13 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
           <div
             ref={desktopPortraitWrapRef}
             className={cn(
-              'relative shrink-0 overflow-hidden lg:w-auto lg:h-full',
+              // Width = height × aspect (via the aspectRatio style) on TRUE
+              // desktop (xl+, ≥1280px). But at tablet LANDSCAPE (lg→xl,
+              // 1024–1279px) that computes to ~76% for this near-square
+              // portrait, starving the quote column (headline clipped, name
+              // pushed off the short viewport). Cap it at 50vw there so the
+              // quote panel keeps its half — object-cover crops the portrait.
+              'relative shrink-0 overflow-hidden lg:w-[50vw] xl:w-auto lg:h-full',
               portraitFirst ? 'order-1' : 'order-2',
             )}
             style={{ aspectRatio: portraitAspect }}
