@@ -304,12 +304,13 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
         // capped at 30vh, body line-clamped, tight padding) ensure
         // the content stack actually fits in that one viewport
         // without cropping.
-        // Mobile (<lg): min-h-svh — at least one visible viewport,
-        // can grow if content needs more room on very small phones.
-        // Desktop (lg+): lg:h-screen — EXPLICIT height required so
-        // the inner flex-row's `min-h-svh` chain doesn't collapse;
-        // the desktop 60/40 split needs both columns to fill the
-        // viewport. Same pattern as the FounderQuote fix.
+        // Mobile + tablet PORTRAIT (<lg): min-h-svh — STACKED, image on top,
+        // content below.
+        // Tablet LANDSCAPE + desktop (lg+): lg:h-screen — EXPLICIT height so
+        // the inner flex-row's `min-h-svh` chain doesn't collapse; the 60/40
+        // side-by-side split needs both columns to fill the viewport. (Per
+        // design review: portrait stays stacked; the 60vw side-by-side is
+        // landscape-only.)
         'w-full min-h-svh lg:h-screen',
         bgClass[bg],
         topSpacingClass[topSpacing as TopSpacingKey],
@@ -340,7 +341,16 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
             // h-[45svh] at this breakpoint.
             // lg+: full-viewport height per the editorial 60/40 split,
             // unchanged.
-            'relative shrink-0 w-full lg:w-auto h-[40svh] lg:h-screen',
+            // Tablet PORTRAIT (md, 768–1023px): STACKED — full-width image on
+            // top, taller than the phone (md:h-[60svh]) so the bottom-aligned
+            // content below sits with only a small gap.
+            // Tablet LANDSCAPE (lg→xl, 1024–1279px): SIDE-BY-SIDE, image width
+            // CAPPED at 55vw (lg:w-[55vw]) — without the cap, square/wide
+            // images balloon to 70–80% and squish the content column. 55/45
+            // gives the content column a touch more room.
+            // Desktop (xl+, ≥1280px): aspect-based width (xl:w-auto), wide
+            // enough for it. Mobile (<md) keeps the stacked 40svh image.
+            'relative shrink-0 w-full lg:w-[55vw] xl:w-auto h-[40svh] md:h-[60svh] lg:h-screen',
             // overflow:hidden contains the 1.08 scale during entrance so
             // the image doesn't bleed past the column edge.
             'overflow-hidden',
@@ -414,6 +424,11 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
 
           {/* Content stack — pushed to bottom of the column, aligned to outer edge.
               All sizes locked to the PDF spec via fluid clamps (see tokens.css). */}
+          {/* `mt-auto` bottom-anchors the content stack at EVERY breakpoint —
+              phone (image dominant, text low), tablet, and desktop all share
+              the same low-content editorial rhythm. (An earlier tablet-only
+              `md:mt-0` top-align was reverted per design review: the default
+              bottom alignment reads better in the side-by-side.) */}
           <div className={cn('mt-auto max-w-2xl w-full', imageFirst ? 'lg:ml-auto' : '')}>
             {/* Mobile-only icon — sits directly above the eyebrow.
                 Smaller than the desktop icon (32px vs 56-72px) so it
@@ -460,8 +475,8 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
               ref={bodyWrapRef}
               className={cn(
                 'mb-6 max-w-xl',
-                // Push to right edge on desktop only (image-left
-                // layout) — mobile stacks left-aligned naturally.
+                // Push to outer edge on the side-by-side (image-left layout) —
+                // mobile + tablet portrait stack left-aligned naturally.
                 imageFirst ? 'lg:ml-auto' : '',
               )}
             >

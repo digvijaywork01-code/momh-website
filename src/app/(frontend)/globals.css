@@ -287,13 +287,46 @@ body > * {
   background: rgba(255, 255, 255, 0.45);
   border-radius: 2px;
 }
-@media (min-width: 1024px) {
+/* From md (768px) up, the editorial split is side-by-side with a full-
+ * height content column, so the body runs at its natural full length —
+ * drop the mobile clamp. SHORT viewports re-apply it below. */
+@media (min-width: 768px) {
   .expandable-text-clamp,
   .expandable-text-scroll {
     display: block;
     max-height: none;
     -webkit-line-clamp: unset;
     overflow: visible;
+  }
+}
+
+/* Short-viewport RE-CLAMP — landscape tablets + any narrow short window.
+ *
+ * From md the editorial split is side-by-side and the body runs full. But
+ * each block pins to ONE viewport height, so on a SHORT viewport (≤840px
+ * tall) whose content column is NARROW (768–1279px wide), the full body
+ * wraps into more lines than the height allows and gets CUT OFF — most
+ * visibly on iPad landscape (1024×768) and short tablet-portrait windows.
+ *
+ * Re-apply the clamp + Read More there so content always fits, reusing the
+ * exact mechanism that makes mobile fit. The 1279px width ceiling is
+ * deliberate: wide laptops (≥1280px) have a wide enough column that the
+ * full text wraps short and FITS (verified 1280×720, 1366×768), so they
+ * stay on the uncut desktop reading flow — the don't-break-PC rule. The
+ * toggle, hidden by `md:hidden`, is re-shown here via its class. */
+@media (min-width: 768px) and (max-width: 1279px) and (max-height: 840px) {
+  .expandable-text-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: var(--clamp-lines, 4);
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .expandable-text-scroll {
+    max-height: calc(var(--clamp-lines, 4) * var(--fs-body, 18px) * 1.5);
+    overflow-y: auto;
+  }
+  .expandable-text-toggle {
+    display: inline-block !important;
   }
 }
 

@@ -205,7 +205,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     // previous block — gives the page a moment to
                     // breathe before transitioning into the footer.
                     'pt-10 lg:pt-14'
-                  : 'min-h-svh justify-end lg:min-h-0 lg:justify-start lg:pt-14',
+                  : // Mobile (<md): full-viewport wrapper, content justified to
+                    // the bottom so the footer snap lands cleanly on small
+                    // phones. Tablet + desktop (md+): hug the content instead
+                    // — on the taller tablet viewport the old `justify-end` left
+                    // a big black band ABOVE the flowers. Moving the hug
+                    // behaviour from lg: to md: fixes tablet; desktop is
+                    // unchanged (same values, md: already covers ≥lg).
+                    'min-h-svh justify-end md:min-h-0 md:justify-start md:pt-14',
               )}
             >
               <FlowerPaintings />
