@@ -50,6 +50,21 @@ export const MuseumJsonLd: React.FC = () => {
       postalCode: '302001',
       addressCountry: 'IN',
     },
+    // Exact pin — confirmed canonical by the owner from the Google Maps
+    // listing for the haveli (the "Sunita Shekhawat Jewellery" place, which
+    // is where MOMH is housed). Lat/lng are the place marker (`!3d`/`!4d`),
+    // NOT the map-view centre. `geo` is what Google actually uses to position
+    // the museum in Maps / local results / the knowledge panel, so this is the
+    // load-bearing location signal.
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 26.9053956,
+      longitude: 75.7941591,
+    },
+    // Stable CID link to that exact Google place (derived from the listing's
+    // feature id), so `hasMap` resolves to the verified pin rather than a
+    // fuzzy address text-search.
+    hasMap: 'https://maps.google.com/?cid=12916303950302817297',
     sameAs: [
       'https://www.instagram.com/momh_india/',
       'https://www.linkedin.com/company/museum-of-meenakari-heritage-momh/',
