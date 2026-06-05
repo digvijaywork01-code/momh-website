@@ -47,18 +47,26 @@ const config = {
     },
     extend: {
       // Custom breakpoint: `wide` = TRUE desktop/laptop landscape — ≥1280px
-      // AND aspect-ratio ≥ 7/5 (1.40). Separates real PCs (MacBook ≈1.54,
-      // 16:10 ≈1.60, 16:9 ≈1.78) from the iPad Pro 12.9" in LANDSCAPE
-      // (1366×1024 = 4:3 = 1.333), which clears the 1280px width gate yet is
-      // NOT a desktop. EditorialSplit/FounderQuote use `wide:w-auto` to drop
-      // the image-width cap ONLY on real desktops; the 12.9" landscape stays
-      // capped (lg:landscape:w-[55vw]/[50vw]) so its image can't balloon to
-      // 60–76% and squish the content. The min-width:1280 half also keeps the
-      // smaller iPads' landscape (≤1194px) on the cap regardless of aspect.
-      // Merged into Tailwind's default screens (sm/md/lg/xl/2xl) — does not
-      // replace them.
+      // AND aspect-ratio ≥ 151/100 (1.51). Separates real PCs (MacBook ≈1.538,
+      // 16:10 = 1.60, 16:9 = 1.78) from 3:2 / 4:3 TABLETS in landscape that
+      // clear the 1280px width gate but are NOT desktops:
+      //   • iPad Pro 12.9"  1366×1024 = 4:3 = 1.333
+      //   • Surface Pro 7   1368×912  = 3:2 = 1.500  (exact integer ratio)
+      // Both fall BELOW 1.51, so `wide` doesn't match and the image keeps its
+      // lg:landscape:w-[55vw]/[50vw] cap — otherwise square images balloon to
+      // 60–76% and crush the content column (Surface founder portrait hit 68%).
+      // Why 1.51, not the 1.40 this started at: Surface LANDSCAPE is 3:2 =
+      // exactly 1.5, so the floor had to rise just past 1.5 to re-cap it. 1.51
+      // is deliberately the LOW end of the 1.500→1.538 gap — Surface is an exact
+      // ratio needing ZERO margin, so the whole budget buys Mac clearance (Macs
+      // at ~1.538 keep 0.028 of headroom and stay aspect-based). The tight
+      // margin is safe because the 55/45 cap is itself a good landscape layout:
+      // a mis-capped borderline window is different, not broken.
+      // The min-width:1280 half keeps the smaller iPads' landscape (≤1194px)
+      // capped regardless of aspect. Merged into Tailwind's default screens
+      // (sm/md/lg/xl/2xl) — does not replace them.
       screens: {
-        wide: { raw: '(min-width: 1280px) and (min-aspect-ratio: 7/5)' },
+        wide: { raw: '(min-width: 1280px) and (min-aspect-ratio: 151/100)' },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
