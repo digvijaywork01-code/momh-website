@@ -46,6 +46,20 @@ const config = {
       },
     },
     extend: {
+      // Custom breakpoint: `wide` = TRUE desktop/laptop landscape — ≥1280px
+      // AND aspect-ratio ≥ 7/5 (1.40). Separates real PCs (MacBook ≈1.54,
+      // 16:10 ≈1.60, 16:9 ≈1.78) from the iPad Pro 12.9" in LANDSCAPE
+      // (1366×1024 = 4:3 = 1.333), which clears the 1280px width gate yet is
+      // NOT a desktop. EditorialSplit/FounderQuote use `wide:w-auto` to drop
+      // the image-width cap ONLY on real desktops; the 12.9" landscape stays
+      // capped (lg:landscape:w-[55vw]/[50vw]) so its image can't balloon to
+      // 60–76% and squish the content. The min-width:1280 half also keeps the
+      // smaller iPads' landscape (≤1194px) on the cap regardless of aspect.
+      // Merged into Tailwind's default screens (sm/md/lg/xl/2xl) — does not
+      // replace them.
+      screens: {
+        wide: { raw: '(min-width: 1280px) and (min-aspect-ratio: 7/5)' },
+      },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
