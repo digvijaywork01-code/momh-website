@@ -67,6 +67,19 @@ const config = {
       // (sm/md/lg/xl/2xl) — does not replace them.
       screens: {
         wide: { raw: '(min-width: 1280px) and (min-aspect-ratio: 151/100)' },
+        // `sbs` (side-by-side) = the trigger for EditorialSplit's two-column
+        // landscape layout. Was `lg:landscape:` (≥1024px landscape); broadened to
+        // ANY tall landscape so the Surface Duo single screen rotated to landscape
+        // (720×912... i.e. 720×540) gets the split instead of the phone STACKED
+        // layout — which turned the artwork into a wide-short 3.3:1 strip.
+        //   • min-height:480 keeps real landscape PHONES (≤430px tall) stacked.
+        //   • min-width:640 stops it firing on a tiny resized window.
+        // It is a SUPERSET of the old lg:landscape for every ≥1024 device (those
+        // are all ≥480 tall), so iPad / Surface Pro / desktop landscapes are
+        // unchanged. Only EditorialSplit uses `sbs`; FounderQuote keeps
+        // `lg:landscape` (its mobile portrait+quote layout already reads well on
+        // the Duo, so it intentionally stays full-bleed there).
+        sbs: { raw: '(min-width: 640px) and (orientation: landscape) and (min-height: 480px)' },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
