@@ -149,26 +149,12 @@ const SocialLinks: React.FC<{ className?: string }> = ({ className }) => (
         <path d="M7.31 2.31C7.55 2.31 7.75 2.12 7.75 1.88C7.75 1.64 7.55 1.44 7.31 1.44C7.07 1.44 6.88 1.64 6.88 1.88C6.88 2.12 7.07 2.31 7.31 2.31Z" fill="white" />
       </svg>
     </Link>
-    {/* X (Twitter) — rendered as a non-clickable <span> until a real
-        museum X profile exists. The previous hardcoded href pointed at
-        `https://twitter.com` (platform homepage / login screen), not at
-        a brand profile. Visually preserved so the social row still
-        balances; `cursor-default` + no hover ring make the
-        non-interactive state legible. Drop this back to a <Link> with
-        the real profile URL when one's set up. */}
-    <span
-      aria-label="X (Twitter) — coming soon"
-      className="w-7 h-7 rounded-full bg-offwhite/70 text-founder-red flex items-center justify-center cursor-default"
-    >
-      <svg width="12" height="11" viewBox="0 0 11 10" fill="none">
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M3.47 0H0L4.11 5.44L0.26 10H2.04L4.95 6.55L7.53 9.97H11L6.77 4.37L6.78 4.38L10.42 0.06H8.64L5.94 3.27L3.47 0ZM1.91 0.95H2.99L9.09 9.02H8.01L1.91 0.95Z"
-          fill="currentColor"
-        />
-      </svg>
-    </span>
+    {/* X (Twitter) — intentionally not rendered. The previous hardcoded
+        href pointed at `https://twitter.com` (platform homepage /
+        login screen), not at a brand profile. Until a real museum X
+        profile exists, the icon stays off the row. Add a <Link href=
+        "https://x.com/<handle>"> with the same chip styling as the
+        others (see Facebook above) to reinstate. */}
     <Link
       href="https://www.linkedin.com/company/museum-of-meenakari-heritage-momh/about/"
       aria-label="LinkedIn"
