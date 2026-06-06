@@ -50,14 +50,18 @@ const bgClass: Record<BgKey, string> = {
 const isDarkBg = (bg: BgKey): boolean =>
   bg === 'black' || bg === 'emerald' || bg === 'maroon' || bg === 'navy'
 
-/** Icon horizontal alignment within the content column. Mobile always
- *  uses `justify-start` (left) so the icon reads naturally above the
- *  left-aligned text stack. Desktop applies the editor's chosen
- *  position via the `lg:` prefix. */
+/** Icon horizontal alignment within the content column. STACKED layouts
+ *  always use `justify-start` (left) so the icon reads naturally above the
+ *  left-aligned text stack. In the SIDE-BY-SIDE layout it applies the
+ *  editor's chosen position at the `sbs:` breakpoint — the SAME breakpoint
+ *  that right-aligns the content (sbs:items-end) — so the icon tracks the
+ *  text alignment. (Was `lg:`, which left the icon stuck on the left at
+ *  720–1023px side-by-side viewports like the Surface Duo landscape, where
+ *  the content is already right-aligned.) */
 const iconAlignClass: Record<'left' | 'center' | 'right', string> = {
-  left: 'justify-start lg:justify-start',
-  center: 'justify-start lg:justify-center',
-  right: 'justify-start lg:justify-end',
+  left: 'justify-start sbs:justify-start',
+  center: 'justify-start sbs:justify-center',
+  right: 'justify-start sbs:justify-end',
 }
 
 type TopSpacingKey = NonNullable<EditorialSplitBlockProps['topSpacing']>
