@@ -39,15 +39,16 @@ export const NewsletterWidget: React.FC<Props> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email || status === 'submitting') return
-    if (!endpoint) {
-      // No endpoint wired — display a local success so the UX still feels
-      // complete; admins can plug in a real URL via the block config.
-      setStatus('success')
-      return
-    }
+    // When the CMS leaves `endpoint` empty (as the home-page p12 widget
+    // currently does) we used to fake a local "Subscribed" — which meant
+    // every submission was silently discarded. Default to the in-house
+    // `/api/newsletter` route instead so signups always land in
+    // `/admin → Newsletter Subscribers`. Admins can still override per-
+    // block with a different URL (e.g. a future Mailchimp route).
+    const target = endpoint && endpoint.trim() ? endpoint : '/api/newsletter'
     try {
       setStatus('submitting')
-      const res = await fetch(endpoint, {
+      const res = await fetch(target, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

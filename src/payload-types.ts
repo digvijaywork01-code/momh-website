@@ -72,6 +72,7 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
+    'newsletter-subscribers': NewsletterSubscriber;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -88,6 +89,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    'newsletter-subscribers': NewsletterSubscribersSelect<false> | NewsletterSubscribersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -1854,6 +1856,23 @@ export interface FormBlock {
   blockType: 'formBlock';
 }
 /**
+ * Email signups from the public site’s newsletter widget. Latest at the top.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsletter-subscribers".
+ */
+export interface NewsletterSubscriber {
+  id: number;
+  email: string;
+  /**
+   * Which widget / page this signup came from. Useful for attribution later.
+   */
+  source?: string | null;
+  subscribedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
@@ -2045,6 +2064,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: number | User;
+      } | null)
+    | ({
+        relationTo: 'newsletter-subscribers';
+        value: number | NewsletterSubscriber;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2845,6 +2868,17 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsletter-subscribers_select".
+ */
+export interface NewsletterSubscribersSelect<T extends boolean = true> {
+  email?: T;
+  source?: T;
+  subscribedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
