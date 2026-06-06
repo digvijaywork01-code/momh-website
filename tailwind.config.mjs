@@ -80,6 +80,17 @@ const config = {
         // `lg:landscape` (its mobile portrait+quote layout already reads well on
         // the Duo, so it intentionally stays full-bleed there).
         sbs: { raw: '(min-width: 640px) and (orientation: landscape) and (min-height: 480px)' },
+        // `short` = a viewport too SHORT to hold a full-bleed carousel card.
+        // The CardGrid / TwoColumnFeature mobile carousels put a full-WIDTH
+        // image above the text; image height scales with width, so on a phone
+        // (≤430px wide) it's short and fits, but on the Surface Duo single
+        // screen in landscape (720×540) a 4/3 image is 540px tall = the WHOLE
+        // viewport, pushing the heading + card text + dots off-screen. `short`
+        // caps those carousel images to a fraction of the height so the card
+        // fits. max-height:600 catches the short LANDSCAPE viewports (Duo 540,
+        // phone landscape ≤430) but NOT phone PORTRAIT (844 tall), tablet
+        // portrait, or desktop (≥~700 tall) — those keep the full image.
+        short: { raw: '(max-height: 600px)' },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',

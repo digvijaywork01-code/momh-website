@@ -70,11 +70,16 @@ const CardArticle: React.FC<{ card: Card }> = ({ card }) => {
   return (
     <article className="flex flex-col h-full">
       {card.image && typeof card.image === 'object' && (
-        <div className="relative aspect-[4/3] mb-6 overflow-hidden">
+        <div className="relative aspect-[4/3] short:aspect-auto short:h-[30svh] mb-6 short:mb-3 overflow-hidden">
           <Media
             fill
             loading="eager"
-            imgClassName="object-contain"
+            // On SHORT viewports (Surface Duo / phone landscape) the 4/3 image
+            // is height-capped (see `short:h-[30svh]` above), so switch to
+            // object-cover there for a clean banner crop instead of a tiny
+            // contained image floating in a wide letterbox. Taller viewports
+            // keep object-contain (press images show in full).
+            imgClassName="object-contain short:object-cover"
             resource={card.image}
           />
         </div>
@@ -239,14 +244,14 @@ export const CardGridBlock: React.FC<CardGridBlockProps> = ({
         // Tight vertical padding so the headline + 3-card row fits in
         // laptop-class viewports (~800-900px). On taller screens flex
         // justify-center keeps the layout vertically centered.
-        'w-full min-h-svh flex flex-col justify-center py-10 lg:py-14 px-6 md:px-12 lg:px-20',
+        'w-full min-h-svh flex flex-col justify-center py-10 short:py-4 lg:py-14 px-6 md:px-12 lg:px-20',
         bgClass[bg],
       )}
       data-theme={dark ? 'dark' : 'light'}
       data-snap-section
       aria-label="Card grid"
     >
-      <div ref={headlineRef} className="max-w-3xl mb-8 lg:mb-10">
+      <div ref={headlineRef} className="max-w-3xl mb-8 short:mb-4 lg:mb-10">
         {eyebrow && (
           <p className="font-script italic text-eyebrow opacity-90 mb-2">
             {eyebrow}
