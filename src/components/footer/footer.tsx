@@ -37,29 +37,46 @@ const ChevronDownIcon = ({ className }: { className?: string }) => (
 )
 
 // Link columns from PDF page 13 (left → right).
-type LinkItem = { label: string; href: string }
+//
+// `disabled` flag: the label still renders in the footer (so the visual
+// balance of the columns stays the same) but it's emitted as a plain
+// <span> instead of a clickable <Link>, with a slightly muted colour
+// + `cursor-default` so visitors don't try to click it. Used for
+// labels whose target page hasn't been built yet (404 on prod) or
+// whose anchor target doesn't exist on the home page. Flip back to
+// `disabled: false` (or remove the flag) when the corresponding page
+// / anchor exists.
+type LinkItem = { label: string; href: string; disabled?: boolean }
 type LinkColumn = { title: string; items: LinkItem[] }
 
 const ABOUT_LINKS: LinkColumn = {
   title: 'About',
   items: [
-    { label: 'Our Story', href: '/#about' },
-    { label: "Founder's Vision", href: '/#founder' },
-    { label: 'As Seen On', href: '/#press' },
-    { label: 'Blog', href: '/#blogs' },
-    { label: 'Testimonials', href: '/#testimonials' },
+    // All five anchor IDs (#about / #founder / #press / #blogs /
+    // #testimonials) are absent from the rendered home page DOM, so
+    // these labels silently scroll nowhere. Marked disabled until
+    // matching sections gain those ids.
+    { label: 'Our Story', href: '/#about', disabled: true },
+    { label: "Founder's Vision", href: '/#founder', disabled: true },
+    { label: 'As Seen On', href: '/#press', disabled: true },
+    { label: 'Blog', href: '/#blogs', disabled: true },
+    { label: 'Testimonials', href: '/#testimonials', disabled: true },
   ],
 }
 
 const SUPPORT_LINKS: LinkColumn = {
   title: 'Support',
   items: [
-    { label: 'Contact Us', href: '/contact' },
-    { label: 'FAQ', href: '/faq' },
-    { label: 'Privacy Policy', href: '/privacy-policy' },
-    { label: 'Cookies Policy', href: '/cookies-policy' },
-    { label: 'Accessibility Statement', href: '/accessibility' },
-    { label: 'Sitemap', href: '/sitemap' },
+    // Every target below returns HTTP 404 on prod — no route folder,
+    // no Page slug. Disabled until the pages are built.
+    // ("Sitemap" → /sitemap is also 404; the *real* sitemap lives at
+    // /sitemap.xml for crawlers, but that's not a human-facing route.)
+    { label: 'Contact Us', href: '/contact', disabled: true },
+    { label: 'FAQ', href: '/faq', disabled: true },
+    { label: 'Privacy Policy', href: '/privacy-policy', disabled: true },
+    { label: 'Cookies Policy', href: '/cookies-policy', disabled: true },
+    { label: 'Accessibility Statement', href: '/accessibility', disabled: true },
+    { label: 'Sitemap', href: '/sitemap', disabled: true },
   ],
 }
 
@@ -70,7 +87,8 @@ const VISIT_LINKS: LinkColumn = {
     { label: 'Museum Guidelines', href: '/museum-guidelines' },
     { label: 'Craft Your Jewellery', href: '/craft-your-jewellery' },
     { label: 'Book a Visit', href: '/book-an-appointment' },
-    { label: 'Create Your Sevak', href: '/create-your-sevak' },
+    // /create-your-sevak is not yet a real route on prod (404).
+    { label: 'Create Your Sevak', href: '/create-your-sevak', disabled: true },
   ],
 }
 
@@ -85,9 +103,12 @@ const OPENING_HOURS: { day: string; time: string }[] = [
 ]
 
 const LEGAL_LINKS: LinkItem[] = [
-  { label: 'Copyright', href: '/copyright' },
-  { label: 'Privacy Policy', href: '/privacy-policy' },
-  { label: 'Terms of Use', href: '/terms' },
+  // All three legal targets currently 404 — disabled until the pages
+  // exist. Sequenced in the footer bottom bar; rendered as plain
+  // <span>s by the disabled branch below.
+  { label: 'Copyright', href: '/copyright', disabled: true },
+  { label: 'Privacy Policy', href: '/privacy-policy', disabled: true },
+  { label: 'Terms of Use', href: '/terms', disabled: true },
 ]
 
 const ADDRESS_LINES = [
@@ -128,10 +149,16 @@ const SocialLinks: React.FC<{ className?: string }> = ({ className }) => (
         <path d="M7.31 2.31C7.55 2.31 7.75 2.12 7.75 1.88C7.75 1.64 7.55 1.44 7.31 1.44C7.07 1.44 6.88 1.64 6.88 1.88C6.88 2.12 7.07 2.31 7.31 2.31Z" fill="white" />
       </svg>
     </Link>
-    <Link
-      href="https://twitter.com"
-      aria-label="X (Twitter)"
-      className="w-7 h-7 rounded-full bg-offwhite text-founder-red flex items-center justify-center hover:bg-offwhite/90 transition-colors"
+    {/* X (Twitter) — rendered as a non-clickable <span> until a real
+        museum X profile exists. The previous hardcoded href pointed at
+        `https://twitter.com` (platform homepage / login screen), not at
+        a brand profile. Visually preserved so the social row still
+        balances; `cursor-default` + no hover ring make the
+        non-interactive state legible. Drop this back to a <Link> with
+        the real profile URL when one's set up. */}
+    <span
+      aria-label="X (Twitter) — coming soon"
+      className="w-7 h-7 rounded-full bg-offwhite/70 text-founder-red flex items-center justify-center cursor-default"
     >
       <svg width="12" height="11" viewBox="0 0 11 10" fill="none">
         <path
@@ -141,7 +168,7 @@ const SocialLinks: React.FC<{ className?: string }> = ({ className }) => (
           fill="currentColor"
         />
       </svg>
-    </Link>
+    </span>
     <Link
       href="https://www.linkedin.com/company/museum-of-meenakari-heritage-momh/about/"
       aria-label="LinkedIn"
@@ -266,11 +293,24 @@ const Footer = () => {
               © Museum of Meenakari Heritage 2026. ALL RIGHTS RESERVED.
             </p>
             <div className="flex gap-6">
-              {LEGAL_LINKS.map((link) => (
-                <Link key={link.label} href={link.href} className="hover:text-offwhite transition-colors">
-                  {link.label}
-                </Link>
-              ))}
+              {LEGAL_LINKS.map((link) =>
+                link.disabled ? (
+                  <span
+                    key={link.label}
+                    className="text-offwhite/50 cursor-default select-none"
+                  >
+                    {link.label}
+                  </span>
+                ) : (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="hover:text-offwhite transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ),
+              )}
             </div>
           </div>
         </div>
@@ -305,13 +345,21 @@ const Footer = () => {
               </button>
               {openAccordion === col.title && (
                 <ul className="pb-4 space-y-2 font-body text-sm text-offwhite/80">
-                  {col.items.map((item) => (
-                    <li key={item.label}>
-                      <Link href={item.href} className="hover:underline">
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
+                  {col.items.map((item) =>
+                    item.disabled ? (
+                      <li key={item.label}>
+                        <span className="text-offwhite/50 cursor-default select-none">
+                          {item.label}
+                        </span>
+                      </li>
+                    ) : (
+                      <li key={item.label}>
+                        <Link href={item.href} className="hover:underline">
+                          {item.label}
+                        </Link>
+                      </li>
+                    ),
+                  )}
                 </ul>
               )}
             </div>
@@ -368,11 +416,24 @@ const Footer = () => {
         <div className="mt-8 flex flex-col gap-3 text-xs text-offwhite/70">
           <p className="m-0">© Museum of Meenakari Heritage 2026. ALL RIGHTS RESERVED.</p>
           <div className="flex flex-wrap gap-4">
-            {LEGAL_LINKS.map((link) => (
-              <Link key={link.label} href={link.href} className="hover:text-offwhite transition-colors">
-                {link.label}
-              </Link>
-            ))}
+            {LEGAL_LINKS.map((link) =>
+              link.disabled ? (
+                <span
+                  key={link.label}
+                  className="text-offwhite/50 cursor-default select-none"
+                >
+                  {link.label}
+                </span>
+              ) : (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="hover:text-offwhite transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ),
+            )}
           </div>
         </div>
       </div>
@@ -387,13 +448,24 @@ const FooterLinkColumn: React.FC<{ column: LinkColumn; className?: string }> = (
   <div className={`flex flex-col gap-3 ${className || ''}`}>
     <h3 className="font-body font-normal text-offwhite text-sm tracking-wide mb-1">{column.title}</h3>
     <ul className="space-y-2 font-body text-sm text-offwhite/80">
-      {column.items.map((item) => (
-        <li key={item.label}>
-          <Link href={item.href} className="hover:text-offwhite transition-colors">
-            {item.label}
-          </Link>
-        </li>
-      ))}
+      {column.items.map((item) =>
+        item.disabled ? (
+          // Disabled: label is preserved (keeps the column visually
+          // balanced) but rendered as a non-interactive <span>. Dim
+          // colour + `cursor-default` signal it's not a live link.
+          <li key={item.label}>
+            <span className="text-offwhite/50 cursor-default select-none">
+              {item.label}
+            </span>
+          </li>
+        ) : (
+          <li key={item.label}>
+            <Link href={item.href} className="hover:text-offwhite transition-colors">
+              {item.label}
+            </Link>
+          </li>
+        ),
+      )}
     </ul>
   </div>
 )
