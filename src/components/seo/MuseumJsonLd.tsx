@@ -16,8 +16,8 @@ import { getServerSideURL } from '@/utilities/getURL'
  *
  * Data sources (all from the live site / footer — not fabricated):
  *  - Address: footer ADDRESS_LINES
- *  - Socials: footer SocialLinks (the dead `twitter.com` placeholder is
- *    deliberately excluded)
+ *  - Socials: footer SocialLinks (X points at the parent brand
+ *    Sunita Shekhawat — there's no dedicated MoMH X profile yet)
  *  - Positioning: homepage InfoHero / About copy
  */
 export const MuseumJsonLd: React.FC = () => {
@@ -71,6 +71,10 @@ export const MuseumJsonLd: React.FC = () => {
       'https://www.facebook.com/sunitashekhawatjaipur',
       'https://www.youtube.com/channel/UCVDcqrqm62CcaPe1O5iJiVg',
       'https://in.pinterest.com/shekhawatsunita/',
+      // Parent brand X (Sunita Shekhawat Jaipur). Mirrors the footer
+      // icon. Swap to a dedicated `@momh_india`-style handle when one
+      // exists.
+      'https://x.com/sshekhawatjpr',
     ],
     openingHoursSpecification: {
       '@type': 'OpeningHoursSpecification',
