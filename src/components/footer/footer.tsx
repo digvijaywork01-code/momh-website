@@ -201,10 +201,15 @@ const Footer = () => {
             viewports (~700-800px content area). Inside the snap-
             section wrapper, `justify-end` pushes this content to the
             bottom of the viewport while the flowers stack just above. */}
-        <div className="max-w-[1920px] mx-auto px-16 lg:px-20 pt-8 lg:pt-10 pb-6">
-          {/* Top row: logo + socials on the left, link columns on the right */}
-          <div className="grid grid-cols-12 gap-8 lg:gap-12">
-            <div className="col-span-3 flex flex-col gap-6">
+        <div className="max-w-[1920px] mx-auto px-10 md:px-12 lg:px-16 xl:px-20 pt-8 lg:pt-10 pb-6">
+          {/* Top row: logo + socials on the left, link columns on the right.
+              Reflows so the columns never cram on tablets:
+                • tablet portrait (md, 768–1023): 2 columns
+                • tablet landscape / small (lg, 1024–1279): 3 columns
+                • desktop (xl, ≥1280): the original 5-across 12-col grid
+              Each block keeps its original 12-col span only at `xl`. */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-12 gap-x-8 gap-y-10 xl:gap-12">
+            <div className="col-span-2 lg:col-span-4 xl:col-span-3 flex flex-col gap-6">
               <Link href="/" className="inline-flex">
                 {/* Official white stacked MOMH wordmark — same logo
                     used in the ContactPanel above on the personal-
@@ -221,11 +226,11 @@ const Footer = () => {
               <SocialLinks />
             </div>
 
-            <FooterLinkColumn className="col-span-2" column={ABOUT_LINKS} />
-            <FooterLinkColumn className="col-span-2" column={SUPPORT_LINKS} />
+            <FooterLinkColumn className="col-span-1 xl:col-span-2" column={ABOUT_LINKS} />
+            <FooterLinkColumn className="col-span-1 xl:col-span-2" column={SUPPORT_LINKS} />
 
             {/* Visit column with sub-section "Contact" + address */}
-            <div className="col-span-2 flex flex-col gap-6">
+            <div className="col-span-1 xl:col-span-2 flex flex-col gap-6">
               <FooterLinkColumn column={VISIT_LINKS} />
               <div className="flex flex-col gap-2">
                 <h3 className="font-body font-normal text-offwhite text-sm tracking-wide mb-1">Contact</h3>
@@ -241,7 +246,7 @@ const Footer = () => {
             </div>
 
             {/* Opening Hours */}
-            <div className="col-span-3 flex flex-col gap-2">
+            <div className="col-span-1 xl:col-span-3 flex flex-col gap-2">
               <h3 className="font-body font-normal text-offwhite text-sm tracking-wide mb-1">Opening Hours</h3>
               <ul className="font-body text-sm leading-relaxed text-offwhite/80 space-y-1.5">
                 {OPENING_HOURS.map(({ day, time }) => (
