@@ -169,9 +169,15 @@ const SocialLinks: React.FC<{ className?: string }> = ({ className }) => (
         />
       </svg>
     </Link>
+    {/* LinkedIn — pointed at the parent brand Sunita Shekhawat Jaipur
+        company page. The previous MoMH-specific LinkedIn page was
+        sparsely populated; mirroring SS keeps the social row
+        consistent with Facebook, Pinterest, and X (all SS-routed)
+        and gives visitors the canonical brand presence. Swap to the
+        MoMH-specific company page when it's actively maintained. */}
     <Link
-      href="https://www.linkedin.com/company/museum-of-meenakari-heritage-momh/about/"
-      aria-label="LinkedIn"
+      href="https://www.linkedin.com/company/sunita-shekhawat-jaipur/"
+      aria-label="LinkedIn — Sunita Shekhawat"
       className="w-7 h-7 rounded-full bg-offwhite text-founder-red flex items-center justify-center hover:bg-offwhite/90 transition-colors"
     >
       <svg width="12" height="12" viewBox="0 0 11 11" fill="none">
@@ -193,9 +199,15 @@ const SocialLinks: React.FC<{ className?: string }> = ({ className }) => (
         <path d="M8.88 4.44L5.17 2.3V6.58L8.88 4.44Z" fill="white" />
       </svg>
     </Link>
+    {/* Pinterest — pointed at the parent brand Sunita Shekhawat Jaipur
+        (`sunitashekhawatjaipur`), which is the account that
+        sunitashekhawat.com itself links from its home / contact /
+        about pages. The previous footer used `shekhawatsunita`
+        (an older personal handle); switching keeps MoMH consistent
+        with the SS canonical social presence. */}
     <Link
-      href="https://in.pinterest.com/shekhawatsunita/"
-      aria-label="Pinterest"
+      href="https://in.pinterest.com/sunitashekhawatjaipur/"
+      aria-label="Pinterest — Sunita Shekhawat"
       className="w-7 h-7 rounded-full bg-offwhite text-founder-red flex items-center justify-center hover:bg-offwhite/90 transition-colors"
     >
       <svg width="10" height="12" viewBox="0 0 9 11" fill="none">

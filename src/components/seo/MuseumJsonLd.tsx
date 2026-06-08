@@ -66,14 +66,17 @@ export const MuseumJsonLd: React.FC = () => {
     // fuzzy address text-search.
     hasMap: 'https://maps.google.com/?cid=12916303950302817297',
     sameAs: [
+      // Mirrors the footer SocialLinks. Instagram is the only MoMH-
+      // specific handle; the rest point at the parent brand Sunita
+      // Shekhawat Jaipur (Facebook, LinkedIn, YouTube, Pinterest, X)
+      // which is the canonical SS social presence and what
+      // sunitashekhawat.com itself links from. Swap any entry to a
+      // MoMH-specific URL when a dedicated handle exists.
       'https://www.instagram.com/momh_india/',
-      'https://www.linkedin.com/company/museum-of-meenakari-heritage-momh/',
       'https://www.facebook.com/sunitashekhawatjaipur',
+      'https://www.linkedin.com/company/sunita-shekhawat-jaipur/',
       'https://www.youtube.com/channel/UCVDcqrqm62CcaPe1O5iJiVg',
-      'https://in.pinterest.com/shekhawatsunita/',
-      // Parent brand X (Sunita Shekhawat Jaipur). Mirrors the footer
-      // icon. Swap to a dedicated `@momh_india`-style handle when one
-      // exists.
+      'https://in.pinterest.com/sunitashekhawatjaipur/',
       'https://x.com/sshekhawatjpr',
     ],
     openingHoursSpecification: {
