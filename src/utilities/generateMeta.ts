@@ -18,9 +18,16 @@ const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   let url = serverUrl + '/og-momh.jpg'
 
   if (image && typeof image === 'object' && 'url' in image) {
-    const ogUrl = image.sizes?.og?.url
-
-    url = ogUrl ? serverUrl + ogUrl : serverUrl + image.url
+    const candidate = image.sizes?.og?.url || image.url
+    if (candidate) {
+      // Media URLs are absolute when the doc lives on Vercel Blob (prod),
+      // relative when the doc is served by Payload's local handler
+      // (dev / fallback). Only prepend `serverUrl` to relative paths —
+      // prepending it to an absolute URL produced
+      // `https://momhindia.orghttps://...blob.vercel-storage.com/...`
+      // and Facebook/Twitter rejected it as a malformed og:image.
+      url = /^https?:\/\//i.test(candidate) ? candidate : serverUrl + candidate
+    }
   }
 
   return url
