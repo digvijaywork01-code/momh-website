@@ -13,6 +13,7 @@ import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import Script from 'next/script'
 // import { draftMode } from 'next/headers'
 
 import './globals.css'
@@ -228,6 +229,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             project dashboard (Analytics + Speed Insights tabs). */}
         <Analytics />
         <SpeedInsights />
+        {/* GA4 (property momhindia.org, 545975114) — feeds the BigQuery
+            daily export in quantum-boulder-335507, so events here become
+            the warehouse's raw history. afterInteractive keeps it off the
+            critical path; no consent gate exists on this site yet. */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-GK6YKXRPJ8"
+          strategy="afterInteractive"
+        />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-GK6YKXRPJ8');`}
+        </Script>
       </body>
     </html>
   )
