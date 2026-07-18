@@ -13,7 +13,7 @@ const NAV_LINKS = [
 ]
 
 // Mobile Nav Specifics
-const MOBILE_NAV_LINKS = [
+const MOBILE_NAV_LINKS: { label: string; href: string; hasArrow?: boolean }[] = [
   { label: 'Visit', href: '/book-an-appointment' },
   { label: 'Plan Your Visit', href: '/plan-your-visit' },
   { label: 'Museum Guidelines', href: '/museum-guidelines' },
@@ -21,12 +21,12 @@ const MOBILE_NAV_LINKS = [
 ]
 
 const openingHours = [
-  { day: 'Monday', time: '10am – 4pm' },
-  { day: 'Tuesday', time: '10am – 4pm' },
-  { day: 'Wednesday', time: '10am – 4pm' },
-  { day: 'Thursday', time: '10am – 4pm' },
-  { day: 'Friday', time: '10am – 4pm' },
-  { day: 'Saturday', time: '10am – 4pm' },
+  { day: 'Monday', time: '11am – 6pm' },
+  { day: 'Tuesday', time: '11am – 6pm' },
+  { day: 'Wednesday', time: '11am – 6pm' },
+  { day: 'Thursday', time: '11am – 6pm' },
+  { day: 'Friday', time: '11am – 6pm' },
+  { day: 'Saturday', time: '11am – 6pm' },
   { day: 'Sunday', time: 'Holiday' },
 ]
 

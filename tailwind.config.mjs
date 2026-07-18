@@ -46,6 +46,52 @@ const config = {
       },
     },
     extend: {
+      // Custom breakpoint: `wide` = TRUE desktop/laptop landscape — ≥1280px
+      // AND aspect-ratio ≥ 151/100 (1.51). Separates real PCs (MacBook ≈1.538,
+      // 16:10 = 1.60, 16:9 = 1.78) from 3:2 / 4:3 TABLETS in landscape that
+      // clear the 1280px width gate but are NOT desktops:
+      //   • iPad Pro 12.9"  1366×1024 = 4:3 = 1.333
+      //   • Surface Pro 7   1368×912  = 3:2 = 1.500  (exact integer ratio)
+      // Both fall BELOW 1.51, so `wide` doesn't match and the image keeps its
+      // lg:landscape:w-[55vw]/[50vw] cap — otherwise square images balloon to
+      // 60–76% and crush the content column (Surface founder portrait hit 68%).
+      // Why 1.51, not the 1.40 this started at: Surface LANDSCAPE is 3:2 =
+      // exactly 1.5, so the floor had to rise just past 1.5 to re-cap it. 1.51
+      // is deliberately the LOW end of the 1.500→1.538 gap — Surface is an exact
+      // ratio needing ZERO margin, so the whole budget buys Mac clearance (Macs
+      // at ~1.538 keep 0.028 of headroom and stay aspect-based). The tight
+      // margin is safe because the 55/45 cap is itself a good landscape layout:
+      // a mis-capped borderline window is different, not broken.
+      // The min-width:1280 half keeps the smaller iPads' landscape (≤1194px)
+      // capped regardless of aspect. Merged into Tailwind's default screens
+      // (sm/md/lg/xl/2xl) — does not replace them.
+      screens: {
+        wide: { raw: '(min-width: 1280px) and (min-aspect-ratio: 151/100)' },
+        // `sbs` (side-by-side) = the trigger for EditorialSplit's two-column
+        // landscape layout. Was `lg:landscape:` (≥1024px landscape); broadened to
+        // ANY tall landscape so the Surface Duo single screen rotated to landscape
+        // (720×912... i.e. 720×540) gets the split instead of the phone STACKED
+        // layout — which turned the artwork into a wide-short 3.3:1 strip.
+        //   • min-height:480 keeps real landscape PHONES (≤430px tall) stacked.
+        //   • min-width:640 stops it firing on a tiny resized window.
+        // It is a SUPERSET of the old lg:landscape for every ≥1024 device (those
+        // are all ≥480 tall), so iPad / Surface Pro / desktop landscapes are
+        // unchanged. Only EditorialSplit uses `sbs`; FounderQuote keeps
+        // `lg:landscape` (its mobile portrait+quote layout already reads well on
+        // the Duo, so it intentionally stays full-bleed there).
+        sbs: { raw: '(min-width: 640px) and (orientation: landscape) and (min-height: 480px)' },
+        // `short` = a viewport too SHORT to hold a full-bleed carousel card.
+        // The CardGrid / TwoColumnFeature mobile carousels put a full-WIDTH
+        // image above the text; image height scales with width, so on a phone
+        // (≤430px wide) it's short and fits, but on the Surface Duo single
+        // screen in landscape (720×540) a 4/3 image is 540px tall = the WHOLE
+        // viewport, pushing the heading + card text + dots off-screen. `short`
+        // caps those carousel images to a fraction of the height so the card
+        // fits. max-height:600 catches the short LANDSCAPE viewports (Duo 540,
+        // phone landscape ≤430) but NOT phone PORTRAIT (844 tall), tablet
+        // portrait, or desktop (≥~700 tall) — those keep the full image.
+        short: { raw: '(max-height: 600px)' },
+      },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',

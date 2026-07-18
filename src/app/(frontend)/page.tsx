@@ -1,9 +1,39 @@
+import type { Metadata } from 'next'
+
 import { notFound } from 'next/navigation'
 
 import type { Page as PageType } from '@/payload-types'
 
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { getCachedDocument } from '@/utilities/getDocument'
+import { generateMeta } from '@/utilities/generateMeta'
+import MuseumJsonLd from '@/components/seo/MuseumJsonLd'
+
+/**
+ * SEO metadata for the home page.
+ *
+ * Re-fetches the `home` doc at the SAME depth (2) the component uses, so
+ * `getCachedDocument`'s unstable_cache entry is shared — no second DB hit.
+ *
+ * The CMS SEO title is deliberately stripped here so the home <title> is
+ * always the brand-forward "Museum of Meenakari Heritage — Jaipur, India"
+ * (HOME_TITLE) and never doubles the wordmark. Description + OG image still
+ * honour any CMS overrides.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  let homePage: PageType | undefined
+  try {
+    homePage = (await getCachedDocument('pages', 'home', 2)()) as PageType | undefined
+  } catch {
+    homePage = undefined
+  }
+
+  const stripped = homePage
+    ? { ...homePage, meta: { ...(homePage.meta ?? {}), title: undefined } }
+    : null
+
+  return generateMeta({ doc: stripped })
+}
 
 /**
  * Home page — purely CMS-driven.
@@ -34,5 +64,10 @@ export default async function Page() {
     notFound()
   }
 
-  return <RenderBlocks blocks={layout} />
+  return (
+    <>
+      <MuseumJsonLd />
+      <RenderBlocks blocks={layout} />
+    </>
+  )
 }

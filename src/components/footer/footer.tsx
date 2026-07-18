@@ -37,29 +37,46 @@ const ChevronDownIcon = ({ className }: { className?: string }) => (
 )
 
 // Link columns from PDF page 13 (left → right).
-type LinkItem = { label: string; href: string }
+//
+// `disabled` flag: the label still renders in the footer (so the visual
+// balance of the columns stays the same) but it's emitted as a plain
+// <span> instead of a clickable <Link>, with a slightly muted colour
+// + `cursor-default` so visitors don't try to click it. Used for
+// labels whose target page hasn't been built yet (404 on prod) or
+// whose anchor target doesn't exist on the home page. Flip back to
+// `disabled: false` (or remove the flag) when the corresponding page
+// / anchor exists.
+type LinkItem = { label: string; href: string; disabled?: boolean }
 type LinkColumn = { title: string; items: LinkItem[] }
 
 const ABOUT_LINKS: LinkColumn = {
   title: 'About',
   items: [
-    { label: 'Our Story', href: '/#about' },
-    { label: "Founder's Vision", href: '/#founder' },
-    { label: 'As Seen On', href: '/#press' },
-    { label: 'Blog', href: '/#blogs' },
-    { label: 'Testimonials', href: '/#testimonials' },
+    // All five anchor IDs (#about / #founder / #press / #blogs /
+    // #testimonials) are absent from the rendered home page DOM, so
+    // these labels silently scroll nowhere. Marked disabled until
+    // matching sections gain those ids.
+    { label: 'Our Story', href: '/#about', disabled: true },
+    { label: "Founder's Vision", href: '/#founder', disabled: true },
+    { label: 'As Seen On', href: '/#press', disabled: true },
+    { label: 'Blog', href: '/#blogs', disabled: true },
+    { label: 'Testimonials', href: '/#testimonials', disabled: true },
   ],
 }
 
 const SUPPORT_LINKS: LinkColumn = {
   title: 'Support',
   items: [
-    { label: 'Contact Us', href: '/contact' },
-    { label: 'FAQ', href: '/faq' },
-    { label: 'Privacy Policy', href: '/privacy-policy' },
-    { label: 'Cookies Policy', href: '/cookies-policy' },
-    { label: 'Accessibility Statement', href: '/accessibility' },
-    { label: 'Sitemap', href: '/sitemap' },
+    // Every target below returns HTTP 404 on prod — no route folder,
+    // no Page slug. Disabled until the pages are built.
+    // ("Sitemap" → /sitemap is also 404; the *real* sitemap lives at
+    // /sitemap.xml for crawlers, but that's not a human-facing route.)
+    { label: 'Contact Us', href: '/contact', disabled: true },
+    { label: 'FAQ', href: '/faq', disabled: true },
+    { label: 'Privacy Policy', href: '/privacy-policy', disabled: true },
+    { label: 'Cookies Policy', href: '/cookies-policy', disabled: true },
+    { label: 'Accessibility Statement', href: '/accessibility', disabled: true },
+    { label: 'Sitemap', href: '/sitemap', disabled: true },
   ],
 }
 
@@ -70,24 +87,28 @@ const VISIT_LINKS: LinkColumn = {
     { label: 'Museum Guidelines', href: '/museum-guidelines' },
     { label: 'Craft Your Jewellery', href: '/craft-your-jewellery' },
     { label: 'Book a Visit', href: '/book-an-appointment' },
-    { label: 'Create Your Sevak', href: '/create-your-sevak' },
+    // /create-your-sevak is not yet a real route on prod (404).
+    { label: 'Create Your Sevak', href: '/create-your-sevak', disabled: true },
   ],
 }
 
 const OPENING_HOURS: { day: string; time: string }[] = [
-  { day: 'Monday', time: '10am – 4pm' },
-  { day: 'Tuesday', time: '10am – 4pm' },
-  { day: 'Wednesday', time: '10am – 4pm' },
-  { day: 'Thursday', time: '10am – 4pm' },
-  { day: 'Friday', time: '10am – 4pm' },
-  { day: 'Saturday', time: '10am – 4pm' },
+  { day: 'Monday', time: '11am – 6pm' },
+  { day: 'Tuesday', time: '11am – 6pm' },
+  { day: 'Wednesday', time: '11am – 6pm' },
+  { day: 'Thursday', time: '11am – 6pm' },
+  { day: 'Friday', time: '11am – 6pm' },
+  { day: 'Saturday', time: '11am – 6pm' },
   { day: 'Sunday', time: 'Holiday' },
 ]
 
 const LEGAL_LINKS: LinkItem[] = [
-  { label: 'Copyright', href: '/copyright' },
-  { label: 'Privacy Policy', href: '/privacy-policy' },
-  { label: 'Terms of Use', href: '/terms' },
+  // All three legal targets currently 404 — disabled until the pages
+  // exist. Sequenced in the footer bottom bar; rendered as plain
+  // <span>s by the disabled branch below.
+  { label: 'Copyright', href: '/copyright', disabled: true },
+  { label: 'Privacy Policy', href: '/privacy-policy', disabled: true },
+  { label: 'Terms of Use', href: '/terms', disabled: true },
 ]
 
 const ADDRESS_LINES = [
@@ -128,9 +149,15 @@ const SocialLinks: React.FC<{ className?: string }> = ({ className }) => (
         <path d="M7.31 2.31C7.55 2.31 7.75 2.12 7.75 1.88C7.75 1.64 7.55 1.44 7.31 1.44C7.07 1.44 6.88 1.64 6.88 1.88C6.88 2.12 7.07 2.31 7.31 2.31Z" fill="white" />
       </svg>
     </Link>
+    {/* X (Twitter) — pointed at the parent brand Sunita Shekhawat
+        Jaipur (@sshekhawatjpr), same as Facebook above. MoMH doesn't
+        currently run its own X profile; until it does, the SS brand
+        account is the canonical place for cross-platform mentions and
+        is what the museum's PR / press cycle routes through. Swap to
+        a dedicated `@momh_india`-style handle here when one exists. */}
     <Link
-      href="https://twitter.com"
-      aria-label="X (Twitter)"
+      href="https://x.com/sshekhawatjpr"
+      aria-label="X (Twitter) — Sunita Shekhawat"
       className="w-7 h-7 rounded-full bg-offwhite text-founder-red flex items-center justify-center hover:bg-offwhite/90 transition-colors"
     >
       <svg width="12" height="11" viewBox="0 0 11 10" fill="none">
@@ -142,9 +169,15 @@ const SocialLinks: React.FC<{ className?: string }> = ({ className }) => (
         />
       </svg>
     </Link>
+    {/* LinkedIn — pointed at the parent brand Sunita Shekhawat Jaipur
+        company page. The previous MoMH-specific LinkedIn page was
+        sparsely populated; mirroring SS keeps the social row
+        consistent with Facebook, Pinterest, and X (all SS-routed)
+        and gives visitors the canonical brand presence. Swap to the
+        MoMH-specific company page when it's actively maintained. */}
     <Link
-      href="https://www.linkedin.com/company/museum-of-meenakari-heritage-momh/about/"
-      aria-label="LinkedIn"
+      href="https://www.linkedin.com/company/sunita-shekhawat-jaipur/"
+      aria-label="LinkedIn — Sunita Shekhawat"
       className="w-7 h-7 rounded-full bg-offwhite text-founder-red flex items-center justify-center hover:bg-offwhite/90 transition-colors"
     >
       <svg width="12" height="12" viewBox="0 0 11 11" fill="none">
@@ -166,9 +199,15 @@ const SocialLinks: React.FC<{ className?: string }> = ({ className }) => (
         <path d="M8.88 4.44L5.17 2.3V6.58L8.88 4.44Z" fill="white" />
       </svg>
     </Link>
+    {/* Pinterest — pointed at the parent brand Sunita Shekhawat Jaipur
+        (`sunitashekhawatjaipur`), which is the account that
+        sunitashekhawat.com itself links from its home / contact /
+        about pages. The previous footer used `shekhawatsunita`
+        (an older personal handle); switching keeps MoMH consistent
+        with the SS canonical social presence. */}
     <Link
-      href="https://in.pinterest.com/shekhawatsunita/"
-      aria-label="Pinterest"
+      href="https://in.pinterest.com/sunitashekhawatjaipur/"
+      aria-label="Pinterest — Sunita Shekhawat"
       className="w-7 h-7 rounded-full bg-offwhite text-founder-red flex items-center justify-center hover:bg-offwhite/90 transition-colors"
     >
       <svg width="10" height="12" viewBox="0 0 9 11" fill="none">
@@ -201,10 +240,15 @@ const Footer = () => {
             viewports (~700-800px content area). Inside the snap-
             section wrapper, `justify-end` pushes this content to the
             bottom of the viewport while the flowers stack just above. */}
-        <div className="max-w-[1920px] mx-auto px-16 lg:px-20 pt-8 lg:pt-10 pb-6">
-          {/* Top row: logo + socials on the left, link columns on the right */}
-          <div className="grid grid-cols-12 gap-8 lg:gap-12">
-            <div className="col-span-3 flex flex-col gap-6">
+        <div className="max-w-[1920px] mx-auto px-10 md:px-12 lg:px-16 xl:px-20 pt-8 lg:pt-10 pb-6">
+          {/* Top row: logo + socials on the left, link columns on the right.
+              Reflows so the columns never cram on tablets:
+                • tablet portrait (md, 768–1023): 2 columns
+                • tablet landscape / small (lg, 1024–1279): 3 columns
+                • desktop (xl, ≥1280): the original 5-across 12-col grid
+              Each block keeps its original 12-col span only at `xl`. */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-12 gap-x-8 gap-y-10 xl:gap-12">
+            <div className="col-span-2 lg:col-span-4 xl:col-span-3 flex flex-col gap-6">
               <Link href="/" className="inline-flex">
                 {/* Official white stacked MOMH wordmark — same logo
                     used in the ContactPanel above on the personal-
@@ -221,11 +265,11 @@ const Footer = () => {
               <SocialLinks />
             </div>
 
-            <FooterLinkColumn className="col-span-2" column={ABOUT_LINKS} />
-            <FooterLinkColumn className="col-span-2" column={SUPPORT_LINKS} />
+            <FooterLinkColumn className="col-span-1 xl:col-span-2" column={ABOUT_LINKS} />
+            <FooterLinkColumn className="col-span-1 xl:col-span-2" column={SUPPORT_LINKS} />
 
             {/* Visit column with sub-section "Contact" + address */}
-            <div className="col-span-2 flex flex-col gap-6">
+            <div className="col-span-1 xl:col-span-2 flex flex-col gap-6">
               <FooterLinkColumn column={VISIT_LINKS} />
               <div className="flex flex-col gap-2">
                 <h3 className="font-body font-normal text-offwhite text-sm tracking-wide mb-1">Contact</h3>
@@ -241,7 +285,7 @@ const Footer = () => {
             </div>
 
             {/* Opening Hours */}
-            <div className="col-span-3 flex flex-col gap-2">
+            <div className="col-span-1 xl:col-span-3 flex flex-col gap-2">
               <h3 className="font-body font-normal text-offwhite text-sm tracking-wide mb-1">Opening Hours</h3>
               <ul className="font-body text-sm leading-relaxed text-offwhite/80 space-y-1.5">
                 {OPENING_HOURS.map(({ day, time }) => (
@@ -261,11 +305,24 @@ const Footer = () => {
               © Museum of Meenakari Heritage 2026. ALL RIGHTS RESERVED.
             </p>
             <div className="flex gap-6">
-              {LEGAL_LINKS.map((link) => (
-                <Link key={link.label} href={link.href} className="hover:text-offwhite transition-colors">
-                  {link.label}
-                </Link>
-              ))}
+              {LEGAL_LINKS.map((link) =>
+                link.disabled ? (
+                  <span
+                    key={link.label}
+                    className="text-offwhite/50 cursor-default select-none"
+                  >
+                    {link.label}
+                  </span>
+                ) : (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="hover:text-offwhite transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ),
+              )}
             </div>
           </div>
         </div>
@@ -300,13 +357,21 @@ const Footer = () => {
               </button>
               {openAccordion === col.title && (
                 <ul className="pb-4 space-y-2 font-body text-sm text-offwhite/80">
-                  {col.items.map((item) => (
-                    <li key={item.label}>
-                      <Link href={item.href} className="hover:underline">
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
+                  {col.items.map((item) =>
+                    item.disabled ? (
+                      <li key={item.label}>
+                        <span className="text-offwhite/50 cursor-default select-none">
+                          {item.label}
+                        </span>
+                      </li>
+                    ) : (
+                      <li key={item.label}>
+                        <Link href={item.href} className="hover:underline">
+                          {item.label}
+                        </Link>
+                      </li>
+                    ),
+                  )}
                 </ul>
               )}
             </div>
@@ -363,11 +428,24 @@ const Footer = () => {
         <div className="mt-8 flex flex-col gap-3 text-xs text-offwhite/70">
           <p className="m-0">© Museum of Meenakari Heritage 2026. ALL RIGHTS RESERVED.</p>
           <div className="flex flex-wrap gap-4">
-            {LEGAL_LINKS.map((link) => (
-              <Link key={link.label} href={link.href} className="hover:text-offwhite transition-colors">
-                {link.label}
-              </Link>
-            ))}
+            {LEGAL_LINKS.map((link) =>
+              link.disabled ? (
+                <span
+                  key={link.label}
+                  className="text-offwhite/50 cursor-default select-none"
+                >
+                  {link.label}
+                </span>
+              ) : (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="hover:text-offwhite transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ),
+            )}
           </div>
         </div>
       </div>
@@ -382,13 +460,24 @@ const FooterLinkColumn: React.FC<{ column: LinkColumn; className?: string }> = (
   <div className={`flex flex-col gap-3 ${className || ''}`}>
     <h3 className="font-body font-normal text-offwhite text-sm tracking-wide mb-1">{column.title}</h3>
     <ul className="space-y-2 font-body text-sm text-offwhite/80">
-      {column.items.map((item) => (
-        <li key={item.label}>
-          <Link href={item.href} className="hover:text-offwhite transition-colors">
-            {item.label}
-          </Link>
-        </li>
-      ))}
+      {column.items.map((item) =>
+        item.disabled ? (
+          // Disabled: label is preserved (keeps the column visually
+          // balanced) but rendered as a non-interactive <span>. Dim
+          // colour + `cursor-default` signal it's not a live link.
+          <li key={item.label}>
+            <span className="text-offwhite/50 cursor-default select-none">
+              {item.label}
+            </span>
+          </li>
+        ) : (
+          <li key={item.label}>
+            <Link href={item.href} className="hover:text-offwhite transition-colors">
+              {item.label}
+            </Link>
+          </li>
+        ),
+      )}
     </ul>
   </div>
 )

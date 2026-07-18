@@ -50,14 +50,18 @@ const bgClass: Record<BgKey, string> = {
 const isDarkBg = (bg: BgKey): boolean =>
   bg === 'black' || bg === 'emerald' || bg === 'maroon' || bg === 'navy'
 
-/** Icon horizontal alignment within the content column. Mobile always
- *  uses `justify-start` (left) so the icon reads naturally above the
- *  left-aligned text stack. Desktop applies the editor's chosen
- *  position via the `lg:` prefix. */
+/** Icon horizontal alignment within the content column. STACKED layouts
+ *  always use `justify-start` (left) so the icon reads naturally above the
+ *  left-aligned text stack. In the SIDE-BY-SIDE layout it applies the
+ *  editor's chosen position at the `sbs:` breakpoint — the SAME breakpoint
+ *  that right-aligns the content (sbs:items-end) — so the icon tracks the
+ *  text alignment. (Was `lg:`, which left the icon stuck on the left at
+ *  720–1023px side-by-side viewports like the Surface Duo landscape, where
+ *  the content is already right-aligned.) */
 const iconAlignClass: Record<'left' | 'center' | 'right', string> = {
-  left: 'justify-start lg:justify-start',
-  center: 'justify-start lg:justify-center',
-  right: 'justify-start lg:justify-end',
+  left: 'justify-start sbs:justify-start',
+  center: 'justify-start sbs:justify-center',
+  right: 'justify-start sbs:justify-end',
 }
 
 type TopSpacingKey = NonNullable<EditorialSplitBlockProps['topSpacing']>
@@ -304,13 +308,15 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
         // capped at 30vh, body line-clamped, tight padding) ensure
         // the content stack actually fits in that one viewport
         // without cropping.
-        // Mobile (<lg): min-h-svh — at least one visible viewport,
-        // can grow if content needs more room on very small phones.
-        // Desktop (lg+): lg:h-screen — EXPLICIT height required so
-        // the inner flex-row's `min-h-svh` chain doesn't collapse;
-        // the desktop 60/40 split needs both columns to fill the
-        // viewport. Same pattern as the FounderQuote fix.
-        'w-full min-h-svh lg:h-screen',
+        // Mobile + ALL PORTRAIT viewports (incl. iPad Pro 12.9" @ 1024×1366) +
+        // short LANDSCAPE phones (<480px tall): min-h-svh — STACKED, image on
+        // top, content below.
+        // TALL LANDSCAPE (`sbs` = ≥640px AND landscape AND ≥480px tall — from the
+        // Surface Duo single screen @ 720×540 up through every iPad / Surface
+        // Pro / desktop): h-screen, so the side-by-side split's columns fill the
+        // viewport. `sbs` requires landscape, so any PORTRAIT (incl. the 12.9")
+        // STAYS stacked; short landscape phones do too (<480px tall).
+        'w-full min-h-svh sbs:h-screen',
         bgClass[bg],
         topSpacingClass[topSpacing as TopSpacingKey],
         bottomSpacingClass[bottomSpacing as BottomSpacingKey],
@@ -319,7 +325,7 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
       data-snap-section
       aria-label={typeof eyebrow === 'string' ? eyebrow : undefined}
     >
-      <div className="flex flex-col lg:flex-row min-h-svh">
+      <div className="flex flex-col sbs:flex-row min-h-svh">
         {/* Image column — height matches section, width = height × image
             aspect-ratio. On lg+ the column sits beside the content column;
             below lg it sits above with full width. */}
@@ -340,11 +346,22 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
             // h-[45svh] at this breakpoint.
             // lg+: full-viewport height per the editorial 60/40 split,
             // unchanged.
-            'relative shrink-0 w-full lg:w-auto h-[40svh] lg:h-screen',
+            // STACKED (portrait tablets + short landscape phones): phones (<md)
+            // keep the 40svh image; PORTRAIT tablets get md:h-[60svh] — a taller
+            // strip above the bottom-aligned content.
+            // SIDE-BY-SIDE (`sbs` = tall landscape, incl. Surface Duo 720×540):
+            // the image fills the column height (sbs:!h-screen — `!` so it beats
+            // md:h-[60svh] in the 768–1023 landscape band) and is width-CAPPED at
+            // 55vw, so square/wide images can't balloon to 60–80% and crush the
+            // content column. The cap holds through the 12.9" (1366×1024) and
+            // Surface Pro 7 (1368×912) landscapes.
+            // Desktop (`wide`: ≥1280 AND aspect ≥151/100): aspect-based width
+            // (wide:!w-auto) — `!` beats the cap regardless of CSS source order.
+            'relative shrink-0 w-full sbs:w-[55vw] wide:!w-auto h-[40svh] md:h-[60svh] sbs:!h-screen',
             // overflow:hidden contains the 1.08 scale during entrance so
             // the image doesn't bleed past the column edge.
             'overflow-hidden',
-            imageFirst ? 'order-1' : 'order-1 lg:order-2',
+            imageFirst ? 'order-1' : 'order-1 sbs:order-2',
           )}
           style={{ aspectRatio: imageAspect }}
         >
@@ -379,14 +396,14 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
             // content stack fits in one viewport view alongside
             // the capped 35vh image. lg+: original generous padding
             // for the editorial 60/40 spec.
-            'flex-1 flex flex-col px-8 md:px-16 lg:px-24 py-8 lg:py-20',
+            'flex-1 flex flex-col px-8 md:px-16 sbs:!px-24 py-8 sbs:py-20',
             // Mobile: always left-aligned. Desktop: alignment depends
             // on whether the image sits on the left or right of the
             // editorial split.
             'order-2 text-left items-start',
             imageFirst
-              ? 'lg:text-right lg:items-end'
-              : 'lg:order-1 lg:text-left lg:items-start',
+              ? 'sbs:text-right sbs:items-end'
+              : 'sbs:order-1 sbs:text-left sbs:items-start',
           )}
         >
           {/* Decorative icon — pinned to top, left/center/right per
@@ -399,7 +416,10 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
             <div
               ref={iconRef}
               className={cn(
-                'hidden lg:flex w-full',
+                // Desktop ornament — only in LANDSCAPE ≥1024. At ≥1024 PORTRAIT
+                // (12.9") it stays hidden and the inline mobile icon shows
+                // instead, matching the stacked smaller-tablet layout.
+                'hidden sbs:flex w-full',
                 iconAlignClass[iconPosition || 'left'],
               )}
             >
@@ -414,7 +434,12 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
 
           {/* Content stack — pushed to bottom of the column, aligned to outer edge.
               All sizes locked to the PDF spec via fluid clamps (see tokens.css). */}
-          <div className={cn('mt-auto max-w-2xl w-full', imageFirst ? 'lg:ml-auto' : '')}>
+          {/* `mt-auto` bottom-anchors the content stack at EVERY breakpoint —
+              phone (image dominant, text low), tablet, and desktop all share
+              the same low-content editorial rhythm. (An earlier tablet-only
+              `md:mt-0` top-align was reverted per design review: the default
+              bottom alignment reads better in the side-by-side.) */}
+          <div className={cn('mt-auto max-w-2xl w-full', imageFirst ? 'sbs:ml-auto' : '')}>
             {/* Mobile-only icon — sits directly above the eyebrow.
                 Smaller than the desktop icon (32px vs 56-72px) so it
                 reads as a subtle marker rather than a dominant
@@ -425,7 +450,7 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
                 ref={mobileIconRef}
                 src={icon.url}
                 alt={icon.alt || ''}
-                className="lg:hidden w-8 h-8 object-contain mb-3"
+                className="sbs:hidden w-8 h-8 object-contain mb-3"
               />
             )}
 
@@ -460,9 +485,9 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
               ref={bodyWrapRef}
               className={cn(
                 'mb-6 max-w-xl',
-                // Push to right edge on desktop only (image-left
-                // layout) — mobile stacks left-aligned naturally.
-                imageFirst ? 'lg:ml-auto' : '',
+                // Push to outer edge on the side-by-side (image-left layout) —
+                // mobile + ALL portrait (incl. 12.9") stack left-aligned.
+                imageFirst ? 'sbs:ml-auto' : '',
               )}
             >
               <ExpandableText mobileLineClamp={mobileBodyLineClamp}>

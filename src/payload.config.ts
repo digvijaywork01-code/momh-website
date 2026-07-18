@@ -1,4 +1,4 @@
-import { postgresAdapter } from '@payloadcms/db-postgres'
+import { postgresAdapter, sql } from '@payloadcms/db-postgres'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { resendAdapter } from '@payloadcms/email-resend'
 
@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
+import { NewsletterSubscribers } from './collections/NewsletterSubscribers'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
@@ -27,9 +28,6 @@ export default buildConfig({
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below.
       beforeLogin: ['@/components/BeforeLogin'],
-      // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below.
-      beforeDashboard: ['@/components/BeforeDashboard'],
     },
     importMap: {
       baseDir: path.resolve(dirname),
@@ -65,8 +63,64 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI || '',
     },
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [Pages, Posts, Media, Categories, Users, NewsletterSubscribers],
   cors: [getServerSideURL()].filter(Boolean),
+  // Boot-time bootstrap for the `newsletter_subscribers` collection.
+  //
+  // The collection ships without a Payload migration entry because the
+  // migrations/index.ts on this project is intentionally minimal (the
+  // earlier 20250728 migration is broken and re-applying the
+  // 20260527 full-schema initial would fail against existing prod
+  // tables). Instead, this `onInit` hook runs every cold boot and
+  // CREATEs the new table + indexes + FK if they don't exist — an
+  // idempotent, build-safe alternative to wiring `payload migrate`
+  // into the deploy pipeline.
+  //
+  // Safe to run multiple times: every statement uses IF NOT EXISTS.
+  // Costs are ~one cheap query per cold start; warm requests skip it.
+  onInit: async (payload) => {
+    try {
+      await payload.db.drizzle.execute(sql`
+        CREATE TABLE IF NOT EXISTS "newsletter_subscribers" (
+          "id" serial PRIMARY KEY NOT NULL,
+          "email" varchar NOT NULL,
+          "source" varchar DEFAULT 'home-newsletter',
+          "subscribed_at" timestamp(3) with time zone,
+          "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+          "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+        );
+        CREATE UNIQUE INDEX IF NOT EXISTS "newsletter_subscribers_email_idx"
+          ON "newsletter_subscribers" USING btree ("email");
+        CREATE INDEX IF NOT EXISTS "newsletter_subscribers_updated_at_idx"
+          ON "newsletter_subscribers" USING btree ("updated_at");
+        CREATE INDEX IF NOT EXISTS "newsletter_subscribers_created_at_idx"
+          ON "newsletter_subscribers" USING btree ("created_at");
+        ALTER TABLE "payload_locked_documents_rels"
+          ADD COLUMN IF NOT EXISTS "newsletter_subscribers_id" integer;
+        DO $$
+        BEGIN
+          IF NOT EXISTS (
+            SELECT 1 FROM information_schema.table_constraints
+            WHERE constraint_name = 'payload_locked_documents_rels_newsletter_subscribers_fk'
+          ) THEN
+            ALTER TABLE "payload_locked_documents_rels"
+              ADD CONSTRAINT "payload_locked_documents_rels_newsletter_subscribers_fk"
+              FOREIGN KEY ("newsletter_subscribers_id")
+              REFERENCES "public"."newsletter_subscribers"("id")
+              ON DELETE cascade ON UPDATE no action;
+          END IF;
+        END$$;
+        CREATE INDEX IF NOT EXISTS "payload_locked_documents_rels_newsletter_subscribers_id_idx"
+          ON "payload_locked_documents_rels" USING btree ("newsletter_subscribers_id");
+      `)
+      payload.logger.info('[newsletter] table bootstrap ok')
+    } catch (err) {
+      // Non-fatal: if the bootstrap can't run (e.g. read-only DB role,
+      // permissions issue), the route will still return 500 cleanly on
+      // signup and the rest of the admin keeps working.
+      payload.logger.error({ err }, '[newsletter] onInit table bootstrap failed')
+    }
+  },
   email: resendAdapter({
     defaultFromAddress: 'no-reply@momhindia.org',
     defaultFromName: 'Museum of Meenakari Heritage',

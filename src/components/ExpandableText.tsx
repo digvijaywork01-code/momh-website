@@ -77,7 +77,12 @@ export const ExpandableText: React.FC<Props> = ({
         type="button"
         onClick={() => setExpanded((v) => !v)}
         className={cn(
-          'lg:hidden mt-3 font-script italic text-sm underline underline-offset-4',
+          // `md:hidden` hides the toggle from tablet up (full text, no
+          // clamp). `.expandable-text-toggle` lets globals.css RE-SHOW it on
+          // SHORT viewports (landscape tablets / narrow-short windows) where
+          // the clamp is re-applied — otherwise the clamped text couldn't be
+          // expanded.
+          'expandable-text-toggle md:hidden mt-3 font-script italic text-sm underline underline-offset-4',
           'text-current opacity-80 hover:opacity-100 transition-opacity',
           'focus:outline-none focus-visible:ring-1 focus-visible:ring-current',
           toggleClassName,

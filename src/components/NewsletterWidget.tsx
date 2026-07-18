@@ -14,7 +14,7 @@
  * ivory, maroon, emerald, and black backgrounds.
  */
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { cn } from '@/utilities/ui'
 
 type Props = {
@@ -36,18 +36,35 @@ export const NewsletterWidget: React.FC<Props> = ({
   const inkClass = dark ? 'text-offwhite' : 'text-warm-gray'
   const borderClass = dark ? 'border-offwhite/60' : 'border-warm-gray/60'
 
+  // After a successful subscribe:
+  //   • clear the input straight away so the visitor sees the form is
+  //     "fresh" again (and another email could be added if they want);
+  //   • leave "Subscribed" + the disabled button in place for 3 seconds
+  //     as confirmation, then revert to idle so the SUBSCRIBE label +
+  //     active button come back.
+  // The setTimeout is cleaned up on unmount / on any status change so a
+  // mid-window unmount or a stale tick doesn't fire a setState on a
+  // gone component (or jump backwards over a fresh submit).
+  useEffect(() => {
+    if (status !== 'success') return
+    setEmail('')
+    const t = setTimeout(() => setStatus('idle'), 3000)
+    return () => clearTimeout(t)
+  }, [status])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email || status === 'submitting') return
-    if (!endpoint) {
-      // No endpoint wired — display a local success so the UX still feels
-      // complete; admins can plug in a real URL via the block config.
-      setStatus('success')
-      return
-    }
+    // When the CMS leaves `endpoint` empty (as the home-page p12 widget
+    // currently does) we used to fake a local "Subscribed" — which meant
+    // every submission was silently discarded. Default to the in-house
+    // `/api/newsletter` route instead so signups always land in
+    // `/admin → Newsletter Subscribers`. Admins can still override per-
+    // block with a different URL (e.g. a future Mailchimp route).
+    const target = endpoint && endpoint.trim() ? endpoint : '/api/newsletter'
     try {
       setStatus('submitting')
-      const res = await fetch(endpoint, {
+      const res = await fetch(target, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

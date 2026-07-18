@@ -11,6 +11,9 @@ import Footer from '@/components/footer/footer'
 import FlowerPaintings from '@/components/body/FlowerPaintings'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import Script from 'next/script'
 // import { draftMode } from 'next/headers'
 
 import './globals.css'
@@ -62,6 +65,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        {/* Larger PNG icon — Google recommends a favicon that's a multiple of
+            48px for search results; this gives it a crisp 192 to choose from
+            (also the PWA/install icon, shared with the web manifest). */}
+        <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
         {/* Self-hosted font stylesheets — loaded as <link> tags because
@@ -199,7 +206,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     // previous block — gives the page a moment to
                     // breathe before transitioning into the footer.
                     'pt-10 lg:pt-14'
-                  : 'min-h-svh justify-end lg:min-h-0 lg:justify-start lg:pt-14',
+                  : // Mobile (<md): full-viewport wrapper, content justified to
+                    // the bottom so the footer snap lands cleanly on small
+                    // phones. Tablet + desktop (md+): hug the content instead
+                    // — on the taller tablet viewport the old `justify-end` left
+                    // a big black band ABOVE the flowers. Moving the hug
+                    // behaviour from lg: to md: fixes tablet; desktop is
+                    // unchanged (same values, md: already covers ≥lg).
+                    'min-h-svh justify-end md:min-h-0 md:justify-start md:pt-14',
               )}
             >
               <FlowerPaintings />
@@ -208,6 +222,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           )}
           </Providers>
         </div>
+        {/* Real-user Core Web Vitals + page analytics. Mounted OUTSIDE
+            #scroll-container so they never interact with the GSAP/Lenis
+            scroll-snap machinery. Both render nothing visible. Data flows
+            once the corresponding toggles are enabled in the Vercel
+            project dashboard (Analytics + Speed Insights tabs). */}
+        <Analytics />
+        <SpeedInsights />
+        {/* GA4 (property momhindia.org, 545975114) — feeds the BigQuery
+            daily export in quantum-boulder-335507, so events here become
+            the warehouse's raw history. afterInteractive keeps it off the
+            critical path; no consent gate exists on this site yet. */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-GK6YKXRPJ8"
+          strategy="afterInteractive"
+        />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-GK6YKXRPJ8');`}
+        </Script>
       </body>
     </html>
   )

@@ -3,7 +3,23 @@ import { notFound } from 'next/navigation'
 import type { Page as PageType } from '@/payload-types'
 
 import { RenderBlocks } from '@/blocks/RenderBlocks'
+import type { Metadata } from 'next'
+
 import { getCachedDocument } from '@/utilities/getDocument'
+import { generateMeta } from '@/utilities/generateMeta'
+
+export async function generateMetadata(): Promise<Metadata> {
+  let page: PageType | undefined
+  try {
+    page = (await getCachedDocument('pages', 'thank-you', 2)()) as PageType | undefined
+  } catch {
+    page = undefined
+  }
+  // Confirmation page — keep it out of search results (no SEO value, and
+  // we don't want it surfacing instead of the real form pages).
+  const meta = await generateMeta({ doc: page ?? null, pageTitle: 'Thank You' })
+  return { ...meta, robots: { index: false, follow: true } }
+}
 
 /**
  * /thank-you — shared form confirmation page (PDF p7). Both the

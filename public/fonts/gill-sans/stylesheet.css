@@ -1,5 +1,7 @@
 /* Gill Sans — body font for the editorial layout.
- * Extracted from the designer's GillSans.ttc bundle into individual TTFs.
+ * Extracted from the designer's GillSans.ttc bundle into individual TTFs,
+ * then converted to woff2 (~65% smaller). woff2 is listed first; the TTF
+ * stays as a fallback for the rare browser without woff2 support.
  * Production note: this is licensed Monotype Gill Sans. Long-term, swap to
  * Adobe Fonts' Gill Sans Nova via the Typekit kit once available, then this
  * folder can be deleted.
@@ -7,7 +9,8 @@
 
 @font-face {
   font-family: 'Gill Sans';
-  src: url('GillSans-Light.ttf') format('truetype');
+  src: url('GillSans-Light.woff2') format('woff2'),
+       url('GillSans-Light.ttf') format('truetype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -15,7 +18,8 @@
 
 @font-face {
   font-family: 'Gill Sans';
-  src: url('GillSans-LightItalic.ttf') format('truetype');
+  src: url('GillSans-LightItalic.woff2') format('woff2'),
+       url('GillSans-LightItalic.ttf') format('truetype');
   font-weight: 300;
   font-style: italic;
   font-display: swap;
@@ -23,7 +27,8 @@
 
 @font-face {
   font-family: 'Gill Sans';
-  src: url('GillSans-Regular.ttf') format('truetype');
+  src: url('GillSans-Regular.woff2') format('woff2'),
+       url('GillSans-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -31,7 +36,8 @@
 
 @font-face {
   font-family: 'Gill Sans';
-  src: url('GillSans-Italic.ttf') format('truetype');
+  src: url('GillSans-Italic.woff2') format('woff2'),
+       url('GillSans-Italic.ttf') format('truetype');
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -39,7 +45,8 @@
 
 @font-face {
   font-family: 'Gill Sans';
-  src: url('GillSans-SemiBold.ttf') format('truetype');
+  src: url('GillSans-SemiBold.woff2') format('woff2'),
+       url('GillSans-SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -47,7 +54,8 @@
 
 @font-face {
   font-family: 'Gill Sans';
-  src: url('GillSans-SemiBoldItalic.ttf') format('truetype');
+  src: url('GillSans-SemiBoldItalic.woff2') format('woff2'),
+       url('GillSans-SemiBoldItalic.ttf') format('truetype');
   font-weight: 600;
   font-style: italic;
   font-display: swap;
@@ -55,7 +63,8 @@
 
 @font-face {
   font-family: 'Gill Sans';
-  src: url('GillSans-Bold.ttf') format('truetype');
+  src: url('GillSans-Bold.woff2') format('woff2'),
+       url('GillSans-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -63,7 +72,8 @@
 
 @font-face {
   font-family: 'Gill Sans';
-  src: url('GillSans-BoldItalic.ttf') format('truetype');
+  src: url('GillSans-BoldItalic.woff2') format('woff2'),
+       url('GillSans-BoldItalic.ttf') format('truetype');
   font-weight: 700;
   font-style: italic;
   font-display: swap;
@@ -71,7 +81,8 @@
 
 @font-face {
   font-family: 'Gill Sans';
-  src: url('GillSans-UltraBold.ttf') format('truetype');
+  src: url('GillSans-UltraBold.woff2') format('woff2'),
+       url('GillSans-UltraBold.ttf') format('truetype');
   font-weight: 800;
   font-style: normal;
   font-display: swap;

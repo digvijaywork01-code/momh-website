@@ -3,7 +3,20 @@ import { notFound } from 'next/navigation'
 import type { Page as PageType } from '@/payload-types'
 
 import { RenderBlocks } from '@/blocks/RenderBlocks'
+import type { Metadata } from 'next'
+
 import { getCachedDocument } from '@/utilities/getDocument'
+import { generateMeta } from '@/utilities/generateMeta'
+
+export async function generateMetadata(): Promise<Metadata> {
+  let page: PageType | undefined
+  try {
+    page = (await getCachedDocument('pages', 'museum-guidelines', 2)()) as PageType | undefined
+  } catch {
+    page = undefined
+  }
+  return generateMeta({ doc: page ?? null, pageTitle: 'Museum Guidelines' })
+}
 
 /**
  * /museum-guidelines — Payload-managed editorial page.

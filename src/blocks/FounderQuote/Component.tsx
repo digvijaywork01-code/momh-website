@@ -175,9 +175,10 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
   const noScrollAnim = useNoScrollAnimations()
 
   // Refs to all three sections + their content/portrait wrappers.
-  // Both mobile sections and the desktop section are in the DOM at
-  // all times (Tailwind's `lg:hidden` / `hidden lg:block` controls
-  // visibility per breakpoint), so refs attach to all three.
+  // Both mobile sections and the desktop section are in the DOM at all
+  // times (Tailwind's `lg:landscape:hidden` / `hidden lg:landscape:block`
+  // controls visibility per breakpoint+orientation), so refs attach to all
+  // three. The mobile pair also shows at ≥1024 PORTRAIT (12.9" portrait).
   // Animations + IntersectionObserver pick the right targets at
   // runtime via `gsap.matchMedia` + the observer's per-element fire.
   const mobilePortraitSecRef = useRef<HTMLElement | null>(null)
@@ -235,7 +236,11 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
 
     const mm = gsap.matchMedia()
 
-    mm.add('(max-width: 1023px)', () => {
+    // MOBILE markup = <1024px (any orientation) OR ≥1024px PORTRAIT (the
+    // iPad Pro 12.9" @ 1024×1366, which now renders the two stacked sections).
+    // Mirrors the `lg:landscape:hidden` visibility so the cascade is wired to
+    // whichever markup is actually on screen.
+    mm.add('(max-width: 1023px), (min-width: 1024px) and (orientation: portrait)', () => {
       const portraitSec = mobilePortraitSecRef.current
       const contentSec = mobileContentSecRef.current
       const portraitWrap = mobilePortraitWrapRef.current
@@ -277,7 +282,10 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
       )
     })
 
-    mm.add('(min-width: 1024px)', () => {
+    // DESKTOP markup = the 50/50 split, shown only in LANDSCAPE ≥1024 (incl.
+    // the 12.9" landscape). Gated to `landscape` so the ≥1024 PORTRAIT case
+    // (12.9" portrait) does NOT run this — it runs the mobile block above.
+    mm.add('(min-width: 1024px) and (orientation: landscape)', () => {
       const sec = desktopSecRef.current
       const portraitWrap = desktopPortraitWrapRef.current
       const contentWrap = desktopContentWrapRef.current
@@ -347,7 +355,7 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
        *  Hidden on lg+ where the desktop 50/50 split takes over. */}
       <section
         ref={mobilePortraitSecRef}
-        className={cn('lg:hidden w-full h-svh overflow-hidden', bgClass[bg])}
+        className={cn('lg:landscape:hidden w-full h-svh overflow-hidden', bgClass[bg])}
         data-theme="light"
         data-snap-section
         aria-label={eyebrow ? `${eyebrow} portrait` : 'Founder portrait'}
@@ -376,7 +384,7 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
        *  the portrait and lands here cleanly. Hidden on lg+. */}
       <section
         ref={mobileContentSecRef}
-        className={cn('lg:hidden w-full h-svh', bgClass[bg])}
+        className={cn('lg:landscape:hidden w-full h-svh', bgClass[bg])}
         data-theme="light"
         data-snap-section
         aria-label={eyebrow ? `${eyebrow} note` : 'Founder note'}
@@ -397,7 +405,7 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
        *  breakpoint. */}
       <section
         ref={desktopSecRef}
-        className={cn('hidden lg:block w-full lg:h-screen', bgClass[bg])}
+        className={cn('hidden lg:landscape:block w-full lg:landscape:h-screen', bgClass[bg])}
         data-theme="light"
         data-snap-section
         aria-label={eyebrow ? `${eyebrow} ${title}` : 'Founder quote'}
@@ -406,7 +414,16 @@ export const FounderQuoteBlock: React.FC<FounderQuoteBlockProps> = ({
           <div
             ref={desktopPortraitWrapRef}
             className={cn(
-              'relative shrink-0 overflow-hidden lg:w-auto lg:h-full',
+              // Width = height × aspect (via the aspectRatio style) on TRUE
+              // desktop only (`wide`: ≥1280px AND aspect ≥7/5). At tablet
+              // LANDSCAPE — incl. the iPad Pro 12.9" (1366×1024, aspect 1.333,
+              // which is NOT `wide`) — that computes to ~76% for this near-
+              // square portrait, starving the quote column (headline clipped,
+              // name pushed off the short viewport). Cap at 50vw for every
+              // landscape below `wide` so the quote panel keeps its half —
+              // object-cover crops the portrait. `wide:!w-auto` (important)
+              // beats the cap on real desktops regardless of CSS source order.
+              'relative shrink-0 overflow-hidden lg:w-[50vw] wide:!w-auto lg:h-full',
               portraitFirst ? 'order-1' : 'order-2',
             )}
             style={{ aspectRatio: portraitAspect }}

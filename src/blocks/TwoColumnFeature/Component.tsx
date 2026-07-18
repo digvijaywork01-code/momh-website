@@ -170,7 +170,7 @@ const Column: React.FC<{ column: Column; dark: boolean }> = ({ column, dark }) =
         return (
           <div
             ref={imageWrapRef}
-            className="relative mb-4 w-full overflow-hidden aspect-[var(--mobile-aspect)] lg:aspect-[5/2]"
+            className="relative mb-4 short:mb-3 w-full overflow-hidden aspect-[var(--mobile-aspect)] short:max-h-[30svh] lg:aspect-[5/2]"
             style={{ ['--mobile-aspect' as string]: mobileAspect } as React.CSSProperties}
           >
             <Media fill loading="eager" imgClassName="object-cover" resource={column.image} />
@@ -361,7 +361,7 @@ export const TwoColumnFeatureBlock: React.FC<TwoColumnFeatureBlockProps> = ({
         // (~800-900px content area after browser chrome). On taller
         // viewports the flex `justify-center` keeps everything visually
         // balanced with whitespace above and below.
-        'w-full min-h-svh flex flex-col justify-center py-10 lg:py-14 px-6 md:px-12 lg:px-20',
+        'w-full min-h-svh flex flex-col justify-center py-10 short:py-4 lg:py-14 px-6 md:px-12 lg:px-20',
         bgClass[bg],
       )}
       data-theme={dark ? 'dark' : 'light'}

@@ -236,19 +236,6 @@ body > * {
   font-style: italic;
 }
 
-.swiper-pagination-bullet-custom {
-  width: 8px;
-  height: 8px;
-  background-color: #d1d5db; /* gray-300 */
-  border-radius: 9999px;
-  opacity: 1;
-  transition: background-color 0.3s;
-}
-
-.swiper-pagination-bullet-active-custom {
-  background-color: #111827; /* gray-900 */
-}
-
 /* ─── ExpandableText (mobile Read More) ────────────────────────────
  * Used by the `<ExpandableText>` component to truncate long body /
  * quote text to a fixed line count on mobile. The line count is
@@ -300,13 +287,46 @@ body > * {
   background: rgba(255, 255, 255, 0.45);
   border-radius: 2px;
 }
-@media (min-width: 1024px) {
+/* From md (768px) up, the editorial split is side-by-side with a full-
+ * height content column, so the body runs at its natural full length —
+ * drop the mobile clamp. SHORT viewports re-apply it below. */
+@media (min-width: 768px) {
   .expandable-text-clamp,
   .expandable-text-scroll {
     display: block;
     max-height: none;
     -webkit-line-clamp: unset;
     overflow: visible;
+  }
+}
+
+/* Short narrow-window RE-CLAMP (768–1023px wide × ≤840px tall ONLY).
+ *
+ * Below lg the editorial block STACKS (image on top, content below) and
+ * pins to ONE viewport height. A window that's both NARROW (<1024px) and
+ * SHORT (≤840px) — e.g. a desktop window dragged to ~1000×700 — can't fit
+ * the stacked image + full body, so clamp + show Read More there.
+ *
+ * This deliberately STOPS at 1023px. At lg+ (≥1024 = landscape tablets) the
+ * 55/45 side-by-side gives the content a wide-enough column that the FULL
+ * body wraps short and FITS (verified every block at 1024×768), so landscape
+ * shows the full body with NO Read More — clamping a panel that has plenty
+ * of empty room would be a pointless toggle. (Real iPad portrait is ≥1024px
+ * TALL, so it never matches this rule either.) Toggle (md:hidden) re-shown
+ * here via its class. */
+@media (min-width: 768px) and (max-width: 1023px) and (max-height: 840px) {
+  .expandable-text-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: var(--clamp-lines, 4);
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .expandable-text-scroll {
+    max-height: calc(var(--clamp-lines, 4) * var(--fs-body, 18px) * 1.5);
+    overflow-y: auto;
+  }
+  .expandable-text-toggle {
+    display: inline-block !important;
   }
 }
 
