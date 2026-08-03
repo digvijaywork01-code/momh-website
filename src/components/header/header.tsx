@@ -7,6 +7,7 @@ const LOGO_SRC = '/momh-logo.jpg'
 
 const NAV_LINKS = [
   { label: 'Visit', href: '/book-an-appointment' },
+  { label: 'About Us', href: '/about' },
   { label: 'Plan Your Visit', href: '/plan-your-visit' },
   { label: 'Museum Guidelines', href: '/museum-guidelines' },
   { label: 'Craft Your Jewellery', href: '/craft-your-jewellery' },
@@ -15,6 +16,7 @@ const NAV_LINKS = [
 // Mobile Nav Specifics
 const MOBILE_NAV_LINKS: { label: string; href: string; hasArrow?: boolean }[] = [
   { label: 'Visit', href: '/book-an-appointment' },
+  { label: 'About Us', href: '/about' },
   { label: 'Plan Your Visit', href: '/plan-your-visit' },
   { label: 'Museum Guidelines', href: '/museum-guidelines' },
   { label: 'Craft Your Jewellery', href: '/craft-your-jewellery' },

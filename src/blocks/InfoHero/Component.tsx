@@ -18,6 +18,27 @@ import { Card } from '@/components/ui/card'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import { cn } from '@/utilities/ui'
 
+/**
+ * Render `*word*` spans in a plain-text headline as italic <em> accents —
+ * the site's editorial signature (About *Us*, A *Homage* to Jaipur). The
+ * headline field is plain text (not richText), so this is the lightweight
+ * equivalent of the Lexical italic runs other blocks get. Text without
+ * asterisks passes through untouched.
+ */
+const renderEmphasis = (text: string): React.ReactNode => {
+  const parts = text.split(/\*([^*]+)\*/g)
+  if (parts.length === 1) return text
+  return parts.map((part, i) =>
+    i % 2 === 1 ? (
+      <em key={i} className="italic">
+        {part}
+      </em>
+    ) : (
+      part
+    ),
+  )
+}
+
 const isVideoResource = (resource: unknown): boolean => {
   return (
     typeof resource === 'object' &&
@@ -69,6 +90,15 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
   const overlayOpacity = Math.max(0, Math.min(100, overlayDarkness ?? 40)) / 100
   const isVideo = isVideoResource(backgroundMedia)
 
+  // Two layout personalities from one block:
+  //  - WITH infoCards (the home landing hero): bottom-left cards stack,
+  //    headline above them, scroll-down chevron. Unchanged.
+  //  - WITHOUT cards (mid-page statement band, e.g. the About page's
+  //    "A Homage to Jaipur"): headline + subline centred both axes,
+  //    visible on mobile too, no chevron (it's not a landing screen,
+  //    so a "scroll down" cue mid-page reads as clutter).
+  const hasCards = Array.isArray(infoCards) && infoCards.length > 0
+
   return (
     <section
       /* Full viewport height on every breakpoint. The PDF's 1920/945
@@ -104,14 +134,25 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
       {/* Desktop content — cards stack vertically at bottom-left of viewport.
           PDF p2 spec: cards left-aligned to x=110, buttons exactly 257×40 px
           in the brand red (#F1001C, now wired via tokens). No headline
-          overlay on the home-page InfoHero — when `headline` is supplied
-          (other pages), it renders as a centered overlay above the cards. */}
-      <div className="hidden md:flex absolute inset-0 z-20 flex-col justify-end pb-24">
+          overlay on the home-page InfoHero. When the block has NO cards
+          (statement-band variant, e.g. About's "A Homage to Jaipur"), the
+          headline + subline centre on both axes instead. */}
+      <div
+        className={cn(
+          'hidden md:flex absolute inset-0 z-20 flex-col',
+          hasCards ? 'justify-end pb-24' : 'items-center justify-center',
+        )}
+      >
         {(headline || subline) && (
-          <div className="px-[110px] mb-12 max-w-3xl">
+          <div
+            className={cn(
+              'max-w-3xl',
+              hasCards ? 'px-[110px] mb-12' : 'px-8 text-center',
+            )}
+          >
             {headline && (
               <h1 className="font-display text-display text-offwhite drop-shadow-lg">
-                {headline}
+                {headline ? renderEmphasis(headline) : headline}
               </h1>
             )}
             {subline && (
@@ -162,11 +203,19 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
         )}
       </div>
 
-      {/* Mobile content */}
+      {/* Mobile content — statement-band variant (no cards) centres the
+          text like the desktop treatment; the cards variant keeps its
+          original left-aligned stack with the `mt-8` clearance under
+          the fixed header. */}
       <div className="md:hidden absolute inset-0 z-20 flex flex-col p-4">
-        <div className="flex-grow flex flex-col justify-center mt-8">
+        <div
+          className={cn(
+            'flex-grow flex flex-col justify-center',
+            hasCards ? 'mt-8' : 'items-center text-center px-2',
+          )}
+        >
           <h1 className="font-display text-display text-offwhite font-normal drop-shadow-lg">
-            {headline}
+            {headline ? renderEmphasis(headline) : headline}
           </h1>
           {subline && (
             <p className="font-body text-body mt-1 text-offwhite drop-shadow-md">
@@ -221,6 +270,7 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
           guarantees the circle reads against the bright/busy haveli
           image, and a full-opacity 2px white ring + thicker arrow make
           it legible. (Static — no bounce animation.) */}
+      {hasCards && (
       <button
         type="button"
         onClick={scrollToNextBlock}
@@ -242,6 +292,7 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
           <polyline points="6 9 12 15 18 9" />
         </svg>
       </button>
+      )}
     </section>
   )
 }

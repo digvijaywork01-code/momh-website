@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const routes = [
     '', // home
+    '/about',
     '/plan-your-visit',
     '/craft-your-jewellery',
     '/museum-guidelines',

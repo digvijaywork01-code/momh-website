@@ -52,11 +52,12 @@ type LinkColumn = { title: string; items: LinkItem[] }
 const ABOUT_LINKS: LinkColumn = {
   title: 'About',
   items: [
-    // All five anchor IDs (#about / #founder / #press / #blogs /
-    // #testimonials) are absent from the rendered home page DOM, so
-    // these labels silently scroll nowhere. Marked disabled until
-    // matching sections gain those ids.
-    { label: 'Our Story', href: '/#about', disabled: true },
+    // "Our Story" now points at the real /about page. The remaining
+    // four anchor IDs (#founder / #press / #blogs / #testimonials) are
+    // absent from the rendered home page DOM, so those labels silently
+    // scroll nowhere. Marked disabled until matching sections gain
+    // those ids.
+    { label: 'Our Story', href: '/about' },
     { label: "Founder's Vision", href: '/#founder', disabled: true },
     { label: 'As Seen On', href: '/#press', disabled: true },
     { label: 'Blog', href: '/#blogs', disabled: true },
