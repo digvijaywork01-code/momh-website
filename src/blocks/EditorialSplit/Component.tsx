@@ -328,7 +328,11 @@ export const EditorialSplitBlock: React.FC<
         // Pro / desktop): h-screen, so the side-by-side split's columns fill the
         // viewport. `sbs` requires landscape, so any PORTRAIT (incl. the 12.9")
         // STAYS stacked; short landscape phones do too (<480px tall).
-        'w-full min-h-svh sbs:h-screen',
+        // fifty-justified: on MOBILE the panel hugs its content (image +
+        // text) instead of stretching to a full viewport — the stretched
+        // leftover read as huge vertical padding around the text. The
+        // side-by-side (sbs) keeps the full-screen panel.
+        fifty ? 'w-full sbs:h-screen' : 'w-full min-h-svh sbs:h-screen',
         bgClass[bg],
         topSpacingClass[topSpacing as TopSpacingKey],
         bottomSpacingClass[bottomSpacing as BottomSpacingKey],
@@ -337,7 +341,15 @@ export const EditorialSplitBlock: React.FC<
       data-snap-section
       aria-label={typeof eyebrow === 'string' ? eyebrow : undefined}
     >
-      <div className="flex flex-col sbs:flex-row min-h-svh">
+      <div
+        className={cn(
+          'flex flex-col sbs:flex-row',
+          // fifty-justified: the inner wrapper also drops the mobile
+          // viewport-height floor (it would re-stretch the panel the
+          // section-level fix just released); sbs keeps it.
+          fifty ? 'sbs:min-h-svh' : 'min-h-svh',
+        )}
+      >
         {/* Image column — height matches section, width = height × image
             aspect-ratio. On lg+ the column sits beside the content column;
             below lg it sits above with full width. */}
