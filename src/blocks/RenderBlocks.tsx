@@ -54,8 +54,14 @@ const blockComponents = {
 
 export const RenderBlocks: React.FC<{
   blocks: Page['layout'][0][]
+  /** Page-level render variant forwarded to every editorialSplit block.
+   *  'fifty-justified' = the About-page PDF spec (flush 50/50 columns,
+   *  justified body, vertically centred stack). Not a CMS field — a
+   *  page route opts in explicitly, so shared-block rendering on every
+   *  other page is untouched. */
+  editorialSplitVariant?: 'fifty-justified'
 }> = (props) => {
-  const { blocks } = props
+  const { blocks, editorialSplitVariant } = props
 
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
@@ -76,7 +82,13 @@ export const RenderBlocks: React.FC<{
                 // eslint-disable-next-line react/jsx-key
                 <Fragment key={index}>
                   {/* @ts-expect-error there may be some mismatch between the expected types here */}
-                  <Block {...block} disableInnerContainer />
+                  <Block
+                    {...block}
+                    {...(blockType === 'editorialSplit' && editorialSplitVariant
+                      ? { variant: editorialSplitVariant }
+                      : {})}
+                    disableInnerContainer
+                  />
                 </Fragment>
               )
             }

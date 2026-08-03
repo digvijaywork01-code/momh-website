@@ -104,7 +104,17 @@ const resolveLinkHref = (
   return null
 }
 
-export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
+export const EditorialSplitBlock: React.FC<
+  EditorialSplitBlockProps & {
+    /** Render variant, forwarded by RenderBlocks (NOT a CMS field — no
+     *  schema). 'fifty-justified' = the About-page PDF spec: image and
+     *  text columns exactly 50/50, ~6.77vw text padding (130px at the
+     *  1920 artboard), body justified with the last line snapping to
+     *  the outer edge, content stack vertically centred. Default
+     *  (undefined) renders every other page byte-identically. */
+    variant?: 'fifty-justified'
+  }
+> = ({
   image,
   imagePosition = 'right',
   backgroundColor = 'ivory',
@@ -121,7 +131,9 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
   ctaStyle,
   ctaLink,
   contactEmail,
+  variant,
 }) => {
+  const fifty = variant === 'fifty-justified'
   const { setHeaderTheme } = useHeaderTheme()
   // On inner pages that opt out of scroll-driven motion (NO_ANIM_PATHS),
   // skip the entrance cascade entirely. Otherwise the gsap.set below
@@ -357,13 +369,19 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
             // Surface Pro 7 (1368×912) landscapes.
             // Desktop (`wide`: ≥1280 AND aspect ≥151/100): aspect-based width
             // (wide:!w-auto) — `!` beats the cap regardless of CSS source order.
-            'relative shrink-0 w-full sbs:w-[55vw] wide:!w-auto h-[40svh] md:h-[60svh] sbs:!h-screen',
+            // fifty-justified (About PDF): the image half is EXACTLY 50vw
+            // regardless of natural aspect — the designer crops to the
+            // half via object-cover, so the aspect-based width logic is
+            // bypassed entirely.
+            fifty
+              ? 'relative shrink-0 w-full sbs:!w-1/2 h-[40svh] md:h-[60svh] sbs:!h-screen'
+              : 'relative shrink-0 w-full sbs:w-[55vw] wide:!w-auto h-[40svh] md:h-[60svh] sbs:!h-screen',
             // overflow:hidden contains the 1.08 scale during entrance so
             // the image doesn't bleed past the column edge.
             'overflow-hidden',
             imageFirst ? 'order-1' : 'order-1 sbs:order-2',
           )}
-          style={{ aspectRatio: imageAspect }}
+          style={fifty ? undefined : { aspectRatio: imageAspect }}
         >
           {imgObj && (
             <Media
@@ -396,7 +414,11 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
             // content stack fits in one viewport view alongside
             // the capped 35vh image. lg+: original generous padding
             // for the editorial 60/40 spec.
-            'flex-1 flex flex-col px-8 md:px-16 sbs:!px-24 py-8 sbs:py-20',
+            // fifty-justified: PDF text padding is 130px on the 1920
+            // artboard = 6.77vw, applied inside the 50vw text half.
+            fifty
+              ? 'flex-1 flex flex-col px-8 md:px-16 sbs:!px-[6.77vw] py-8 sbs:py-20'
+              : 'flex-1 flex flex-col px-8 md:px-16 sbs:!px-24 py-8 sbs:py-20',
             // Mobile: always left-aligned. Desktop: alignment depends
             // on whether the image sits on the left or right of the
             // editorial split.
@@ -439,7 +461,15 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
               the same low-content editorial rhythm. (An earlier tablet-only
               `md:mt-0` top-align was reverted per design review: the default
               bottom alignment reads better in the side-by-side.) */}
-          <div className={cn('mt-auto max-w-2xl w-full', imageFirst ? 'sbs:ml-auto' : '')}>
+          <div
+            className={cn(
+              // fifty-justified: `my-auto` centres the stack vertically in
+              // the panel (PDF shows centred, not bottom-anchored) and the
+              // width cap moves to the PDF's 700px text measure.
+              fifty ? 'my-auto sbs:max-w-[700px] w-full' : 'mt-auto max-w-2xl w-full',
+              imageFirst ? 'sbs:ml-auto' : '',
+            )}
+          >
             {/* Mobile-only icon — sits directly above the eyebrow.
                 Smaller than the desktop icon (32px vs 56-72px) so it
                 reads as a subtle marker rather than a dominant
@@ -484,7 +514,21 @@ export const EditorialSplitBlock: React.FC<EditorialSplitBlockProps> = ({
             <div
               ref={bodyWrapRef}
               className={cn(
-                'mb-6 max-w-xl',
+                'mb-6',
+                // fifty-justified: body justified at every breakpoint
+                // (PDF spec — full lines flush both edges); on the
+                // side-by-side the LAST line snaps to the outer edge
+                // (right-flush when the image is on the left), matching
+                // the PDF's line endings. Width follows the stack's
+                // 700px measure instead of max-w-xl.
+                fifty
+                  ? cn(
+                      'max-w-none text-justify',
+                      imageFirst
+                        ? 'sbs:[text-align-last:right]'
+                        : 'sbs:[text-align-last:left]',
+                    )
+                  : 'max-w-xl',
                 // Push to outer edge on the side-by-side (image-left layout) —
                 // mobile + ALL portrait (incl. 12.9") stack left-aligned.
                 imageFirst ? 'sbs:ml-auto' : '',

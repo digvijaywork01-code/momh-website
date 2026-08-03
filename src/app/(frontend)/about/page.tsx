@@ -43,7 +43,10 @@ export default async function AboutPage() {
     notFound()
   }
 
-  return <RenderBlocks blocks={layout} />
+  // `fifty-justified` opts every editorialSplit on THIS page into the
+  // About-PDF layout (flush 50/50 columns, justified body, centred stack)
+  // without touching how the shared block renders anywhere else.
+  return <RenderBlocks blocks={layout} editorialSplitVariant="fifty-justified" />
 }
 
 export const dynamic = 'force-static'
