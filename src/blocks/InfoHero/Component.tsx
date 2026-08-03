@@ -151,7 +151,16 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
             )}
           >
             {headline && (
-              <h1 className="font-display text-display text-offwhite drop-shadow-lg">
+              <h1
+                className={cn(
+                  'text-offwhite drop-shadow-lg',
+                  // PDF spec for the statement band: ~80px at 1920 (text-hero
+                  // clamp), plain words Gill Sans Light, *accent* in Playfair
+                  // Display Italic (.statement-display). Cards variant keeps
+                  // its original display styling.
+                  hasCards ? 'font-display text-display' : 'statement-display text-hero',
+                )}
+              >
                 {headline ? renderEmphasis(headline) : headline}
               </h1>
             )}
@@ -214,7 +223,14 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
             hasCards ? 'mt-8' : 'items-center text-center px-2',
           )}
         >
-          <h1 className="font-display text-display text-offwhite font-normal drop-shadow-lg">
+          <h1
+            className={cn(
+              'text-offwhite drop-shadow-lg',
+              hasCards
+                ? 'font-display text-display font-normal'
+                : 'statement-display text-hero',
+            )}
+          >
             {headline ? renderEmphasis(headline) : headline}
           </h1>
           {subline && (

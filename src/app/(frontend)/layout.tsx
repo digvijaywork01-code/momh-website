@@ -95,6 +95,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Cormorant:wght@300;500;600&display=swap"
         />
+        {/* Playfair Display Italic 400 — the About page's "A *Homage* to
+            Jaipur" statement band is the one place the designer's PDF
+            switches the italic accent from Cormorant to Playfair
+            (PlayfairDisplay-Italic @ ~80px, extracted from the PDF).
+            Loaded as its own single-style request so nothing else on
+            the site picks it up. Consumed by `.statement-display em`
+            in globals.css. */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400&display=swap"
+        />
         {/* TODO(adobe-fonts-kit): swap KIT_ID with the project's Typekit kit id.
             Once enabled, the --font-display token resolves to Meno Banner.
             Until then, Cormorant (self-hosted) is the display fallback. */}

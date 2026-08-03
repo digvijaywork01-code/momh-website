@@ -236,6 +236,25 @@ body > * {
   font-style: italic;
 }
 
+/* Statement-band headline (About page's "A *Homage* to Jaipur").
+ *
+ * Same sans/serif mix as .editorial-display, but the PDF switches this
+ * one accent to Playfair Display Italic 400 (not Cormorant Light 300 —
+ * the hairline Cormorant strokes would wash out at ~80px white over a
+ * busy photograph). Plain words stay Gill Sans Light. Pair with
+ * `text-hero` for the PDF's 80px-at-1920 fluid scale. */
+.statement-display {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-style: normal;
+}
+.statement-display em,
+.statement-display i {
+  font-family: 'Playfair Display', 'Cormorant', Georgia, serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
 /* ─── ExpandableText (mobile Read More) ────────────────────────────
  * Used by the `<ExpandableText>` component to truncate long body /
  * quote text to a fixed line count on mobile. The line count is
