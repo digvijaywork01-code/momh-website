@@ -461,7 +461,15 @@ export const EditorialSplitBlock: React.FC<
             <div
               className={cn(
                 'flex flex-col shrink-0 w-full sbs:w-1/2',
-                imageFirst ? 'order-1' : 'order-1 sbs:order-2',
+                // The heading and the image share this column, so they share
+                // its padding — which is why the PDF insets both from the page
+                // edge (the Trade map starts at 6.0%, the Making image ends at
+                // 94.5%) while the bands whose heading sits with the TEXT let
+                // their image bleed to the edge. Padding goes on the OUTER
+                // side only; the inner edge runs to the centre line. This also
+                // lands the image at ~44.5vw, matching the PDF's 43.7 / 44.6.
+                'px-8 md:px-16',
+                imageFirst ? 'order-1 sbs:!pr-0 sbs:!pl-[5.5vw]' : 'order-1 sbs:order-2 sbs:!pl-0 sbs:!pr-[5.5vw]',
               )}
             >
               {headline && (
