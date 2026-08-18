@@ -20,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '', // home
     '/about',
     '/founders-vision',
+    '/art-and-craftsmanship',
     '/plan-your-visit',
     '/craft-your-jewellery',
     '/museum-guidelines',

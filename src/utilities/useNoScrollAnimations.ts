@@ -21,6 +21,7 @@ import { usePathname } from 'next/navigation'
 const NO_ANIM_PATHS = [
   '/about',
   '/founders-vision',
+  '/art-and-craftsmanship',
   '/plan-your-visit',
   '/craft-your-jewellery',
   '/personal-consultation',

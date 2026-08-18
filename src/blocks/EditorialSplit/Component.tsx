@@ -131,6 +131,7 @@ export const EditorialSplitBlock: React.FC<
   ctaStyle,
   ctaLink,
   contactEmail,
+  headingPosition = 'with-text',
   variant,
 }) => {
   const fifty = variant === 'fifty-justified'
@@ -140,6 +141,10 @@ export const EditorialSplitBlock: React.FC<
   // a maroon rule, body justified at the PDF's 30px. A band with NO headline
   // is the pull-quote treatment: text centred in its half.
   const band = variant === 'editorial-band'
+  // The Art & Craftsmanship PDF puts the section heading above the IMAGE
+  // column on some bands and above the TEXT column on others, varying block
+  // to block on one page — so it is a CMS field, not a page-level variant.
+  const headingOverImage = band && headingPosition === 'with-image'
   const { setHeaderTheme } = useHeaderTheme()
   // On inner pages that opt out of scroll-driven motion (NO_ANIM_PATHS),
   // skip the entrance cascade entirely. Otherwise the gsap.set below
@@ -367,7 +372,15 @@ export const EditorialSplitBlock: React.FC<
       >
         {/* Image column — height matches section, width = height × image
             aspect-ratio. On lg+ the column sits beside the content column;
-            below lg it sits above with full width. */}
+            below lg it sits above with full width.
+
+            When `headingPosition` is 'with-image' the section heading and its
+            maroon rule are rendered at the TOP of this column instead of the
+            text column, which is how the Art & Craftsmanship PDF lays out its
+            Trade and Making bands. The wrapper below is a plain flex column so
+            the image keeps its own aspect-driven box underneath. */}
+        {(() => {
+          const imageColumn = (
         <div
           ref={imageWrapRef}
           className={cn(
@@ -403,15 +416,20 @@ export const EditorialSplitBlock: React.FC<
             band
               ? // Exactly half the page; height follows the image's own
                 // aspect via the inline aspectRatio below, so the photo is
-                // shown whole — never cropped — at any viewport.
-                'relative shrink-0 w-full sbs:!w-1/2 sbs:!h-auto'
+                // shown whole — never cropped — at any viewport. When the
+                // heading sits over this column the wrapper above already
+                // owns the half-width, so the box just fills it.
+                headingOverImage
+                ? 'relative shrink-0 w-full sbs:!h-auto'
+                : 'relative shrink-0 w-full sbs:!w-1/2 sbs:!h-auto'
               : fifty
                 ? 'relative shrink-0 w-full sbs:!w-1/2 h-[40svh] md:h-[60svh] sbs:!h-screen'
                 : 'relative shrink-0 w-full sbs:w-[55vw] wide:!w-auto h-[40svh] md:h-[60svh] sbs:!h-screen',
             // overflow:hidden contains the 1.08 scale during entrance so
             // the image doesn't bleed past the column edge.
             'overflow-hidden',
-            imageFirst ? 'order-1' : 'order-1 sbs:order-2',
+            // Order lives on the wrapper when there is one.
+            headingOverImage ? '' : imageFirst ? 'order-1' : 'order-1 sbs:order-2',
           )}
           style={fifty ? undefined : { aspectRatio: imageAspect }}
         >
@@ -432,6 +450,38 @@ export const EditorialSplitBlock: React.FC<
             />
           )}
         </div>
+          )
+          // Only the 'with-image' case needs a wrapper. Returning the column
+          // bare otherwise keeps the DOM byte-identical on every page that
+          // does not use this option — an earlier `display: contents` wrapper
+          // added a stray node (with inert order classes) to every
+          // editorial split on the site.
+          if (!headingOverImage) return imageColumn
+          return (
+            <div
+              className={cn(
+                'flex flex-col shrink-0 w-full sbs:w-1/2',
+                imageFirst ? 'order-1' : 'order-1 sbs:order-2',
+              )}
+            >
+              {headline && (
+                <div className={cn('mb-6', imageFirst ? '' : 'sbs:text-right')}>
+                  <div className="section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4">
+                    <RichText data={headline} enableGutter={false} enableProse={false} />
+                  </div>
+                  <div
+                    className={cn(
+                      'w-[8.6vw] min-w-[100px] h-px bg-[#8e1e24]',
+                      imageFirst ? '' : 'sbs:ml-auto',
+                    )}
+                    aria-hidden="true"
+                  />
+                </div>
+              )}
+              {imageColumn}
+            </div>
+          )
+        })()}
 
         {/* Content column — fills whatever horizontal space remains.
             DESKTOP: text aligns AWAY from the image (image-left → text
@@ -532,8 +582,11 @@ export const EditorialSplitBlock: React.FC<
             )}
 
             {/* `headline` is optional (the pull-quote band is body-only), so
-                everything here is gated on it being present. */}
-            {headline && (
+                everything here is gated on it being present. On an
+                editorial-band with headingPosition 'with-image' the heading is
+                rendered over the image column instead (see below), so it is
+                suppressed here. */}
+            {headline && !headingOverImage && (
               <div
                 ref={headlineRef}
                 className={cn(
@@ -556,7 +609,7 @@ export const EditorialSplitBlock: React.FC<
             {/* Maroon hairline under each band heading — the PDF draws it at
                 165px on a 1921 artboard (8.6vw), tucked to the same edge the
                 text is aligned to. */}
-            {band && headline && (
+            {band && headline && !headingOverImage && (
               <div
                 className={cn(
                   'w-[8.6vw] min-w-[100px] h-px bg-[#8e1e24] mb-6',

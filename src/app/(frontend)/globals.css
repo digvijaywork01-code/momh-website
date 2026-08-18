@@ -253,17 +253,43 @@ body > * {
   font-family: var(--font-script);
   font-weight: 300;
   font-style: normal;
-  text-transform: uppercase;
   letter-spacing: 0.06em;
+  /* NO text-transform. Case comes from the CMS copy, typed as designed.
+     An earlier version uppercased here and let italics opt out, which broke
+     the moment a design needed BOTH an italic-and-capitals heading ("FROM
+     FLUX TO FIRE") and an italic-and-title-case one ("Why Museum"). Letting
+     the editor type the case serves both and is what an editor expects. */
 }
 .section-caps em,
 .section-caps i {
   font-style: italic;
-  /* Italic headings keep their own case — the PDF's "Why Museum" is title
-     case, not capitals — so an italicised heading opts out of the
-     uppercase transform simply by being italicised in the CMS. */
-  text-transform: none;
   letter-spacing: 0.02em;
+}
+/* A bolded word inside a section heading is the design's red accent
+   ("A TRADE CARRIED BY SEA", "THE MAKING OF A JEWEL"). Weight is inherited
+   so the accent reads as colour only, not as a heavier word. */
+.section-caps strong,
+.section-caps b {
+  /* matches the `brand-red` Tailwind token (tailwind.config.mjs) */
+  color: #F1001C;
+  font-weight: inherit;
+}
+
+/* Banner title, Art & Craftsmanship variant — italic serif throughout with
+ * the accent word in brand red ("The Art & *Craftsmanship*"). Distinct from
+ * .statement-display, which is Gill Sans with a Playfair italic accent; that
+ * one stays exactly as the About page ships it. */
+.banner-display {
+  font-family: var(--font-script);
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+.banner-display em,
+.banner-display i {
+  font-style: italic;
+  /* matches the `brand-red` Tailwind token */
+  color: #F1001C;
 }
 
 /* Statement-band headline (About page's "A *Homage* to Jaipur").

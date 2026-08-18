@@ -49,12 +49,21 @@ const isVideoResource = (resource: unknown): boolean => {
   )
 }
 
-export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
+export const InfoHeroBlock: React.FC<
+  InfoHeroBlockProps & {
+    /** Render variant forwarded by RenderBlocks (NOT a CMS field).
+     *  'banner-title' = the Art & Craftsmanship banner: the whole title in
+     *  italic serif with the accent word in brand red. Default (undefined)
+     *  keeps the home cards hero and the About statement band untouched. */
+    variant?: 'banner-title'
+  }
+> = ({
   backgroundMedia,
   overlayDarkness,
   headline,
   subline,
   infoCards,
+  variant,
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
   const sectionRef = useRef<HTMLElement | null>(null)
@@ -98,6 +107,7 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
   //    visible on mobile too, no chevron (it's not a landing screen,
   //    so a "scroll down" cue mid-page reads as clutter).
   const hasCards = Array.isArray(infoCards) && infoCards.length > 0
+  const bannerTitle = variant === 'banner-title'
 
   return (
     <section
@@ -158,7 +168,11 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
                   // clamp), plain words Gill Sans Light, *accent* in Playfair
                   // Display Italic (.statement-display). Cards variant keeps
                   // its original display styling.
-                  hasCards ? 'font-display text-display' : 'statement-display text-hero',
+                  hasCards
+                    ? 'font-display text-display'
+                    : bannerTitle
+                      ? 'banner-display text-hero'
+                      : 'statement-display text-hero',
                 )}
               >
                 {headline ? renderEmphasis(headline) : headline}
@@ -228,7 +242,9 @@ export const InfoHeroBlock: React.FC<InfoHeroBlockProps> = ({
               'text-offwhite drop-shadow-lg',
               hasCards
                 ? 'font-display text-display font-normal'
-                : 'statement-display text-hero',
+                : bannerTitle
+                  ? 'banner-display text-hero'
+                  : 'statement-display text-hero',
             )}
           >
             {headline ? renderEmphasis(headline) : headline}

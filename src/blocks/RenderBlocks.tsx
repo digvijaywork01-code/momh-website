@@ -15,6 +15,7 @@ import { TwoColumnFeatureBlock } from '@/blocks/TwoColumnFeature/Component'
 import { InfoHeroBlock } from '@/blocks/InfoHero/Component'
 import { ImageBannerBlock } from '@/blocks/ImageBanner/Component'
 import { MediaBandBlock } from '@/blocks/MediaBand/Component'
+import { NumberedGridBlock } from '@/blocks/NumberedGrid/Component'
 import { SectionIntroBlock } from '@/blocks/SectionIntro/Component'
 import { VisitInfoBlock } from '@/blocks/VisitInfo/Component'
 import { CarouselBlock } from '@/blocks/Carousel/Component'
@@ -41,6 +42,7 @@ const blockComponents = {
   infoHero: InfoHeroBlock,
   imageBanner: ImageBannerBlock,
   mediaBand: MediaBandBlock,
+  numberedGrid: NumberedGridBlock,
   sectionIntro: SectionIntroBlock,
   visitInfo: VisitInfoBlock,
   carousel: CarouselBlock,
@@ -64,8 +66,11 @@ export const RenderBlocks: React.FC<{
    *  justified body). Not a CMS field — a page route opts in explicitly,
    *  so shared-block rendering on every other page is untouched. */
   editorialSplitVariant?: 'fifty-justified' | 'editorial-band'
+  /** Page-level render variant forwarded to every infoHero block.
+   *  'banner-title' = italic-serif title with a red accent word. */
+  infoHeroVariant?: 'banner-title'
 }> = (props) => {
-  const { blocks, editorialSplitVariant } = props
+  const { blocks, editorialSplitVariant, infoHeroVariant } = props
 
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
@@ -87,7 +92,9 @@ export const RenderBlocks: React.FC<{
               const variantProps =
                 blockType === 'editorialSplit' && editorialSplitVariant
                   ? { variant: editorialSplitVariant }
-                  : {}
+                  : blockType === 'infoHero' && infoHeroVariant
+                    ? { variant: infoHeroVariant }
+                    : {}
 
               // No wrapper margin — editorial blocks render edge-to-edge.
               // The default Payload template had `my-16` here, which produced

@@ -202,6 +202,7 @@ export interface Page {
     | TwoColumnFeatureBlock
     | ImageBannerBlock
     | MediaBandBlock
+    | NumberedGridBlock
     | SectionIntroBlock
     | VisitInfoBlock
     | CarouselBlock
@@ -518,6 +519,10 @@ export interface EditorialSplitBlock {
    */
   bottomSpacing: 'none' | 'sm' | 'md' | 'lg';
   iconPosition: 'left' | 'center' | 'right';
+  /**
+   * Only affects pages using the editorial-band layout. The Art & Craftsmanship PDF puts the heading over the image column in some bands and over the text in others.
+   */
+  headingPosition: 'with-text' | 'with-image';
   /**
    * Optional small line-art icon (fish, bird, phoenix, floral, etc.). SVG preferred.
    */
@@ -1037,6 +1042,80 @@ export interface MediaBandBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBand';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NumberedGridBlock".
+ */
+export interface NumberedGridBlock {
+  layout: 'grid' | 'carousel';
+  /**
+   * Grid columns, or cards per slide in carousel mode.
+   */
+  columns: '2' | '3';
+  /**
+   * Leave Number and Caption blank when the artwork already carries its own label (as the making-of step images do).
+   */
+  items: {
+    image: number | Media;
+    /**
+     * e.g. "01". Renders small, italic, in brand red.
+     */
+    number?: string | null;
+    /**
+     * e.g. "FLUX", "Painted Enamel".
+     */
+    caption?: string | null;
+    id?: string | null;
+  }[];
+  /**
+   * Ignored when a text column is set — the grid then fills its half.
+   */
+  maxWidth?: ('full' | 'wide' | 'medium' | 'narrow') | null;
+  /**
+   * When set, the grid takes one half of the section and a heading + body column takes the other.
+   */
+  textPosition: 'none' | 'left' | 'right';
+  /**
+   * Section heading. Type it in the case you want. Italicise for an italic heading; bold a word to make it brand red.
+   */
+  headline?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  autoplay?: boolean | null;
+  autoplayInterval?: number | null;
+  topSpacing: 'none' | 'sm' | 'md' | 'lg';
+  bottomSpacing: 'none' | 'sm' | 'md' | 'lg';
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'numberedGrid';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2195,6 +2274,7 @@ export interface PagesSelect<T extends boolean = true> {
         twoColumnFeature?: T | TwoColumnFeatureBlockSelect<T>;
         imageBanner?: T | ImageBannerBlockSelect<T>;
         mediaBand?: T | MediaBandBlockSelect<T>;
+        numberedGrid?: T | NumberedGridBlockSelect<T>;
         sectionIntro?: T | SectionIntroBlockSelect<T>;
         visitInfo?: T | VisitInfoBlockSelect<T>;
         carousel?: T | CarouselBlockSelect<T>;
@@ -2271,6 +2351,7 @@ export interface EditorialSplitBlockSelect<T extends boolean = true> {
   topSpacing?: T;
   bottomSpacing?: T;
   iconPosition?: T;
+  headingPosition?: T;
   icon?: T;
   eyebrow?: T;
   headline?: T;
@@ -2417,6 +2498,32 @@ export interface MediaBandBlockSelect<T extends boolean = true> {
   aspectRatio?: T;
   frame?: T;
   panelBackground?: T;
+  topSpacing?: T;
+  bottomSpacing?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NumberedGridBlock_select".
+ */
+export interface NumberedGridBlockSelect<T extends boolean = true> {
+  layout?: T;
+  columns?: T;
+  items?:
+    | T
+    | {
+        image?: T;
+        number?: T;
+        caption?: T;
+        id?: T;
+      };
+  maxWidth?: T;
+  textPosition?: T;
+  headline?: T;
+  body?: T;
+  autoplay?: T;
+  autoplayInterval?: T;
   topSpacing?: T;
   bottomSpacing?: T;
   id?: T;

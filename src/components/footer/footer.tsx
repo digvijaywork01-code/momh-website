@@ -59,6 +59,7 @@ const ABOUT_LINKS: LinkColumn = {
     // sections gain those ids.
     { label: 'Our Story', href: '/about' },
     { label: "Founder's Vision", href: '/founders-vision' },
+    { label: 'The Art & Craftsmanship', href: '/art-and-craftsmanship' },
     { label: 'As Seen On', href: '/#press', disabled: true },
     { label: 'Blog', href: '/#blogs', disabled: true },
     { label: 'Testimonials', href: '/#testimonials', disabled: true },

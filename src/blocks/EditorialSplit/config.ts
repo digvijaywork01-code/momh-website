@@ -122,6 +122,21 @@ export const EditorialSplit: Block = {
       ],
     },
     {
+      name: 'headingPosition',
+      type: 'select',
+      required: true,
+      defaultValue: 'with-text',
+      label: 'Heading sits above',
+      options: [
+        { label: 'The text column (default)', value: 'with-text' },
+        { label: 'The image column', value: 'with-image' },
+      ],
+      admin: {
+        description:
+          'Only affects pages using the editorial-band layout. The Art & Craftsmanship PDF puts the heading over the image column in some bands and over the text in others.',
+      },
+    },
+    {
       name: 'icon',
       type: 'upload',
       relationTo: 'media',
