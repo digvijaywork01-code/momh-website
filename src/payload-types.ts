@@ -201,6 +201,7 @@ export interface Page {
     | CardGridBlock
     | TwoColumnFeatureBlock
     | ImageBannerBlock
+    | MediaBandBlock
     | SectionIntroBlock
     | VisitInfoBlock
     | CarouselBlock
@@ -528,7 +529,7 @@ export interface EditorialSplitBlock {
   /**
    * Display headline. Italicize key words (Cmd/Ctrl+I) for the Cormorant italic emphasis pattern.
    */
-  headline: {
+  headline?: {
     root: {
       type: string;
       children: {
@@ -542,7 +543,7 @@ export interface EditorialSplitBlock {
       version: number;
     };
     [k: string]: unknown;
-  };
+  } | null;
   body: {
     root: {
       type: string;
@@ -1019,11 +1020,35 @@ export interface ImageBannerBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaBandBlock".
+ */
+export interface MediaBandBlock {
+  media: number | Media;
+  width: 'half' | 'three-fifths' | 'seven-tenths' | 'full';
+  align: 'left' | 'center' | 'right';
+  /**
+   * Videos MUST pick an explicit ratio — Payload does not record dimensions for video files, so "Natural" has nothing to read.
+   */
+  aspectRatio: 'natural' | 'square' | 'wide';
+  frame: 'none' | 'hairline';
+  panelBackground: 'none' | 'black';
+  topSpacing: 'none' | 'sm' | 'md' | 'lg';
+  bottomSpacing: 'none' | 'sm' | 'md' | 'lg';
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mediaBand';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "SectionIntroBlock".
  */
 export interface SectionIntroBlock {
   backgroundColor: 'cream' | 'ivory' | 'white' | 'black' | 'emerald' | 'maroon';
   showTopDivider?: boolean | null;
+  /**
+   * Display is the page-title look ("Plan Your *Visit*"). Section caps is the smaller closing-statement look from the Founder’s Vision PDF: Cormorant capitals over a short maroon rule, with the body justified beneath.
+   */
+  headingStyle: 'display' | 'section-caps';
   /**
    * When the next block has its own substantial top padding (e.g. a form or info panel), halve the SectionIntro bottom padding so the gap between the intro and the next block doesn’t feel too cavernous. Leave OFF when the next block is a full-bleed image / banner.
    */
@@ -2169,6 +2194,7 @@ export interface PagesSelect<T extends boolean = true> {
         cardGrid?: T | CardGridBlockSelect<T>;
         twoColumnFeature?: T | TwoColumnFeatureBlockSelect<T>;
         imageBanner?: T | ImageBannerBlockSelect<T>;
+        mediaBand?: T | MediaBandBlockSelect<T>;
         sectionIntro?: T | SectionIntroBlockSelect<T>;
         visitInfo?: T | VisitInfoBlockSelect<T>;
         carousel?: T | CarouselBlockSelect<T>;
@@ -2382,11 +2408,28 @@ export interface ImageBannerBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaBandBlock_select".
+ */
+export interface MediaBandBlockSelect<T extends boolean = true> {
+  media?: T;
+  width?: T;
+  align?: T;
+  aspectRatio?: T;
+  frame?: T;
+  panelBackground?: T;
+  topSpacing?: T;
+  bottomSpacing?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "SectionIntroBlock_select".
  */
 export interface SectionIntroBlockSelect<T extends boolean = true> {
   backgroundColor?: T;
   showTopDivider?: T;
+  headingStyle?: T;
   tightBottom?: T;
   eyebrow?: T;
   headline?: T;

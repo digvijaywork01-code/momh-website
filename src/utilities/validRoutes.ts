@@ -19,6 +19,7 @@
 export const VALID_ROUTES: ReadonlySet<string> = new Set([
   '/',
   '/about',
+  '/founders-vision',
   '/book-an-appointment',
   '/craft-your-jewellery',
   '/museum-guidelines',

@@ -14,6 +14,7 @@ import { CardGrid } from '../../blocks/CardGrid/config'
 import { TwoColumnFeature } from '../../blocks/TwoColumnFeature/config'
 import { InfoHero } from '../../blocks/InfoHero/config'
 import { ImageBanner } from '../../blocks/ImageBanner/config'
+import { MediaBand } from '../../blocks/MediaBand/config'
 import { SectionIntro } from '../../blocks/SectionIntro/config'
 import { VisitInfo } from '../../blocks/VisitInfo/config'
 import { Carousel } from '../../blocks/Carousel/config'
@@ -101,6 +102,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 CardGrid,
                 TwoColumnFeature,
                 ImageBanner,
+                MediaBand,
                 SectionIntro,
                 VisitInfo,
                 Carousel,

@@ -61,6 +61,21 @@ export const SectionIntro: Block = {
       ],
     },
     {
+      name: 'headingStyle',
+      type: 'select',
+      required: true,
+      defaultValue: 'display',
+      label: 'Heading treatment',
+      options: [
+        { label: 'Display — large centred title (default)', value: 'display' },
+        { label: 'Section caps — small serif capitals with a rule below', value: 'section-caps' },
+      ],
+      admin: {
+        description:
+          'Display is the page-title look ("Plan Your *Visit*"). Section caps is the smaller closing-statement look from the Founder\u2019s Vision PDF: Cormorant capitals over a short maroon rule, with the body justified beneath.',
+      },
+    },
+    {
       name: 'tightBottom',
       type: 'checkbox',
       defaultValue: false,

@@ -14,6 +14,7 @@ import { CardGridBlock } from '@/blocks/CardGrid/Component'
 import { TwoColumnFeatureBlock } from '@/blocks/TwoColumnFeature/Component'
 import { InfoHeroBlock } from '@/blocks/InfoHero/Component'
 import { ImageBannerBlock } from '@/blocks/ImageBanner/Component'
+import { MediaBandBlock } from '@/blocks/MediaBand/Component'
 import { SectionIntroBlock } from '@/blocks/SectionIntro/Component'
 import { VisitInfoBlock } from '@/blocks/VisitInfo/Component'
 import { CarouselBlock } from '@/blocks/Carousel/Component'
@@ -39,6 +40,7 @@ const blockComponents = {
   twoColumnFeature: TwoColumnFeatureBlock,
   infoHero: InfoHeroBlock,
   imageBanner: ImageBannerBlock,
+  mediaBand: MediaBandBlock,
   sectionIntro: SectionIntroBlock,
   visitInfo: VisitInfoBlock,
   carousel: CarouselBlock,
@@ -56,10 +58,12 @@ export const RenderBlocks: React.FC<{
   blocks: Page['layout'][0][]
   /** Page-level render variant forwarded to every editorialSplit block.
    *  'fifty-justified' = the About-page PDF spec (flush 50/50 columns,
-   *  justified body, vertically centred stack). Not a CMS field — a
-   *  page route opts in explicitly, so shared-block rendering on every
-   *  other page is untouched. */
-  editorialSplitVariant?: 'fifty-justified'
+   *  justified body, vertically centred stack).
+   *  'editorial-band'  = the Founder's-Vision PDF spec (short 50/50 bands
+   *  separated by white, Cormorant capitals over a maroon rule, 30px
+   *  justified body). Not a CMS field — a page route opts in explicitly,
+   *  so shared-block rendering on every other page is untouched. */
+  editorialSplitVariant?: 'fifty-justified' | 'editorial-band'
 }> = (props) => {
   const { blocks, editorialSplitVariant } = props
 
@@ -75,6 +79,16 @@ export const RenderBlocks: React.FC<{
             const Block = blockComponents[blockType]
 
             if (Block) {
+              // Page-level render variant, applied only to editorialSplit.
+              // Kept OUT of the JSX below so the single @ts-expect-error
+              // there still covers the whole element (a multi-line element
+              // would push the real mismatch past the directive's one-line
+              // reach and break the build).
+              const variantProps =
+                blockType === 'editorialSplit' && editorialSplitVariant
+                  ? { variant: editorialSplitVariant }
+                  : {}
+
               // No wrapper margin — editorial blocks render edge-to-edge.
               // The default Payload template had `my-16` here, which produced
               // a 4rem white gap above the hero and between every section.
@@ -82,13 +96,7 @@ export const RenderBlocks: React.FC<{
                 // eslint-disable-next-line react/jsx-key
                 <Fragment key={index}>
                   {/* @ts-expect-error there may be some mismatch between the expected types here */}
-                  <Block
-                    {...block}
-                    {...(blockType === 'editorialSplit' && editorialSplitVariant
-                      ? { variant: editorialSplitVariant }
-                      : {})}
-                    disableInnerContainer
-                  />
+                  <Block {...block} {...variantProps} disableInnerContainer />
                 </Fragment>
               )
             }

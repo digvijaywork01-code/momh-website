@@ -236,6 +236,36 @@ body > * {
   font-style: italic;
 }
 
+/* Section capitals — the Founder's Vision page's section headings
+ * ("A LIFETIME WITH MEENAKARI", "CRAFT AS SCHOLARSHIP", "A CONTINUING
+ * COMMITMENT") and its one italic heading ("Why Museum").
+ *
+ * The designer PDF sets these in Questa Grande Light 40px. Questa Grande
+ * is licensed to the SSJ main site's Typekit kit only and is not loaded
+ * here, so we render them in Cormorant Light 300 — the serif this site
+ * already ships — uppercased and tracked to sit at the same optical
+ * weight. Italic headings keep their case (the PDF's "Why Museum" is
+ * title case, not capitals), so an italicised heading opts out of the
+ * uppercase transform.
+ *
+ * Pair with the maroon hairline rule the PDF draws beneath each heading. */
+.section-caps {
+  font-family: var(--font-script);
+  font-weight: 300;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.section-caps em,
+.section-caps i {
+  font-style: italic;
+  /* Italic headings keep their own case — the PDF's "Why Museum" is title
+     case, not capitals — so an italicised heading opts out of the
+     uppercase transform simply by being italicised in the CMS. */
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
 /* Statement-band headline (About page's "A *Homage* to Jaipur").
  *
  * Same sans/serif mix as .editorial-display, but the PDF switches this

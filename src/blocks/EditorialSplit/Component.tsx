@@ -112,7 +112,7 @@ export const EditorialSplitBlock: React.FC<
      *  1920 artboard), body justified with the last line snapping to
      *  the outer edge, content stack vertically centred. Default
      *  (undefined) renders every other page byte-identically. */
-    variant?: 'fifty-justified'
+    variant?: 'fifty-justified' | 'editorial-band'
   }
 > = ({
   image,
@@ -134,6 +134,12 @@ export const EditorialSplitBlock: React.FC<
   variant,
 }) => {
   const fifty = variant === 'fifty-justified'
+  // 'editorial-band' — the Founder's Vision page. Short bands separated by
+  // white rather than full-viewport panels: 50/50 columns, image at its own
+  // aspect (never cropped), text vertically centred, Cormorant capitals over
+  // a maroon rule, body justified at the PDF's 30px. A band with NO headline
+  // is the pull-quote treatment: text centred in its half.
+  const band = variant === 'editorial-band'
   const { setHeaderTheme } = useHeaderTheme()
   // On inner pages that opt out of scroll-driven motion (NO_ANIM_PATHS),
   // skip the entrance cascade entirely. Otherwise the gsap.set below
@@ -332,7 +338,14 @@ export const EditorialSplitBlock: React.FC<
         // text) instead of stretching to a full viewport — the stretched
         // leftover read as huge vertical padding around the text. The
         // side-by-side (sbs) keeps the full-screen panel.
-        fifty ? 'w-full sbs:h-screen' : 'w-full min-h-svh sbs:h-screen',
+        // editorial-band: short bands separated by white, never a
+        // full-viewport panel — the PDF's whole rhythm. Vertical air is
+        // proportional (vw) so it tracks the artboard at any width.
+        band
+          ? 'w-full py-[3vw]'
+          : fifty
+            ? 'w-full sbs:h-screen'
+            : 'w-full min-h-svh sbs:h-screen',
         bgClass[bg],
         topSpacingClass[topSpacing as TopSpacingKey],
         bottomSpacingClass[bottomSpacing as BottomSpacingKey],
@@ -347,7 +360,9 @@ export const EditorialSplitBlock: React.FC<
           // fifty-justified: the inner wrapper also drops the mobile
           // viewport-height floor (it would re-stretch the panel the
           // section-level fix just released); sbs keeps it.
-          fifty ? 'sbs:min-h-svh' : 'min-h-svh',
+          // editorial-band: no floor at any breakpoint — the band is only
+          // as tall as the taller of its two columns.
+          band ? '' : fifty ? 'sbs:min-h-svh' : 'min-h-svh',
         )}
       >
         {/* Image column — height matches section, width = height × image
@@ -385,9 +400,14 @@ export const EditorialSplitBlock: React.FC<
             // regardless of natural aspect — the designer crops to the
             // half via object-cover, so the aspect-based width logic is
             // bypassed entirely.
-            fifty
-              ? 'relative shrink-0 w-full sbs:!w-1/2 h-[40svh] md:h-[60svh] sbs:!h-screen'
-              : 'relative shrink-0 w-full sbs:w-[55vw] wide:!w-auto h-[40svh] md:h-[60svh] sbs:!h-screen',
+            band
+              ? // Exactly half the page; height follows the image's own
+                // aspect via the inline aspectRatio below, so the photo is
+                // shown whole — never cropped — at any viewport.
+                'relative shrink-0 w-full sbs:!w-1/2 sbs:!h-auto'
+              : fifty
+                ? 'relative shrink-0 w-full sbs:!w-1/2 h-[40svh] md:h-[60svh] sbs:!h-screen'
+                : 'relative shrink-0 w-full sbs:w-[55vw] wide:!w-auto h-[40svh] md:h-[60svh] sbs:!h-screen',
             // overflow:hidden contains the 1.08 scale during entrance so
             // the image doesn't bleed past the column edge.
             'overflow-hidden',
@@ -428,9 +448,11 @@ export const EditorialSplitBlock: React.FC<
             // for the editorial 60/40 spec.
             // fifty-justified: PDF text padding is 130px on the 1920
             // artboard = 6.77vw, applied inside the 50vw text half.
-            fifty
-              ? 'flex-1 flex flex-col px-8 md:px-16 sbs:!px-[6.77vw] py-8 sbs:py-20'
-              : 'flex-1 flex flex-col px-8 md:px-16 sbs:!px-24 py-8 sbs:py-20',
+            band
+              ? 'flex-1 flex flex-col px-8 md:px-16 sbs:!px-[4.2vw] py-8 sbs:!py-[3vw]'
+              : fifty
+                ? 'flex-1 flex flex-col px-8 md:px-16 sbs:!px-[6.77vw] py-8 sbs:py-20'
+                : 'flex-1 flex flex-col px-8 md:px-16 sbs:!px-24 py-8 sbs:py-20',
             // Mobile: always left-aligned. Desktop: alignment depends
             // on whether the image sits on the left or right of the
             // editorial split.
@@ -478,7 +500,11 @@ export const EditorialSplitBlock: React.FC<
               // fifty-justified: `my-auto` centres the stack vertically in
               // the panel (PDF shows centred, not bottom-anchored) and the
               // width cap moves to the PDF's 700px text measure.
-              fifty ? 'my-auto sbs:max-w-[700px] w-full' : 'mt-auto max-w-2xl w-full',
+              band
+                ? 'my-auto sbs:max-w-[760px] w-full'
+                : fifty
+                  ? 'my-auto sbs:max-w-[700px] w-full'
+                  : 'mt-auto max-w-2xl w-full',
               imageFirst ? 'sbs:ml-auto' : '',
             )}
           >
@@ -505,13 +531,40 @@ export const EditorialSplitBlock: React.FC<
               </p>
             )}
 
-            <div ref={headlineRef} className="editorial-display text-display mb-6">
-              <RichText
-                data={headline}
-                enableGutter={false}
-                enableProse={false}
+            {/* `headline` is optional (the pull-quote band is body-only), so
+                everything here is gated on it being present. */}
+            {headline && (
+              <div
+                ref={headlineRef}
+                className={cn(
+                  band
+                    ? // PDF: 40px on a 1921 artboard = 2.08vw, Cormorant
+                      // capitals. An italicised heading ("Why Museum") keeps
+                      // its own case via the .section-caps em rule.
+                      'section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4'
+                    : 'editorial-display text-display mb-6',
+                )}
+              >
+                <RichText
+                  data={headline}
+                  enableGutter={false}
+                  enableProse={false}
+                />
+              </div>
+            )}
+
+            {/* Maroon hairline under each band heading — the PDF draws it at
+                165px on a 1921 artboard (8.6vw), tucked to the same edge the
+                text is aligned to. */}
+            {band && headline && (
+              <div
+                className={cn(
+                  'w-[8.6vw] min-w-[100px] h-px bg-[#8e1e24] mb-6',
+                  imageFirst ? 'sbs:ml-auto' : '',
+                )}
+                aria-hidden="true"
               />
-            </div>
+            )}
 
             {/* Body + optional featured line wrapped together inside
                 one ExpandableText so the mobile Read More toggle
@@ -533,21 +586,34 @@ export const EditorialSplitBlock: React.FC<
                 // (right-flush when the image is on the left), matching
                 // the PDF's line endings. Width follows the stack's
                 // 700px measure instead of max-w-xl.
-                fifty
+                band
                   ? cn(
                       'max-w-none text-justify',
-                      imageFirst
-                        ? 'sbs:[text-align-last:right]'
-                        : 'sbs:[text-align-last:left]',
+                      // A band with no headline is the pull-quote: the PDF
+                      // centres its last line rather than flushing it to an
+                      // edge. Headed bands flush to the outer edge like the
+                      // About page's splits.
+                      !headline
+                        ? '[text-align-last:center]'
+                        : imageFirst
+                          ? 'sbs:[text-align-last:right]'
+                          : 'sbs:[text-align-last:left]',
                     )
-                  : 'max-w-xl',
+                  : fifty
+                    ? cn(
+                        'max-w-none text-justify',
+                        imageFirst
+                          ? 'sbs:[text-align-last:right]'
+                          : 'sbs:[text-align-last:left]',
+                      )
+                    : 'max-w-xl',
                 // Push to outer edge on the side-by-side (image-left layout) —
                 // mobile + ALL portrait (incl. 12.9") stack left-aligned.
                 imageFirst ? 'sbs:ml-auto' : '',
               )}
             >
               <ExpandableText mobileLineClamp={mobileBodyLineClamp}>
-                <div className="font-body text-body">
+                <div className={cn('font-body', band ? 'text-hero-body' : 'text-body')}>
                   <RichText
                     data={body}
                     enableGutter={false}
@@ -555,7 +621,25 @@ export const EditorialSplitBlock: React.FC<
                   />
                 </div>
                 {featuredLine && (
-                  <div className="font-body text-body mt-4">
+                  <div
+                    className={cn(
+                      'font-body mt-4',
+                      // On a band the featured line is the attribution
+                      // ("SUNITA SHEKHAWAT · MUSEUM DIRECTOR & FOUNDER") —
+                      // capitals, tracked, never justified.
+                      band
+                        ? cn(
+                            'text-hero-body uppercase',
+                            // Never justified, and never inheriting the body's
+                            // text-align-last (which would fling this single
+                            // line to the far edge). Tracks the column's own
+                            // alignment instead of assuming a side.
+                            '!text-left [text-align-last:auto]',
+                            imageFirst ? 'sbs:!text-right' : 'sbs:!text-left',
+                          )
+                        : 'text-body',
+                    )}
+                  >
                     <RichText
                       data={featuredLine}
                       enableGutter={false}

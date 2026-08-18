@@ -142,7 +142,11 @@ export const EditorialSplit: Block = {
     {
       name: 'headline',
       type: 'richText',
-      required: true,
+      // NOT required: the Founder's Vision pull-quote band is body-only
+      // (image + a centred italic paragraph, no heading). Safe to relax —
+      // the column is already nullable jsonb in the schema, so this is
+      // validation-only and needs no migration.
+      required: false,
       editor: lexicalEditor({
         features: ({ rootFeatures }) => [
           ...rootFeatures,

@@ -65,6 +65,7 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
   backgroundColor = 'cream',
   showTopDivider = false,
   tightBottom = false,
+  headingStyle = 'display',
   ctaLabel,
   ctaStyle,
   ctaLink,
@@ -80,6 +81,7 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
 
   const bg = (backgroundColor || 'cream') as BgKey
   const dark = isDarkBg(bg)
+  const sectionCaps = headingStyle === 'section-caps'
 
   useEffect(() => {
     const el = sectionRef.current
@@ -171,7 +173,15 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
         />
       )}
 
-      <div className="max-w-2xl mx-auto text-center">
+      <div
+        className={cn(
+          'mx-auto text-center',
+          // PDF measures the closing statement at 42.5% of the artboard;
+          // max-w-2xl wrapped it a line early. Only the section-caps
+          // treatment widens — every other SectionIntro is untouched.
+          sectionCaps ? 'max-w-2xl sbs:max-w-[42.5vw]' : 'max-w-2xl',
+        )}
+      >
 
         {eyebrow && (
           <p
@@ -184,19 +194,51 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
 
         <div
           ref={headlineRef}
-          // Inner-page intro display — bigger than the home page's
-          // EditorialSplit headlines because the section is centered
-          // and has nothing else competing for visual weight. Matches
-          // the PDF's "Plan Your Visit" treatment at ~64px on a
-          // 1920-wide artboard. Italic words (em/i) render in brand
-          // red to match the PDF's red emphasis (e.g. "*Visit*").
-          className="editorial-display text-[2.5rem] md:text-[3.5rem] lg:text-[4rem] leading-tight mb-6 [&_em]:text-brand-red [&_i]:text-brand-red"
+          // Two treatments:
+          //  - 'display' (default, unchanged): inner-page intro display,
+          //    bigger than the home page's EditorialSplit headlines because
+          //    the section is centered with nothing competing for visual
+          //    weight. Matches the PDF's "Plan Your Visit" at ~64px on a
+          //    1920-wide artboard. Italic words render in brand red.
+          //  - 'section-caps': the Founder's Vision closing statement —
+          //    Cormorant Light capitals at the PDF's 40px/1921 = 2.08vw,
+          //    with a short maroon rule underneath (rendered below).
+          // NOTE: `leading-tight` must sit AFTER the text-size utilities in
+          // each branch. cn() runs tailwind-merge, which treats font-size as
+          // conflicting with line-height — hoisting `leading-tight` to a
+          // shared prefix made the later text-[...] classes strip it, which
+          // silently changed the headline leading on every existing page.
+          className={cn(
+            sectionCaps
+              ? 'section-caps text-[1.4rem] md:text-[1.7rem] lg:text-[2.08vw] leading-tight mb-5'
+              : 'editorial-display text-[2.5rem] md:text-[3.5rem] lg:text-[4rem] leading-tight mb-6 [&_em]:text-brand-red [&_i]:text-brand-red',
+          )}
         >
           <RichText data={headline} enableGutter={false} enableProse={false} />
         </div>
 
+        {/* Short centred rule under a section-caps heading. The PDF draws
+            it at 124px on a 1921 artboard (6.45vw) in the same maroon as
+            the heading rules on the editorial bands. */}
+        {sectionCaps && (
+          <div
+            className="mx-auto w-[6.45vw] min-w-[80px] h-px bg-[#8e1e24] mb-5"
+            aria-hidden="true"
+          />
+        )}
+
         {body && (
-          <div ref={bodyRef} className="font-body text-body opacity-95">
+          <div
+            ref={bodyRef}
+            className={cn(
+              'font-body opacity-95',
+              // The PDF sets the closing paragraph at 30px (= text-hero-body)
+              // and justifies it, with the last line centred.
+              sectionCaps
+                ? 'text-hero-body text-justify [text-align-last:center]'
+                : 'text-body',
+            )}
+          >
             <RichText data={body} enableGutter={false} enableProse={false} />
           </div>
         )}
