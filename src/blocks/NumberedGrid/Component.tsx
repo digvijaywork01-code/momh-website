@@ -155,11 +155,16 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
       : { [SBS]: { slidesToScroll: 2 } }
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
-      loop: false,
+      // Loop only when it drives itself. Autoplay against a non-looping
+      // carousel walks to the last page and stops dead, which reads as a
+      // broken component; without autoplay, trimSnaps is the better
+      // behaviour because it stops the last page over-scrolling into a gap.
+      // (Embla ignores containScroll while looping, hence the swap.)
+      loop: wantsAutoplay,
       align: 'start',
       slidesToScroll: 1,
       breakpoints,
-      containScroll: 'trimSnaps',
+      ...(wantsAutoplay ? {} : { containScroll: 'trimSnaps' as const }),
       active: isCarousel,
     },
     wantsAutoplay
