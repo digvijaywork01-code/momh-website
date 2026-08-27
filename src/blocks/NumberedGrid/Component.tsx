@@ -160,7 +160,7 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
   // Autoplay is a self-driven UI affordance, so it only answers to
   // prefers-reduced-motion — the same contract ProcessCarousel uses.
   const reduced = prefersReducedMotion()
-  const wantsAutoplay = isCarousel && autoplay === true && !reduced
+  const wantsAutoplay = (isCarousel || mobileCarousel) && autoplay === true && !reduced
   // Page a whole slide at a time so the techniques read 3 / 3 / 1 rather than
   // creeping forward one card. The step MUST track how many cards are actually
   // visible at the current breakpoint — a fixed step of 3 while only one card
@@ -191,6 +191,10 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
       // sits in a `md:hidden` wrapper, so at tablet+ it simply measures a
       // hidden container and does nothing.
       active: isCarousel || mobileCarousel,
+      // A slower glide for the full-bleed phone gallery — Embla's duration
+      // is a speed factor (default 25, higher = slower/softer). The
+      // techniques carousel keeps the default feel.
+      ...(mobileCarousel ? { duration: 42 } : {}),
     },
     wantsAutoplay
       ? [Autoplay({ delay: autoplayInterval || 5000, stopOnInteraction: false, stopOnMouseEnter: true })]
@@ -259,9 +263,11 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
       {/* Phone: one tile per swipe, with dots. */}
       <div className="md:hidden relative">
         <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex" style={{ marginLeft: `-${gutter}` }}>
+          {/* No gutter: adjacent photos butt edge-to-edge, so the glide
+              reads as one continuous filmstrip rather than cards. */}
+          <div className="flex">
             {list.map((item, i) => (
-              <div key={i} className="shrink-0 grow-0 min-w-0 basis-full" style={{ paddingLeft: gutter }}>
+              <div key={i} className="shrink-0 grow-0 min-w-0 basis-full">
                 <GridItem item={item} aspect={itemAspect ?? 'square'} />
               </div>
             ))}

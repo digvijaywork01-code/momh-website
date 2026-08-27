@@ -203,7 +203,8 @@ export const NumberedGrid: Block = {
           label: 'Autoplay the carousel',
           admin: {
             width: '50%',
-            condition: (_, sd) => sd?.layout === 'carousel',
+            condition: (_, sd) =>
+              sd?.layout === 'carousel' || sd?.mobileLayout === 'carousel',
           },
         },
         {
@@ -213,7 +214,9 @@ export const NumberedGrid: Block = {
           label: 'Autoplay interval (ms)',
           admin: {
             width: '50%',
-            condition: (_, sd) => sd?.layout === 'carousel' && Boolean(sd?.autoplay),
+            condition: (_, sd) =>
+              (sd?.layout === 'carousel' || sd?.mobileLayout === 'carousel') &&
+              Boolean(sd?.autoplay),
           },
         },
       ],
