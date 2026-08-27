@@ -64,6 +64,7 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
   body,
   backgroundColor = 'cream',
   showTopDivider = false,
+  tightTop = false,
   tightBottom = false,
   headingStyle = 'display',
   bodyWidth = 'normal',
@@ -142,7 +143,11 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
         // via `tightBottom` so the intro doesn't leave a cavernous
         // gap before a form / info block whose own top padding
         // already provides the breathing room.
-        'w-full min-h-[40vh] pt-20 md:pt-28 px-6 md:px-12 flex flex-col items-center justify-center',
+        'w-full px-6 md:px-12 flex flex-col items-center justify-center',
+        // `tightTop` also releases the 40vh minimum height — with the
+        // min-height held, the padding cut would be swallowed by the
+        // centring and the visual gap would barely move.
+        tightTop ? 'min-h-0 pt-8 md:pt-12' : 'min-h-[40vh] pt-20 md:pt-28',
         tightBottom ? 'pb-8 md:pb-12' : 'pb-20 md:pb-28',
         bgClass[bg],
       )}

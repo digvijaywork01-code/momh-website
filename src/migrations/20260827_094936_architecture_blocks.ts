@@ -15,9 +15,11 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "pages_blocks_editorial_split" ADD COLUMN "image_style" "enum_pages_blocks_editorial_split_image_style" DEFAULT 'bleed';
   ALTER TABLE "pages_blocks_numbered_grid" ADD COLUMN "item_aspect" "enum_pages_blocks_numbered_grid_item_aspect" DEFAULT 'square';
   ALTER TABLE "pages_blocks_section_intro" ADD COLUMN "body_width" "enum_pages_blocks_section_intro_body_width" DEFAULT 'normal';
+  ALTER TABLE "pages_blocks_section_intro" ADD COLUMN "tight_top" boolean DEFAULT false;
   ALTER TABLE "_pages_v_blocks_editorial_split" ADD COLUMN "image_style" "enum__pages_v_blocks_editorial_split_image_style" DEFAULT 'bleed';
   ALTER TABLE "_pages_v_blocks_numbered_grid" ADD COLUMN "item_aspect" "enum__pages_v_blocks_numbered_grid_item_aspect" DEFAULT 'square';
-  ALTER TABLE "_pages_v_blocks_section_intro" ADD COLUMN "body_width" "enum__pages_v_blocks_section_intro_body_width" DEFAULT 'normal';`)
+  ALTER TABLE "_pages_v_blocks_section_intro" ADD COLUMN "body_width" "enum__pages_v_blocks_section_intro_body_width" DEFAULT 'normal';
+  ALTER TABLE "_pages_v_blocks_section_intro" ADD COLUMN "tight_top" boolean DEFAULT false;`)
 }
 
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
@@ -49,9 +51,11 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   ALTER TABLE "pages_blocks_editorial_split" DROP COLUMN "image_style";
   ALTER TABLE "pages_blocks_numbered_grid" DROP COLUMN "item_aspect";
   ALTER TABLE "pages_blocks_section_intro" DROP COLUMN "body_width";
+  ALTER TABLE "pages_blocks_section_intro" DROP COLUMN "tight_top";
   ALTER TABLE "_pages_v_blocks_editorial_split" DROP COLUMN "image_style";
   ALTER TABLE "_pages_v_blocks_numbered_grid" DROP COLUMN "item_aspect";
   ALTER TABLE "_pages_v_blocks_section_intro" DROP COLUMN "body_width";
+  ALTER TABLE "_pages_v_blocks_section_intro" DROP COLUMN "tight_top";
   DROP TYPE "public"."enum_pages_blocks_editorial_split_image_style";
   DROP TYPE "public"."enum_pages_blocks_numbered_grid_item_aspect";
   DROP TYPE "public"."enum_pages_blocks_section_intro_body_width";

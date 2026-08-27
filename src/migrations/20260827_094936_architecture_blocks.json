@@ -1,5 +1,5 @@
 {
-  "id": "8f197d63-d597-4a7c-b42d-436b9bf59fab",
+  "id": "b48f51da-e50b-4878-a59b-245bb84c13a1",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -2495,6 +2495,13 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'normal'"
+        },
+        "tight_top": {
+          "name": "tight_top",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
         },
         "tight_bottom": {
           "name": "tight_bottom",
@@ -8799,6 +8806,13 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'normal'"
+        },
+        "tight_top": {
+          "name": "tight_top",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
         },
         "tight_bottom": {
           "name": "tight_bottom",

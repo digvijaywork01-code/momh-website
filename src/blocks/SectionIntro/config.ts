@@ -92,6 +92,16 @@ export const SectionIntro: Block = {
       },
     },
     {
+      name: 'tightTop',
+      type: 'checkbox',
+      defaultValue: false,
+      label: 'Tighten top padding',
+      admin: {
+        description:
+          'Halve the top padding and release the 40vh minimum height — for intros that follow a block whose own bottom spacing already provides the air (e.g. the Architecture galleries intro).',
+      },
+    },
+    {
       name: 'tightBottom',
       type: 'checkbox',
       defaultValue: false,

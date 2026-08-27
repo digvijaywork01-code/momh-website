@@ -1138,6 +1138,10 @@ export interface SectionIntroBlock {
    */
   bodyWidth?: ('normal' | 'wide') | null;
   /**
+   * Halve the top padding and release the 40vh minimum height — for intros that follow a block whose own bottom spacing already provides the air (e.g. the Architecture galleries intro).
+   */
+  tightTop?: boolean | null;
+  /**
    * When the next block has its own substantial top padding (e.g. a form or info panel), halve the SectionIntro bottom padding so the gap between the intro and the next block doesn’t feel too cavernous. Leave OFF when the next block is a full-bleed image / banner.
    */
   tightBottom?: boolean | null;
@@ -2549,6 +2553,7 @@ export interface SectionIntroBlockSelect<T extends boolean = true> {
   showTopDivider?: T;
   headingStyle?: T;
   bodyWidth?: T;
+  tightTop?: T;
   tightBottom?: T;
   eyebrow?: T;
   headline?: T;
