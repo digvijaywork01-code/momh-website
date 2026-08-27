@@ -520,6 +520,10 @@ export interface EditorialSplitBlock {
   bottomSpacing: 'none' | 'sm' | 'md' | 'lg';
   iconPosition: 'left' | 'center' | 'right';
   /**
+   * Only affects pages using the editorial-band layout. The Architecture PDF floats both band images clear of the page edge (7.5vw outer margin); every earlier band bleeds.
+   */
+  imageStyle: 'bleed' | 'inset';
+  /**
    * Only affects pages using the editorial-band layout. The Art & Craftsmanship PDF puts the heading over the image column in some bands and over the text in others.
    */
   headingPosition: 'with-text' | 'with-image';
@@ -1052,7 +1056,7 @@ export interface NumberedGridBlock {
   /**
    * Grid columns, or cards per slide in carousel mode.
    */
-  columns: '2' | '3';
+  columns: '2' | '3' | '4';
   /**
    * Leave Number and Caption blank when the artwork already carries its own label (as the making-of step images do).
    */
@@ -1071,7 +1075,8 @@ export interface NumberedGridBlock {
   /**
    * Ignored when a text column is set — the grid then fills its half.
    */
-  maxWidth?: ('full' | 'wide' | 'medium' | 'narrow') | null;
+  maxWidth?: ('bleed' | 'full' | 'wide' | 'medium' | 'narrow') | null;
+  itemAspect: 'square' | 'portrait';
   /**
    * When set, the grid takes one half of the section and a heading + body column takes the other.
    */
@@ -1128,6 +1133,10 @@ export interface SectionIntroBlock {
    * Display is the page-title look ("Plan Your *Visit*"). Section caps is the smaller closing-statement look from the Founder’s Vision PDF: Cormorant capitals over a short maroon rule, with the body justified beneath.
    */
   headingStyle: 'display' | 'section-caps';
+  /**
+   * Only applies to the Section caps heading treatment.
+   */
+  bodyWidth?: ('normal' | 'wide') | null;
   /**
    * When the next block has its own substantial top padding (e.g. a form or info panel), halve the SectionIntro bottom padding so the gap between the intro and the next block doesn’t feel too cavernous. Leave OFF when the next block is a full-bleed image / banner.
    */
@@ -2351,6 +2360,7 @@ export interface EditorialSplitBlockSelect<T extends boolean = true> {
   topSpacing?: T;
   bottomSpacing?: T;
   iconPosition?: T;
+  imageStyle?: T;
   headingPosition?: T;
   icon?: T;
   eyebrow?: T;
@@ -2519,6 +2529,7 @@ export interface NumberedGridBlockSelect<T extends boolean = true> {
         id?: T;
       };
   maxWidth?: T;
+  itemAspect?: T;
   textPosition?: T;
   headline?: T;
   body?: T;
@@ -2537,6 +2548,7 @@ export interface SectionIntroBlockSelect<T extends boolean = true> {
   backgroundColor?: T;
   showTopDivider?: T;
   headingStyle?: T;
+  bodyWidth?: T;
   tightBottom?: T;
   eyebrow?: T;
   headline?: T;

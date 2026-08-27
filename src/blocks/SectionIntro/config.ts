@@ -76,6 +76,22 @@ export const SectionIntro: Block = {
       },
     },
     {
+      name: 'bodyWidth',
+      type: 'select',
+      required: true,
+      defaultValue: 'normal',
+      label: 'Body measure (Section caps only)',
+      options: [
+        { label: 'Normal (≈42.5vw) — default', value: 'normal' },
+        { label: 'Wide (≈52.5vw) — the Architecture galleries intro', value: 'wide' },
+      ],
+      admin: {
+        width: '50%',
+        description: 'Only applies to the Section caps heading treatment.',
+        condition: (_, sd) => sd?.headingStyle === 'section-caps',
+      },
+    },
+    {
       name: 'tightBottom',
       type: 'checkbox',
       defaultValue: false,

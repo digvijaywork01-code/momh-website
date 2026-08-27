@@ -65,6 +65,7 @@ export const NumberedGrid: Block = {
           options: [
             { label: '2', value: '2' },
             { label: '3', value: '3' },
+            { label: '4', value: '4' },
           ],
           admin: {
             width: '50%',
@@ -110,21 +111,40 @@ export const NumberedGrid: Block = {
       ],
     },
     {
-      name: 'maxWidth',
-      type: 'select',
-      required: true,
-      defaultValue: 'wide',
-      label: 'Grid width',
-      options: [
-        { label: 'Full bleed to the section padding', value: 'full' },
-        { label: 'Wide (≈88%) — 3-up grids', value: 'wide' },
-        { label: 'Medium (≈79%) — a pair of large images', value: 'medium' },
-        { label: 'Narrow (≈67%) — a tall 2-column grid', value: 'narrow' },
+      type: 'row',
+      fields: [
+        {
+          name: 'maxWidth',
+          type: 'select',
+          required: true,
+          defaultValue: 'wide',
+          label: 'Grid width',
+          options: [
+            { label: 'Edge-to-edge mosaic (no side padding, tight gutter)', value: 'bleed' },
+            { label: 'Full width of the padded section', value: 'full' },
+            { label: 'Wide (≈88%) — 3-up grids', value: 'wide' },
+            { label: 'Medium (≈79%) — a pair of large images', value: 'medium' },
+            { label: 'Narrow (≈67%) — a tall 2-column grid', value: 'narrow' },
+          ],
+          admin: {
+            width: '50%',
+            description: 'Ignored when a text column is set — the grid then fills its half.',
+            condition: (_, sd) => !sd?.textPosition || sd.textPosition === 'none',
+          },
+        },
+        {
+          name: 'itemAspect',
+          type: 'select',
+          required: true,
+          defaultValue: 'square',
+          label: 'Tile shape',
+          options: [
+            { label: 'Square (1:1)', value: 'square' },
+            { label: 'Portrait (3:5)', value: 'portrait' },
+          ],
+          admin: { width: '50%' },
+        },
       ],
-      admin: {
-        description: 'Ignored when a text column is set — the grid then fills its half.',
-        condition: (_, sd) => !sd?.textPosition || sd.textPosition === 'none',
-      },
     },
     {
       name: 'textPosition',

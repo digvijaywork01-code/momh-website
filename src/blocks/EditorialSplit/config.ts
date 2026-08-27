@@ -122,6 +122,21 @@ export const EditorialSplit: Block = {
       ],
     },
     {
+      name: 'imageStyle',
+      type: 'select',
+      required: true,
+      defaultValue: 'bleed',
+      label: 'Image treatment',
+      options: [
+        { label: 'Bleed — runs to the page edge (default)', value: 'bleed' },
+        { label: 'Inset — floats clear of the edge on both sides', value: 'inset' },
+      ],
+      admin: {
+        description:
+          'Only affects pages using the editorial-band layout. The Architecture PDF floats both band images clear of the page edge (7.5vw outer margin); every earlier band bleeds.',
+      },
+    },
+    {
       name: 'headingPosition',
       type: 'select',
       required: true,

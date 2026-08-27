@@ -66,6 +66,7 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
   showTopDivider = false,
   tightBottom = false,
   headingStyle = 'display',
+  bodyWidth = 'normal',
   ctaLabel,
   ctaStyle,
   ctaLink,
@@ -179,7 +180,11 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
           // PDF measures the closing statement at 42.5% of the artboard;
           // max-w-2xl wrapped it a line early. Only the section-caps
           // treatment widens — every other SectionIntro is untouched.
-          sectionCaps ? 'max-w-2xl sbs:max-w-[42.5vw]' : 'max-w-2xl',
+          sectionCaps
+            ? bodyWidth === 'wide'
+              ? 'max-w-2xl sbs:max-w-[52.5vw]'
+              : 'max-w-2xl sbs:max-w-[42.5vw]'
+            : 'max-w-2xl',
         )}
       >
 

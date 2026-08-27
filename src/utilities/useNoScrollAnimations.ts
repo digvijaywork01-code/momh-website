@@ -22,6 +22,7 @@ const NO_ANIM_PATHS = [
   '/about',
   '/founders-vision',
   '/art-and-craftsmanship',
+  '/architecture',
   '/plan-your-visit',
   '/craft-your-jewellery',
   '/personal-consultation',

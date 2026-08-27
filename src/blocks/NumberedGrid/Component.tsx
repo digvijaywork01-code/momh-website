@@ -40,6 +40,7 @@ const prefersReducedMotion = () =>
 const gridColsClass: Record<ColumnsKey, string> = {
   '2': 'grid-cols-1 sbs:grid-cols-2',
   '3': 'grid-cols-1 md:grid-cols-2 sbs:grid-cols-3',
+  '4': 'grid-cols-1 md:grid-cols-2 sbs:grid-cols-4',
 }
 
 /** Carousel slide widths — the same 1 / 2 / N progression expressed as flex
@@ -47,12 +48,14 @@ const gridColsClass: Record<ColumnsKey, string> = {
 const slideBasisClass: Record<ColumnsKey, string> = {
   '2': 'basis-full sbs:basis-1/2',
   '3': 'basis-full md:basis-1/2 sbs:basis-1/3',
+  '4': 'basis-full md:basis-1/2 sbs:basis-1/4',
 }
 
 /** Grid inset. The PDF insets each grid differently — the technique row runs
  *  ~88% of the artboard, the image pair ~79%, the tall making-of grid ~67% —
  *  so this is an editor choice rather than a single hard-coded measure. */
 const maxWidthClass: Record<string, string> = {
+  bleed: '',
   full: '',
   // vw, not %, so these are measured against the VIEWPORT the way the PDF's
   // spans are — a percentage would be taken from the already-padded content
@@ -76,13 +79,21 @@ const bottomSpacingClass: Record<SpacingKey, string> = {
  *  `font-sans` is a dead utility in this repo. */
 const GridItem: React.FC<{
   item: NonNullable<NumberedGridBlockProps['items']>[number]
-}> = ({ item }) => {
+  /** Tile shape — 'portrait' is the Architecture mosaic's 3:5 (measured
+   *  460x768 = 0.599 in the PDF; the supplied photos are 0.596). */
+  aspect?: 'square' | 'portrait'
+}> = ({ item, aspect = 'square' }) => {
   const img = typeof item.image === 'object' && item.image ? item.image : null
   if (!img) return null
   const hasCaption = Boolean(item.number || item.caption)
   return (
     <figure className="m-0">
-      <div className="relative w-full aspect-square overflow-hidden">
+      <div
+        className={cn(
+          'relative w-full overflow-hidden',
+          aspect === 'portrait' ? 'aspect-[3/5]' : 'aspect-square',
+        )}
+      >
         <Media
           fill
           loading="eager"
@@ -112,6 +123,7 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
   columns = '3',
   textPosition = 'none',
   maxWidth = 'wide',
+  itemAspect = 'square',
   headline,
   body,
   autoplay = false,
@@ -152,7 +164,9 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
   const breakpoints: Record<string, { slidesToScroll: number }> =
     cols === '3'
       ? { '(min-width: 768px)': { slidesToScroll: 2 }, [SBS]: { slidesToScroll: 3 } }
-      : { [SBS]: { slidesToScroll: 2 } }
+      : cols === '4'
+        ? { '(min-width: 768px)': { slidesToScroll: 2 }, [SBS]: { slidesToScroll: 4 } }
+        : { [SBS]: { slidesToScroll: 2 } }
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       // Loop only when it drives itself. Autoplay against a non-looping
@@ -190,9 +204,11 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
 
   if (!list.length) return null
 
-  // The PDF uses a tight 28px gutter for the 3-up that sits beside text, and
-  // ~80px for the standalone grids. Expressed in vw so it tracks the artboard.
-  const gutter = hasText ? '1.5vw' : '4.2vw'
+  // Gutters, all measured from the PDFs and expressed in vw so they track
+  // the artboard: the edge-to-edge mosaic packs at 1.25vw (24-36px), a grid
+  // beside a text column at 1.5vw (28px), standalone grids at 4.2vw (~80px).
+  const isBleed = !hasText && maxWidth === 'bleed'
+  const gutter = isBleed ? '1.25vw' : hasText ? '1.5vw' : '4.2vw'
 
   const grid = isCarousel ? (
     <div className="relative">
@@ -204,7 +220,7 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
               className={cn('shrink-0 grow-0 min-w-0', slideBasisClass[cols])}
               style={{ paddingLeft: gutter }}
             >
-              <GridItem item={item} />
+              <GridItem item={item} aspect={itemAspect ?? 'square'} />
             </div>
           ))}
         </div>
@@ -230,7 +246,7 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
   ) : (
     <div className={cn('grid', gridColsClass[cols])} style={{ gap: gutter }}>
       {list.map((item, i) => (
-        <GridItem key={i} item={item} />
+        <GridItem key={i} item={item} aspect={itemAspect ?? 'square'} />
       ))}
     </div>
   )
@@ -239,7 +255,10 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
     <section
       ref={sectionRef}
       className={cn(
-        'relative w-full bg-ivory text-ink px-8 md:px-16 sbs:px-[5.5vw]',
+        'relative w-full bg-ivory text-ink',
+        // The mosaic runs truly edge-to-edge; every other mode keeps the
+        // section's own padding.
+        isBleed ? 'px-0' : 'px-8 md:px-16 sbs:px-[5.5vw]',
         topSpacingClass[(topSpacing || 'md') as SpacingKey],
         bottomSpacingClass[(bottomSpacing || 'md') as SpacingKey],
       )}

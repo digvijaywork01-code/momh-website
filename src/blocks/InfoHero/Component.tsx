@@ -179,7 +179,16 @@ export const InfoHeroBlock: React.FC<
               </h1>
             )}
             {subline && (
-              <p className="font-body text-body mt-2 text-offwhite/95 drop-shadow-md">
+              <p
+                // Template literal, NOT cn(): tailwind-merge cannot classify
+                // the custom `text-body`/`text-hero-body` size tokens and
+                // treats them as conflicting with the `text-offwhite/95`
+                // colour, silently dropping it (caught by the regression
+                // diff on /about). The Architecture PDF sets the banner
+                // subline at 30px (text-hero-body); every other hero keeps
+                // 24px (text-body).
+                className={`font-body ${bannerTitle ? 'text-hero-body' : 'text-body'} mt-2 text-offwhite/95 drop-shadow-md`}
+              >
                 {subline}
               </p>
             )}
@@ -250,7 +259,9 @@ export const InfoHeroBlock: React.FC<
             {headline ? renderEmphasis(headline) : headline}
           </h1>
           {subline && (
-            <p className="font-body text-body mt-1 text-offwhite drop-shadow-md">
+            <p
+              className={`font-body ${bannerTitle ? 'text-hero-body' : 'text-body'} mt-1 text-offwhite drop-shadow-md`}
+            >
               {subline}
             </p>
           )}

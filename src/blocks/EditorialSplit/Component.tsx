@@ -132,6 +132,7 @@ export const EditorialSplitBlock: React.FC<
   ctaLink,
   contactEmail,
   headingPosition = 'with-text',
+  imageStyle = 'bleed',
   variant,
 }) => {
   const fifty = variant === 'fifty-justified'
@@ -145,6 +146,10 @@ export const EditorialSplitBlock: React.FC<
   // column on some bands and above the TEXT column on others, varying block
   // to block on one page — so it is a CMS field, not a page-level variant.
   const headingOverImage = band && headingPosition === 'with-image'
+  // The Architecture PDF floats both band images clear of the page edge
+  // (image spans 7.5->47.3vw / 52.7->92.5vw; text padded ~7.6vw in its
+  // half). Only meaningful on the band layout; default keeps the bleed.
+  const insetImage = band && imageStyle === 'inset'
   const { setHeaderTheme } = useHeaderTheme()
   // On inner pages that opt out of scroll-driven motion (NO_ANIM_PATHS),
   // skip the entrance cascade entirely. Otherwise the gsap.set below
@@ -416,10 +421,10 @@ export const EditorialSplitBlock: React.FC<
             band
               ? // Exactly half the page; height follows the image's own
                 // aspect via the inline aspectRatio below, so the photo is
-                // shown whole — never cropped — at any viewport. When the
-                // heading sits over this column the wrapper above already
-                // owns the half-width, so the box just fills it.
-                headingOverImage
+                // shown whole — never cropped — at any viewport. When a
+                // wrapper owns the half-width (heading-over-image, or the
+                // inset treatment), the box just fills it.
+                headingOverImage || insetImage
                 ? 'relative shrink-0 w-full sbs:!h-auto'
                 : 'relative shrink-0 w-full sbs:!w-1/2 sbs:!h-auto'
               : fifty
@@ -429,7 +434,11 @@ export const EditorialSplitBlock: React.FC<
             // the image doesn't bleed past the column edge.
             'overflow-hidden',
             // Order lives on the wrapper when there is one.
-            headingOverImage ? '' : imageFirst ? 'order-1' : 'order-1 sbs:order-2',
+            headingOverImage || insetImage
+              ? ''
+              : imageFirst
+                ? 'order-1'
+                : 'order-1 sbs:order-2',
           )}
           style={fifty ? undefined : { aspectRatio: imageAspect }}
         >
@@ -451,28 +460,37 @@ export const EditorialSplitBlock: React.FC<
           )}
         </div>
           )
-          // Only the 'with-image' case needs a wrapper. Returning the column
-          // bare otherwise keeps the DOM byte-identical on every page that
-          // does not use this option — an earlier `display: contents` wrapper
-          // added a stray node (with inert order classes) to every
-          // editorial split on the site.
-          if (!headingOverImage) return imageColumn
+          // A wrapper exists only when something owns the column beyond the
+          // bare image: the heading-over-image case, or the Architecture
+          // inset. Returning the column bare otherwise keeps the DOM
+          // byte-identical on every page that uses neither option — an
+          // earlier `display: contents` wrapper added a stray node (with
+          // inert order classes) to every editorial split on the site.
+          if (!headingOverImage && !insetImage) return imageColumn
           return (
             <div
               className={cn(
                 'flex flex-col shrink-0 w-full sbs:w-1/2',
-                // The heading and the image share this column, so they share
-                // its padding — which is why the PDF insets both from the page
-                // edge (the Trade map starts at 6.0%, the Making image ends at
-                // 94.5%) while the bands whose heading sits with the TEXT let
-                // their image bleed to the edge. Padding goes on the OUTER
-                // side only; the inner edge runs to the centre line. This also
-                // lands the image at ~44.5vw, matching the PDF's 43.7 / 44.6.
                 'px-8 md:px-16',
-                imageFirst ? 'order-1 sbs:!pr-0 sbs:!pl-[5.5vw]' : 'order-1 sbs:order-2 sbs:!pl-0 sbs:!pr-[5.5vw]',
+                // with-image: padding on the OUTER side only (heading and
+                // image share the column, so they share its inset — Trade
+                // map starts at 6.0%, Making image ends at 94.5%).
+                // inset: measured margins from the Architecture PDF —
+                // 7.5vw outer, 2.7vw inner; image lands at 39.8vw.
+                insetImage
+                  ? imageFirst
+                    ? 'order-1 sbs:!pl-[7.5vw] sbs:!pr-[2.7vw]'
+                    : 'order-1 sbs:order-2 sbs:!pr-[7.5vw] sbs:!pl-[2.7vw]'
+                  : imageFirst
+                    ? 'order-1 sbs:!pr-0 sbs:!pl-[5.5vw]'
+                    : 'order-1 sbs:order-2 sbs:!pl-0 sbs:!pr-[5.5vw]',
               )}
             >
-              {headline && (
+              {/* The heading lives in this column ONLY for the
+                  heading-over-image bands; the inset wrapper exists purely
+                  for geometry, and its heading renders in the text column
+                  as usual (rendering here too duplicated it). */}
+              {headingOverImage && headline && (
                 <div className={cn('mb-6', imageFirst ? '' : 'sbs:text-right')}>
                   <div className="section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4">
                     <RichText data={headline} enableGutter={false} enableProse={false} />
@@ -486,7 +504,15 @@ export const EditorialSplitBlock: React.FC<
                   />
                 </div>
               )}
-              {imageColumn}
+              {insetImage ? (
+                // Centre the floated image vertically against a taller text
+                // column. Wrapped ONLY in the inset case so the
+                // heading-over-image bands (Art & Craftsmanship) keep their
+                // exact shipped DOM.
+                <div className="my-auto">{imageColumn}</div>
+              ) : (
+                imageColumn
+              )}
             </div>
           )
         })()}
@@ -507,7 +533,9 @@ export const EditorialSplitBlock: React.FC<
             // fifty-justified: PDF text padding is 130px on the 1920
             // artboard = 6.77vw, applied inside the 50vw text half.
             band
-              ? 'flex-1 flex flex-col px-8 md:px-16 sbs:!px-[4.2vw] py-8 sbs:!py-[3vw]'
+              ? insetImage
+                ? 'flex-1 flex flex-col px-8 md:px-16 sbs:!px-[7.6vw] py-8 sbs:!py-[3vw]'
+                : 'flex-1 flex flex-col px-8 md:px-16 sbs:!px-[4.2vw] py-8 sbs:!py-[3vw]'
               : fifty
                 ? 'flex-1 flex flex-col px-8 md:px-16 sbs:!px-[6.77vw] py-8 sbs:py-20'
                 : 'flex-1 flex flex-col px-8 md:px-16 sbs:!px-24 py-8 sbs:py-20',
