@@ -1,5 +1,5 @@
 {
-  "id": "b48f51da-e50b-4878-a59b-245bb84c13a1",
+  "id": "083d3d36-b085-42a9-92c4-27009bf64756",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -2311,6 +2311,14 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'square'"
+        },
+        "mobile_layout": {
+          "name": "mobile_layout",
+          "type": "enum_pages_blocks_numbered_grid_mobile_layout",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'stack'"
         },
         "text_position": {
           "name": "text_position",
@@ -8616,6 +8624,14 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'square'"
+        },
+        "mobile_layout": {
+          "name": "mobile_layout",
+          "type": "enum__pages_v_blocks_numbered_grid_mobile_layout",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'stack'"
         },
         "text_position": {
           "name": "text_position",
@@ -19406,6 +19422,14 @@
         "portrait"
       ]
     },
+    "public.enum_pages_blocks_numbered_grid_mobile_layout": {
+      "name": "enum_pages_blocks_numbered_grid_mobile_layout",
+      "schema": "public",
+      "values": [
+        "stack",
+        "carousel"
+      ]
+    },
     "public.enum_pages_blocks_numbered_grid_text_position": {
       "name": "enum_pages_blocks_numbered_grid_text_position",
       "schema": "public",
@@ -20070,6 +20094,14 @@
       "values": [
         "square",
         "portrait"
+      ]
+    },
+    "public.enum__pages_v_blocks_numbered_grid_mobile_layout": {
+      "name": "enum__pages_v_blocks_numbered_grid_mobile_layout",
+      "schema": "public",
+      "values": [
+        "stack",
+        "carousel"
       ]
     },
     "public.enum__pages_v_blocks_numbered_grid_text_position": {

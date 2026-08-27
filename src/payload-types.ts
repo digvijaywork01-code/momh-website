@@ -1078,6 +1078,10 @@ export interface NumberedGridBlock {
   maxWidth?: ('bleed' | 'full' | 'wide' | 'medium' | 'narrow') | null;
   itemAspect: 'square' | 'portrait';
   /**
+   * How a GRID presents on phones. A 12-tile mosaic as a single-column stack is a very long scroll — the Architecture gallery swipes instead. Tablets and up always keep the grid.
+   */
+  mobileLayout?: ('stack' | 'carousel') | null;
+  /**
    * When set, the grid takes one half of the section and a heading + body column takes the other.
    */
   textPosition: 'none' | 'left' | 'right';
@@ -2534,6 +2538,7 @@ export interface NumberedGridBlockSelect<T extends boolean = true> {
       };
   maxWidth?: T;
   itemAspect?: T;
+  mobileLayout?: T;
   textPosition?: T;
   headline?: T;
   body?: T;

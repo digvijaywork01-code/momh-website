@@ -147,6 +147,22 @@ export const NumberedGrid: Block = {
       ],
     },
     {
+      name: 'mobileLayout',
+      type: 'select',
+      required: true,
+      defaultValue: 'stack',
+      label: 'Phone layout (grid mode)',
+      options: [
+        { label: 'Stack — items in a single column', value: 'stack' },
+        { label: 'Carousel — swipe one item at a time', value: 'carousel' },
+      ],
+      admin: {
+        description:
+          'How a GRID presents on phones. A 12-tile mosaic as a single-column stack is a very long scroll — the Architecture gallery swipes instead. Tablets and up always keep the grid.',
+        condition: (_, sd) => sd?.layout === 'grid',
+      },
+    },
+    {
       name: 'textPosition',
       type: 'select',
       required: true,

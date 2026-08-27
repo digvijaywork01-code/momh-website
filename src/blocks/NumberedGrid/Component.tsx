@@ -124,6 +124,7 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
   textPosition = 'none',
   maxWidth = 'wide',
   itemAspect = 'square',
+  mobileLayout = 'stack',
   headline,
   body,
   autoplay = false,
@@ -147,6 +148,11 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
 
   const cols = (columns || '3') as ColumnsKey
   const isCarousel = layout === 'carousel'
+  // A grid can opt into presenting as a one-per-slide carousel on PHONES
+  // only (< md). Tablets and up always keep the grid — the stack that
+  // motivated this (12 portrait tiles single-file on a 390px screen) only
+  // exists below the 2-column breakpoint.
+  const mobileCarousel = !isCarousel && mobileLayout === 'carousel'
   const textPos = (textPosition || 'none') as TextPosKey
   const hasText = textPos !== 'none'
   const list = Array.isArray(items) ? items : []
@@ -177,9 +183,14 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
       loop: wantsAutoplay,
       align: 'start',
       slidesToScroll: 1,
-      breakpoints,
+      // The phone carousel never changes its per-slide count, so it needs
+      // no breakpoint map.
+      breakpoints: isCarousel ? breakpoints : {},
       ...(wantsAutoplay ? {} : { containScroll: 'trimSnaps' as const }),
-      active: isCarousel,
+      // Also live for a grid presenting as a phone carousel — the instance
+      // sits in a `md:hidden` wrapper, so at tablet+ it simply measures a
+      // hidden container and does nothing.
+      active: isCarousel || mobileCarousel,
     },
     wantsAutoplay
       ? [Autoplay({ delay: autoplayInterval || 5000, stopOnInteraction: false, stopOnMouseEnter: true })]
@@ -189,7 +200,7 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
   const [snaps, setSnaps] = useState<number[]>([])
   const [selected, setSelected] = useState(0)
   useEffect(() => {
-    if (!emblaApi || !isCarousel) return
+    if (!emblaApi || (!isCarousel && !mobileCarousel)) return
     const sync = () => {
       setSnaps(emblaApi.scrollSnapList())
       setSelected(emblaApi.selectedScrollSnap())
@@ -199,7 +210,7 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
     return () => {
       emblaApi.off('select', sync).off('reInit', sync)
     }
-  }, [emblaApi, isCarousel])
+  }, [emblaApi, isCarousel, mobileCarousel])
   const scrollTo = useCallback((i: number) => emblaApi?.scrollTo(i), [emblaApi])
 
   if (!list.length) return null
@@ -243,6 +254,44 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
         </div>
       )}
     </div>
+  ) : mobileCarousel ? (
+    <>
+      {/* Phone: one tile per swipe, with dots. */}
+      <div className="md:hidden relative">
+        <div className="overflow-hidden" ref={emblaRef}>
+          <div className="flex" style={{ marginLeft: `-${gutter}` }}>
+            {list.map((item, i) => (
+              <div key={i} className="shrink-0 grow-0 min-w-0 basis-full" style={{ paddingLeft: gutter }}>
+                <GridItem item={item} aspect={itemAspect ?? 'square'} />
+              </div>
+            ))}
+          </div>
+        </div>
+        {snaps.length > 1 && (
+          <div className="mt-6 flex justify-center gap-2.5">
+            {snaps.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => scrollTo(i)}
+                aria-label={`Go to image ${i + 1}`}
+                aria-current={i === selected}
+                className={cn(
+                  'h-2 w-2 rounded-full transition-colors',
+                  i === selected ? 'bg-brand-red' : 'bg-ink/25 hover:bg-ink/40',
+                )}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+      {/* Tablet and up: the grid, exactly as without the option. */}
+      <div className={cn('hidden md:grid', gridColsClass[cols])} style={{ gap: gutter }}>
+        {list.map((item, i) => (
+          <GridItem key={i} item={item} aspect={itemAspect ?? 'square'} />
+        ))}
+      </div>
+    </>
   ) : (
     <div className={cn('grid', gridColsClass[cols])} style={{ gap: gutter }}>
       {list.map((item, i) => (
