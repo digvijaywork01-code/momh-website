@@ -406,7 +406,7 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
           type="button"
           onClick={scrollNext}
           aria-label="Next slide"
-          className="absolute bottom-3 right-0 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-brand-red text-offwhite transition-transform duration-200 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2"
+          className="absolute bottom-3 right-0 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-brand-red bg-transparent text-brand-red transition-transform duration-200 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2"
         >
           <svg
             width="16"
