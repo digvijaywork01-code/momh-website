@@ -479,10 +479,9 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
       {hasText ? (
         <div
           className={cn(
-            // Bottom-aligned: the text column's last line anchors to the
-            // bottom of the image column (tried centred, then top-aligned —
-            // design direction settled on bottom).
-            'flex flex-col sbs:flex-row sbs:items-end gap-[5vw]',
+            // Vertically centred against the image column (design direction
+            // settled here after trying top- and bottom-anchored).
+            'flex flex-col sbs:flex-row sbs:items-center gap-[5vw]',
             textPos === 'left' ? 'sbs:flex-row' : 'sbs:flex-row-reverse',
           )}
         >
