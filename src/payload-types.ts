@@ -1056,7 +1056,7 @@ export interface NumberedGridBlock {
   /**
    * Grid columns, or cards per slide in carousel mode.
    */
-  columns: '2' | '3' | '4';
+  columns: '1' | '2' | '3' | '4';
   /**
    * Overlay is the "How It Is Made" treatment: big white numeral, italic caption and justified description laid over a darkened photo (fading on hover); phones stack the text below the photo. Uses each item's Number, Caption and Description.
    */
@@ -1098,7 +1098,7 @@ export interface NumberedGridBlock {
    * Ignored when a text column is set — the grid then fills its half.
    */
   maxWidth?: ('bleed' | 'full' | 'wide' | 'medium' | 'narrow') | null;
-  itemAspect: 'square' | 'portrait';
+  itemAspect: 'square' | 'portrait' | 'landscape';
   /**
    * How a GRID presents on phones. A 12-tile mosaic as a single-column stack is a very long scroll — the Architecture gallery swipes instead. Tablets and up always keep the grid.
    */

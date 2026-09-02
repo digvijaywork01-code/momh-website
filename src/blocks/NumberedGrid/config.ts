@@ -63,6 +63,7 @@ export const NumberedGrid: Block = {
           required: true,
           defaultValue: '3',
           options: [
+            { label: '1 (carousel: one big image per slide)', value: '1' },
             { label: '2', value: '2' },
             { label: '3', value: '3' },
             { label: '4', value: '4' },
@@ -166,6 +167,7 @@ export const NumberedGrid: Block = {
           options: [
             { label: 'Square (1:1)', value: 'square' },
             { label: 'Portrait (3:5)', value: 'portrait' },
+            { label: 'Landscape (3:2)', value: 'landscape' },
           ],
           admin: { width: '50%' },
         },

@@ -38,14 +38,24 @@ const prefersReducedMotion = () =>
 /** Grid track counts. Mobile always stacks to a single column so a 26%-wide
  *  square doesn't become a thumbnail on a 390px screen. */
 const gridColsClass: Record<ColumnsKey, string> = {
+  '1': 'grid-cols-1',
   '2': 'grid-cols-1 sbs:grid-cols-2',
   '3': 'grid-cols-1 md:grid-cols-2 sbs:grid-cols-3',
   '4': 'grid-cols-1 md:grid-cols-2 sbs:grid-cols-4',
 }
 
+/** Tile shapes. 'landscape' (3:2) is the FLUX/COLOUR/FIRE single-image
+ *  carousel — one wide frame per slide balances the text column beside it. */
+const aspectClass: Record<string, string> = {
+  square: 'aspect-square',
+  portrait: 'aspect-[3/5]',
+  landscape: 'aspect-[3/2]',
+}
+
 /** Carousel slide widths — the same 1 / 2 / N progression expressed as flex
  *  bases, since Embla sizes slides itself rather than via a grid. */
 const slideBasisClass: Record<ColumnsKey, string> = {
+  '1': 'basis-full',
   '2': 'basis-full sbs:basis-1/2',
   '3': 'basis-full md:basis-1/2 sbs:basis-1/3',
   '4': 'basis-full md:basis-1/2 sbs:basis-1/4',
@@ -81,7 +91,7 @@ const GridItem: React.FC<{
   item: NonNullable<NumberedGridBlockProps['items']>[number]
   /** Tile shape — 'portrait' is the Architecture mosaic's 3:5 (measured
    *  460x768 = 0.599 in the PDF; the supplied photos are 0.596). */
-  aspect?: 'square' | 'portrait'
+  aspect?: NonNullable<NumberedGridBlockProps['itemAspect']>
 }> = ({ item, aspect = 'square' }) => {
   const img = typeof item.image === 'object' && item.image ? item.image : null
   if (!img) return null
@@ -91,7 +101,7 @@ const GridItem: React.FC<{
       <div
         className={cn(
           'relative w-full overflow-hidden',
-          aspect === 'portrait' ? 'aspect-[3/5]' : 'aspect-square',
+          aspectClass[aspect] ?? 'aspect-square',
         )}
       >
         <Media
@@ -128,7 +138,7 @@ const GridItem: React.FC<{
 const OverlayCard: React.FC<{
   item: NonNullable<NumberedGridBlockProps['items']>[number]
   index: number
-  aspect?: 'square' | 'portrait'
+  aspect?: NonNullable<NumberedGridBlockProps['itemAspect']>
 }> = ({ item, index, aspect = 'square' }) => {
   const img = typeof item.image === 'object' && item.image ? item.image : null
   if (!img) return null
@@ -147,7 +157,7 @@ const OverlayCard: React.FC<{
       <div
         className={cn(
           'relative w-full overflow-hidden',
-          aspect === 'portrait' ? 'aspect-[3/5]' : 'aspect-square',
+          aspectClass[aspect] ?? 'aspect-square',
         )}
       >
         <Media
