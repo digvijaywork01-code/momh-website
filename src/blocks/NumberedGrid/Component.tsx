@@ -479,7 +479,10 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
       {hasText ? (
         <div
           className={cn(
-            'flex flex-col sbs:flex-row sbs:items-center gap-[5vw]',
+            // Top-aligned, not centred: centring measured the text against
+            // the whole image column (image + caption + dots) and left the
+            // heading floating ~130px below the image's top edge.
+            'flex flex-col sbs:flex-row sbs:items-start gap-[5vw]',
             textPos === 'left' ? 'sbs:flex-row' : 'sbs:flex-row-reverse',
           )}
         >
