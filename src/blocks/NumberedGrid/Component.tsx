@@ -241,21 +241,16 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
   // prefers-reduced-motion — the same contract ProcessCarousel uses.
   const reduced = prefersReducedMotion()
   const wantsAutoplay = (isCarousel || mobileCarousel) && autoplay === true && !reduced
-  // Page a whole slide at a time so the techniques read 3 / 3 / 1 rather than
-  // creeping forward one card. The step MUST track how many cards are actually
-  // visible at the current breakpoint — a fixed step of 3 while only one card
-  // shows would leave cards 2, 3, 5 and 6 unreachable from the dots. These
-  // queries mirror the `slideBasisClass` breakpoints exactly.
-  const SBS = '(min-width: 640px) and (orientation: landscape) and (min-height: 480px)'
+  // Overlay pairs page a whole pair at a time (the reference behaviour),
+  // switching at plain `md` to mirror their `md:basis-1/2` slide width.
+  // PLAIN carousels advance ONE card per step instead: with a short set
+  // (the techniques carousel is 4 cards at 3-up) a whole-view jump leaves
+  // Embla unable to wrap seamlessly, so the loop dies at the last page —
+  // single-card movement keeps the filmstrip looping continuously, and
+  // gives every card its own dot.
   const breakpoints: Record<string, { slidesToScroll: number }> = overlay
-    ? // Overlay pairs switch at plain `md` (mirroring their `md:basis-1/2`
-      // slide width), not the SBS query the plain card sizes use.
-      { '(min-width: 768px)': { slidesToScroll: 2 } }
-    : cols === '3'
-      ? { '(min-width: 768px)': { slidesToScroll: 2 }, [SBS]: { slidesToScroll: 3 } }
-      : cols === '4'
-        ? { '(min-width: 768px)': { slidesToScroll: 2 }, [SBS]: { slidesToScroll: 4 } }
-        : { [SBS]: { slidesToScroll: 2 } }
+    ? { '(min-width: 768px)': { slidesToScroll: 2 } }
+    : {}
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       // Loop only when it drives itself. Autoplay against a non-looping
@@ -303,6 +298,18 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
 
   if (!list.length) return null
+
+  // Embla silently refuses to loop when the slides can't cover the viewport
+  // roughly twice over — 4 technique cards at 3-up are only 133% of the view,
+  // so `loop: true` was being deactivated and autoplay bounced 1 → 2 → 1.
+  // Rendering the set twice gives the engine room to wrap seamlessly; the
+  // clones are aria-hidden and the dots below collapse to the real count.
+  const needsClones =
+    isCarousel && !overlay && wantsAutoplay && list.length < Number(cols) * 2
+  const slidesList = needsClones ? [...list, ...list] : list
+  const realCount = list.length
+  const dotCount = needsClones ? realCount : snaps.length
+  const activeDot = needsClones ? selected % realCount : selected
 
   // Gutters, all measured from the PDFs and expressed in vw so they track
   // the artboard: the edge-to-edge mosaic packs at 1.25vw (24-36px), a grid
@@ -373,29 +380,30 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
     <div className="relative">
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex" style={{ marginLeft: `-${gutter}` }}>
-          {list.map((item, i) => (
+          {slidesList.map((item, i) => (
             <div
               key={i}
               className={cn('shrink-0 grow-0 min-w-0', slideBasisClass[cols])}
               style={{ paddingLeft: gutter }}
+              {...(i >= realCount ? { 'aria-hidden': true } : {})}
             >
               <GridItem item={item} aspect={itemAspect ?? 'square'} />
             </div>
           ))}
         </div>
       </div>
-      {snaps.length > 1 && (
+      {dotCount > 1 && (
         <div className="mt-8 flex justify-center gap-3">
-          {snaps.map((_, i) => (
+          {Array.from({ length: dotCount }).map((_, i) => (
             <button
               key={i}
               type="button"
               onClick={() => scrollTo(i)}
               aria-label={`Go to slide ${i + 1}`}
-              aria-current={i === selected}
+              aria-current={i === activeDot}
               className={cn(
                 'h-2 w-2 rounded-full transition-colors',
-                i === selected ? 'bg-brand-red' : 'bg-ink/25 hover:bg-ink/40',
+                i === activeDot ? 'bg-brand-red' : 'bg-ink/25 hover:bg-ink/40',
               )}
             />
           ))}
