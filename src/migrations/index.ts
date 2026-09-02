@@ -3,6 +3,7 @@ import * as migration_20260527_050504_initial_v2 from './20260527_050504_initial
 import * as migration_20260818_104430_founders_vision_blocks from './20260818_104430_founders_vision_blocks';
 import * as migration_20260818_123947_art_craftsmanship_blocks from './20260818_123947_art_craftsmanship_blocks';
 import * as migration_20260827_095503_architecture_blocks from './20260827_095503_architecture_blocks';
+import * as migration_20260902_073136_art_craftsmanship_overlay_cards from './20260902_073136_art_craftsmanship_overlay_cards';
 
 export const migrations = [
   {
@@ -28,6 +29,11 @@ export const migrations = [
   {
     up: migration_20260827_095503_architecture_blocks.up,
     down: migration_20260827_095503_architecture_blocks.down,
-    name: '20260827_095503_architecture_blocks'
+    name: '20260827_095503_architecture_blocks',
+  },
+  {
+    up: migration_20260902_073136_art_craftsmanship_overlay_cards.up,
+    down: migration_20260902_073136_art_craftsmanship_overlay_cards.down,
+    name: '20260902_073136_art_craftsmanship_overlay_cards'
   },
 ];

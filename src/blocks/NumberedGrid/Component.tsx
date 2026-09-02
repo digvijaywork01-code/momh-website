@@ -117,10 +117,87 @@ const GridItem: React.FC<{
   )
 }
 
+/** Overlay card — the SSJ "How It Is Made" treatment, re-skinned to this
+ *  site's tokens: photo under a dark tint with a large thin numeral, italic
+ *  caption and justified description in offwhite, all fading on hover to
+ *  reveal the clean photo. Phones get the photo clean with the text stacked
+ *  below (overlaid long copy is cramped on a phone, and touch has no hover
+ *  to reveal the image). One copy of the text, re-flowed with CSS — a
+ *  duplicated mobile/desktop DOM would read as repeated sections to
+ *  crawlers. */
+const OverlayCard: React.FC<{
+  item: NonNullable<NumberedGridBlockProps['items']>[number]
+  index: number
+  aspect?: 'square' | 'portrait'
+}> = ({ item, index, aspect = 'square' }) => {
+  const img = typeof item.image === 'object' && item.image ? item.image : null
+  if (!img) return null
+  const num = item.number || String(index + 1)
+  // With a description the caption rides the numeral's TOP and the body fills
+  // the space beneath (the reference layout). Without one, that two-row grid
+  // would strand the caption up there — so the numeral stops spanning and the
+  // caption bottom-aligns beside it, padded up ~12px so its baseline sits on
+  // the numeral's.
+  const hasDesc = Boolean(item.description)
+  return (
+    <div
+      className="group relative w-full overflow-hidden"
+      aria-label={item.caption ? `${num}: ${item.caption}` : undefined}
+    >
+      <div
+        className={cn(
+          'relative w-full overflow-hidden',
+          aspect === 'portrait' ? 'aspect-[3/5]' : 'aspect-square',
+        )}
+      >
+        <Media
+          fill
+          loading="eager"
+          imgClassName="absolute inset-0 w-full h-full object-cover"
+          resource={img}
+        />
+        {/* Desktop-only tint over the photo; fades on hover. */}
+        <div
+          className="hidden md:block absolute inset-0 bg-black/70 transition-opacity duration-500 ease-out group-hover:opacity-0"
+          aria-hidden="true"
+        />
+      </div>
+      <div className="px-6 pt-5 pb-12 md:absolute md:inset-0 md:z-10 md:flex md:items-end md:px-[2.6vw] md:pt-0 md:pb-[2.4vw] md:transition-opacity md:duration-500 md:ease-out md:group-hover:opacity-0">
+        <div className="grid grid-cols-[auto_1fr] items-baseline gap-x-3 gap-y-2.5 md:grid-cols-[auto_minmax(0,24rem)] md:items-end md:gap-x-5 md:gap-y-0">
+          <span
+            className={cn(
+              'col-start-1 row-start-1 md:self-end font-body font-light text-brand-red md:text-offwhite text-[34px] md:text-[clamp(52px,6.5vw,100px)] leading-none select-none',
+              hasDesc && 'md:row-span-2',
+            )}
+          >
+            {num}.
+          </span>
+          {item.caption && (
+            <h3
+              className={cn(
+                'col-start-2 row-start-1 font-body font-medium italic text-ink md:text-offwhite text-2xl md:text-3xl leading-tight',
+                hasDesc ? 'md:mb-2' : 'md:self-end md:pb-3',
+              )}
+            >
+              {item.caption}
+            </h3>
+          )}
+          {item.description && (
+            <div className="col-span-2 col-start-1 row-start-2 md:col-span-1 md:col-start-2 font-body text-ink md:text-offwhite/90 text-base md:text-lg leading-relaxed md:text-justify">
+              <RichText data={item.description} enableGutter={false} enableProse={false} />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
   items,
   layout = 'grid',
   columns = '3',
+  cardStyle = 'plain',
   textPosition = 'none',
   maxWidth = 'wide',
   itemAspect = 'square',
@@ -148,6 +225,9 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
 
   const cols = (columns || '3') as ColumnsKey
   const isCarousel = layout === 'carousel'
+  // Overlay cards ignore `columns`: the reference design is always 1-up on
+  // phones and a gapless pair from md up, paging a whole pair at a time.
+  const overlay = isCarousel && cardStyle === 'overlay'
   // A grid can opt into presenting as a one-per-slide carousel on PHONES
   // only (< md). Tablets and up always keep the grid — the stack that
   // motivated this (12 portrait tiles single-file on a 390px screen) only
@@ -167,8 +247,11 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
   // shows would leave cards 2, 3, 5 and 6 unreachable from the dots. These
   // queries mirror the `slideBasisClass` breakpoints exactly.
   const SBS = '(min-width: 640px) and (orientation: landscape) and (min-height: 480px)'
-  const breakpoints: Record<string, { slidesToScroll: number }> =
-    cols === '3'
+  const breakpoints: Record<string, { slidesToScroll: number }> = overlay
+    ? // Overlay pairs switch at plain `md` (mirroring their `md:basis-1/2`
+      // slide width), not the SBS query the plain card sizes use.
+      { '(min-width: 768px)': { slidesToScroll: 2 } }
+    : cols === '3'
       ? { '(min-width: 768px)': { slidesToScroll: 2 }, [SBS]: { slidesToScroll: 3 } }
       : cols === '4'
         ? { '(min-width: 768px)': { slidesToScroll: 2 }, [SBS]: { slidesToScroll: 4 } }
@@ -216,6 +299,8 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
     }
   }, [emblaApi, isCarousel, mobileCarousel])
   const scrollTo = useCallback((i: number) => emblaApi?.scrollTo(i), [emblaApi])
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
 
   if (!list.length) return null
 
@@ -225,7 +310,66 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
   const isBleed = !hasText && maxWidth === 'bleed'
   const gutter = isBleed ? '1.25vw' : hasText ? '1.5vw' : '4.2vw'
 
-  const grid = isCarousel ? (
+  const grid = overlay ? (
+    <div className="relative">
+      <div className="overflow-hidden" ref={emblaRef}>
+        {/* Gapless pair — adjacent cards butt together like the reference. */}
+        <div className="flex items-start">
+          {list.map((item, i) => (
+            <div key={i} className="shrink-0 grow-0 min-w-0 basis-full md:basis-1/2">
+              <OverlayCard item={item} index={i} aspect={itemAspect ?? 'square'} />
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Frosted prev/next — desktop only; touch swipes. */}
+      {list.length > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={scrollPrev}
+            aria-label="Previous slide"
+            className="hidden md:flex absolute left-4 lg:left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 lg:w-14 lg:h-14 rounded-full border border-offwhite/45 bg-white/10 backdrop-blur-sm text-offwhite hover:bg-brand-red hover:border-brand-red items-center justify-center transition-all duration-300 ease-out hover:scale-105"
+          >
+            <svg width="17" height="17" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M9 1.5L3.5 7l5.5 5.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={scrollNext}
+            aria-label="Next slide"
+            className="hidden md:flex absolute right-4 lg:right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 lg:w-14 lg:h-14 rounded-full border border-offwhite/45 bg-white/10 backdrop-blur-sm text-offwhite hover:bg-brand-red hover:border-brand-red items-center justify-center transition-all duration-300 ease-out hover:scale-105"
+          >
+            <svg width="17" height="17" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M5 1.5L10.5 7L5 12.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </>
+      )}
+      {/* Pill dots — over the image bottom on desktop, in the stacked text
+          zone on phones (whose cards reserve pb-12 for them). */}
+      {snaps.length > 1 && (
+        <div className="absolute bottom-4 md:bottom-7 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5">
+          {snaps.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => scrollTo(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              aria-current={i === selected}
+              className={cn(
+                'h-1.5 rounded-full transition-all duration-500 ease-out',
+                i === selected
+                  ? 'w-7 bg-brand-red'
+                  : 'w-1.5 bg-ink/30 hover:bg-ink/55 md:bg-offwhite/50 md:hover:bg-offwhite/80',
+              )}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  ) : isCarousel ? (
     <div className="relative">
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex" style={{ marginLeft: `-${gutter}` }}>

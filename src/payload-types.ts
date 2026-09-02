@@ -1058,6 +1058,10 @@ export interface NumberedGridBlock {
    */
   columns: '2' | '3' | '4';
   /**
+   * Overlay is the "How It Is Made" treatment: big white numeral, italic caption and justified description laid over a darkened photo (fading on hover); phones stack the text below the photo. Uses each item's Number, Caption and Description.
+   */
+  cardStyle?: ('plain' | 'overlay') | null;
+  /**
    * Leave Number and Caption blank when the artwork already carries its own label (as the making-of step images do).
    */
   items: {
@@ -1070,6 +1074,24 @@ export interface NumberedGridBlock {
      * e.g. "FLUX", "Painted Enamel".
      */
     caption?: string | null;
+    /**
+     * Rendered only by the Overlay card style — the step description laid over the photo (desktop) or below it (phones).
+     */
+    description?: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
     id?: string | null;
   }[];
   /**
@@ -2528,12 +2550,14 @@ export interface MediaBandBlockSelect<T extends boolean = true> {
 export interface NumberedGridBlockSelect<T extends boolean = true> {
   layout?: T;
   columns?: T;
+  cardStyle?: T;
   items?:
     | T
     | {
         image?: T;
         number?: T;
         caption?: T;
+        description?: T;
         id?: T;
       };
   maxWidth?: T;

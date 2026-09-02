@@ -75,6 +75,22 @@ export const NumberedGrid: Block = {
       ],
     },
     {
+      name: 'cardStyle',
+      type: 'select',
+      required: true,
+      defaultValue: 'plain',
+      label: 'Card style (carousel mode)',
+      options: [
+        { label: 'Plain — image with small number/caption beneath', value: 'plain' },
+        { label: 'Overlay — numeral + caption + description over a tinted photo', value: 'overlay' },
+      ],
+      admin: {
+        description:
+          'Overlay is the "How It Is Made" treatment: big white numeral, italic caption and justified description laid over a darkened photo (fading on hover); phones stack the text below the photo. Uses each item\'s Number, Caption and Description.',
+        condition: (_, sd) => sd?.layout === 'carousel',
+      },
+    },
+    {
       name: 'items',
       type: 'array',
       required: true,
@@ -107,6 +123,15 @@ export const NumberedGrid: Block = {
               admin: { width: '70%', description: 'e.g. "FLUX", "Painted Enamel".' },
             },
           ],
+        },
+        {
+          name: 'description',
+          type: 'richText',
+          editor: richTextEditor,
+          admin: {
+            description:
+              'Rendered only by the Overlay card style — the step description laid over the photo (desktop) or below it (phones).',
+          },
         },
       ],
     },
