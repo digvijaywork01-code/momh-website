@@ -486,10 +486,10 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
             textPos === 'left' ? 'sbs:flex-row' : 'sbs:flex-row-reverse',
           )}
         >
-          {/* Equal halves — the FLUX section pairs one square image with its
-              text column 50-50 (was 61/34 for the old 3-up grid). */}
-          <div className="sbs:flex-1 sbs:min-w-0">{grid}</div>
-          <div className={cn('sbs:flex-1 sbs:min-w-0', textPos === 'left' ? '' : 'sbs:text-right')}>
+          {/* 45/55 — the image column a touch narrower than the text column
+              (was 50-50; before that 61/34 for the old 3-up grid). */}
+          <div className="sbs:flex-[45] sbs:min-w-0">{grid}</div>
+          <div className={cn('sbs:flex-[55] sbs:min-w-0', textPos === 'left' ? '' : 'sbs:text-right')}>
             {headline && (
               <>
                 <div className="section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4">
