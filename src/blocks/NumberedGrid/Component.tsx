@@ -118,13 +118,13 @@ const GridItem: React.FC<{
 }
 
 /** Overlay card — the SSJ "How It Is Made" treatment, re-skinned to this
- *  site's tokens: photo under a dark tint with a large thin numeral, italic
- *  caption and justified description in offwhite, all fading on hover to
- *  reveal the clean photo. Phones get the photo clean with the text stacked
- *  below (overlaid long copy is cramped on a phone, and touch has no hover
- *  to reveal the image). One copy of the text, re-flowed with CSS — a
- *  duplicated mobile/desktop DOM would read as repeated sections to
- *  crawlers. */
+ *  site's tokens: photo under a static dark tint with a large thin numeral,
+ *  italic caption and justified description in offwhite. (The reference's
+ *  hover-fade reveal was dropped here per design direction — the tint and
+ *  text hold still.) Phones get the photo clean with the text stacked
+ *  below (overlaid long copy is cramped on a phone). One copy of the text,
+ *  re-flowed with CSS — a duplicated mobile/desktop DOM would read as
+ *  repeated sections to crawlers. */
 const OverlayCard: React.FC<{
   item: NonNullable<NumberedGridBlockProps['items']>[number]
   index: number
@@ -141,7 +141,7 @@ const OverlayCard: React.FC<{
   const hasDesc = Boolean(item.description)
   return (
     <div
-      className="group relative w-full overflow-hidden"
+      className="relative w-full overflow-hidden"
       aria-label={item.caption ? `${num}: ${item.caption}` : undefined}
     >
       <div
@@ -156,13 +156,13 @@ const OverlayCard: React.FC<{
           imgClassName="absolute inset-0 w-full h-full object-cover"
           resource={img}
         />
-        {/* Desktop-only tint over the photo; fades on hover. */}
+        {/* Desktop-only static tint over the photo. */}
         <div
-          className="hidden md:block absolute inset-0 bg-black/70 transition-opacity duration-500 ease-out group-hover:opacity-0"
+          className="hidden md:block absolute inset-0 bg-black/70"
           aria-hidden="true"
         />
       </div>
-      <div className="px-6 pt-5 pb-12 md:absolute md:inset-0 md:z-10 md:flex md:items-end md:px-[2.6vw] md:pt-0 md:pb-[2.4vw] md:transition-opacity md:duration-500 md:ease-out md:group-hover:opacity-0">
+      <div className="px-6 pt-5 pb-12 md:absolute md:inset-0 md:z-10 md:flex md:items-end md:px-[2.6vw] md:pt-0 md:pb-[2.4vw]">
         <div className="grid grid-cols-[auto_1fr] items-baseline gap-x-3 gap-y-2.5 md:grid-cols-[auto_minmax(0,24rem)] md:items-end md:gap-x-5 md:gap-y-0">
           <span
             className={cn(
