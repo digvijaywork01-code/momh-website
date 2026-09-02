@@ -397,22 +397,50 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
           ))}
         </div>
       </div>
-      {dotCount > 1 && (
-        <div className="mt-8 flex justify-center gap-3">
-          {Array.from({ length: dotCount }).map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => scrollTo(i)}
-              aria-label={`Go to slide ${i + 1}`}
-              aria-current={i === activeDot}
-              className={cn(
-                'h-2 w-2 rounded-full transition-colors',
-                i === activeDot ? 'bg-brand-red' : 'bg-ink/25 hover:bg-ink/40',
-              )}
-            />
-          ))}
-        </div>
+      {/* Text-beside carousels (the FLUX single-image band) trade the dots
+          for one red-circle next arrow sitting at the right end of the
+          number + caption row below the image — the site's EditorialCta
+          arrow language. Standalone carousels (techniques) keep the dots. */}
+      {hasText && list.length > 1 ? (
+        <button
+          type="button"
+          onClick={scrollNext}
+          aria-label="Next slide"
+          className="absolute bottom-3 right-0 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-brand-red text-offwhite transition-transform duration-200 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </button>
+      ) : (
+        dotCount > 1 && (
+          <div className="mt-8 flex justify-center gap-3">
+            {Array.from({ length: dotCount }).map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => scrollTo(i)}
+                aria-label={`Go to slide ${i + 1}`}
+                aria-current={i === activeDot}
+                className={cn(
+                  'h-2 w-2 rounded-full transition-colors',
+                  i === activeDot ? 'bg-brand-red' : 'bg-ink/25 hover:bg-ink/40',
+                )}
+              />
+            ))}
+          </div>
+        )
       )}
     </div>
   ) : mobileCarousel ? (
