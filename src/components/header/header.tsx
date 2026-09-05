@@ -1,22 +1,46 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const LOGO_SRC = '/momh-logo.jpg'
 
-const NAV_LINKS = [
-  { label: 'Visit', href: '/book-an-appointment' },
-  { label: 'About Us', href: '/about' },
-  { label: 'Plan Your Visit', href: '/plan-your-visit' },
-  { label: 'Museum Guidelines', href: '/museum-guidelines' },
-  { label: 'Craft Your Jewellery', href: '/craft-your-jewellery' },
-]
+/** One shared nav model for desktop AND mobile (they used to be two
+ *  hand-maintained duplicate arrays). An item with `children` renders as
+ *  a dropdown panel on desktop and an accordion row in the mobile drawer.
+ *  The parent itself stays a real crawlable link (the Chaumet/Graff
+ *  pattern) — its href is the hub page. */
+type NavChild = { label: string; href: string; image?: string }
+type NavItem = { label: string; href: string; children?: NavChild[] }
 
-// Mobile Nav Specifics
-const MOBILE_NAV_LINKS: { label: string; href: string; hasArrow?: boolean }[] = [
+const NAV_LINKS: NavItem[] = [
   { label: 'Visit', href: '/book-an-appointment' },
-  { label: 'About Us', href: '/about' },
+  {
+    label: 'The Museum',
+    href: '/about',
+    children: [
+      {
+        label: 'Our Story',
+        href: '/about',
+        image: '/media/about-gallery-interior-900x886.jpg',
+      },
+      {
+        label: "Founder's Vision",
+        href: '/founders-vision',
+        image: '/media/fv-founder-library-900x496.jpg',
+      },
+      {
+        label: 'The Art & Craftsmanship',
+        href: '/art-and-craftsmanship',
+        image: '/media/ac-tech-painted-enamel-900x900.jpg',
+      },
+      {
+        label: 'The Architecture',
+        href: '/architecture',
+        image: '/media/thank-you-architecture-900x836.jpg',
+      },
+    ],
+  },
   { label: 'Plan Your Visit', href: '/plan-your-visit' },
   { label: 'Museum Guidelines', href: '/museum-guidelines' },
   { label: 'Craft Your Jewellery', href: '/craft-your-jewellery' },
@@ -69,6 +93,213 @@ const RightArrowIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 )
 
+const ChevronDownIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    width="10"
+    height="6"
+    viewBox="0 0 10 6"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M1 1L5 5L9 1"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
+/** The sheet's photo carousel — "Aperture Exchange", centred-hero cut.
+ *  No sliding track: a row of vitrine panels exchanges WIDTHS, HEIGHTS
+ *  and TINT on each tick. Three photographs show — a clean full-height
+ *  hero in the centre, flanked by two smaller panels resting under a
+ *  light white scrim — plus one pooled panel at zero width on the right
+ *  edge. On a step every panel slides one role left: the left side
+ *  curtains shut, the hero recedes into the left seat (its scrim
+ *  settling on), the right side blooms into the clean hero, and the
+ *  pool grows in as the new right side. Images never translate, scale
+ *  or blur — only frame geometry moves, re-cropping the stationary
+ *  photograph live (object-cover). All tweens share one clock and
+ *  curve, so total width is conserved at every instant and no seams
+ *  open. Panels are keyed by image, so when the step commits (start+1)
+ *  every surviving DOM node's resting values equal what it just
+ *  animated to — the handoff is pixel-invisible by construction. Fixed
+ *  white mullions overlay the resting seams; the panels exchange
+ *  widths behind them like display cases behind a grille. */
+const GLIDE_MS = 1200
+const GLIDE_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)'
+// Slot geometry: [left side, centre hero, right side, pooled next].
+// Sides are narrower, shorter and rest under a light tint; the hero is
+// clean and full height. On a step every panel slides one role left:
+// the left side curtains shut, the hero recedes into the left seat,
+// the right side blooms into the hero, the pool grows in as the new
+// right side. Width math: 27 + 46 + 27 = 100 and the four basis tweens
+// share one clock, so -27 -19 +19 +27 = 0 at every instant.
+type Slot = { basis: number; height: string; veil: number }
+const REST_SLOTS: Slot[] = [
+  { basis: 27, height: '78%', veil: 1 },
+  { basis: 46, height: '100%', veil: 0 },
+  { basis: 27, height: '78%', veil: 1 },
+  { basis: 0, height: '78%', veil: 1 },
+]
+const STEP_SLOTS: Slot[] = [
+  { basis: 0, height: '78%', veil: 1 },
+  { basis: 27, height: '78%', veil: 1 },
+  { basis: 46, height: '100%', veil: 0 },
+  { basis: 27, height: '78%', veil: 1 },
+]
+
+const SheetCarousel = ({
+  images,
+  hrefs,
+  active,
+  onHeroChange,
+  onNavigate,
+}: {
+  images: string[]
+  /** Destination per image — each panel click-navigates to its page. */
+  hrefs: string[]
+  active: boolean
+  /** Reports which image holds (or is taking) the hero seat, so the
+   *  link list can highlight its matching entry. */
+  onHeroChange: (i: number) => void
+  /** Called when a panel is clicked (the sheet closes itself). */
+  onNavigate: () => void
+}) => {
+  const [start, setStart] = useState(0)
+  const [stepping, setStepping] = useState(false)
+  // Rotation holds while the cursor is over the carousel, so the
+  // panels are never moving targets for a click.
+  const [paused, setPaused] = useState(false)
+  const committed = useRef(false)
+  const n = images.length
+
+  // Tick only while the sheet is open and unhovered; closing resets to
+  // the first frame. The first step fires early (1.2s — right after the
+  // sheet finishes opening) so the motion introduces itself, then the
+  // regular 3s cadence takes over.
+  useEffect(() => {
+    if (!active) {
+      setStepping(false)
+      setStart(0)
+      setPaused(false)
+      return
+    }
+    if (paused) return
+    let iv: ReturnType<typeof setInterval> | null = null
+    const first = setTimeout(() => {
+      setStepping(true)
+      iv = setInterval(() => setStepping(true), 3000)
+    }, 1200)
+    return () => {
+      clearTimeout(first)
+      if (iv) clearInterval(iv)
+    }
+  }, [active, paused])
+
+  // The hero highlight follows the INCOMING hero the moment a step
+  // begins, so the link list answers the motion instead of trailing it.
+  useEffect(() => {
+    onHeroChange((start + (stepping ? 2 : 1)) % n)
+  }, [start, stepping, n, onHeroChange])
+
+  const commit = () => {
+    if (committed.current) return
+    committed.current = true
+    setStart((s) => (s + 1) % images.length)
+    setStepping(false)
+  }
+
+  // transitionend on the blooming hero commits the step; the timeout is
+  // the hidden-tab fallback (throttled tabs can swallow the event).
+  useEffect(() => {
+    if (!stepping) {
+      committed.current = false
+      return
+    }
+    const t = setTimeout(commit, GLIDE_MS + 200)
+    return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stepping])
+
+  const slots = stepping ? STEP_SLOTS : REST_SLOTS
+  return (
+    <div
+      className="relative flex w-full items-center overflow-hidden"
+      style={{ aspectRatio: '13 / 4', contain: 'layout paint' }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      {[0, 1, 2, 3].map((k) => {
+        const idx = (start + k) % images.length
+        const slot = slots[k]
+        return (
+          <div
+            key={idx}
+            className="relative overflow-hidden bg-[#F5F3F0]"
+            style={{
+              flex: `0 0 ${slot.basis}%`,
+              height: slot.height,
+              transition: `flex-basis ${GLIDE_MS}ms ${GLIDE_EASE}, height ${GLIDE_MS}ms ${GLIDE_EASE}`,
+            }}
+            onTransitionEnd={
+              k === 2
+                ? (e) => {
+                    if (
+                      e.propertyName === 'flex-basis' &&
+                      e.target === e.currentTarget &&
+                      stepping
+                    )
+                      commit()
+                  }
+                : undefined
+            }
+          >
+            {/* Click-through to the panel's page. tabIndex -1 keeps it
+                out of the tab order — keyboard users have the text
+                links; this is a pointer affordance only. */}
+            <Link
+              href={hrefs[idx]}
+              tabIndex={-1}
+              onClick={onNavigate}
+              className="absolute inset-0 block cursor-pointer"
+            >
+              <img
+                src={images[idx]}
+                alt=""
+                draggable={false}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              {/* Side-panel tint — a light scrim that lifts as a panel
+                  takes the hero seat, on the same clock as the widths. */}
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.6)',
+                  opacity: slot.veil,
+                  transition: `opacity ${GLIDE_MS}ms ${GLIDE_EASE}`,
+                }}
+              />
+            </Link>
+          </div>
+        )
+      })}
+      {/* Fixed mullions over the resting seams (27% / 73%) — the panels
+          exchange widths BEHIND them, like cases behind a grille. */}
+      {[27, 73].map((p) => (
+        <div
+          key={p}
+          className="pointer-events-none absolute inset-y-0 z-10 w-3 -translate-x-1/2 bg-white"
+          style={{ left: `${p}%` }}
+        />
+      ))}
+    </div>
+  )
+}
+
 const MenuIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     {...props}
@@ -94,6 +325,10 @@ interface MobileNavProps {
 }
 
 const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
+  // One accordion open at a time — same convention as the footer's
+  // mobile columns.
+  const [openSub, setOpenSub] = useState<string | null>(null)
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden'
@@ -129,18 +364,51 @@ const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
         </div>
 
         <nav className="flex flex-col border-t border-gray-200">
-          {MOBILE_NAV_LINKS.map((link) => (
-            <div key={link.label} className="border-b border-gray-200">
-              <Link
-                href={link.href}
-                className="flex justify-between text-xl items-center py-8"
-                onClick={onClose}
-              >
-                <span>{link.label}</span>
-                {link.hasArrow && <RightArrowIcon />}
-              </Link>
-            </div>
-          ))}
+          {NAV_LINKS.map((link) =>
+            link.children ? (
+              // Accordion row — the chevron rotates to point down when
+              // open; sub-rows keep 44px+ tap targets (py-4 + text-lg).
+              <div key={link.label} className="border-b border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => setOpenSub(openSub === link.label ? null : link.label)}
+                  aria-expanded={openSub === link.label}
+                  className="flex justify-between text-xl items-center py-8 w-full text-left"
+                >
+                  <span>{link.label}</span>
+                  <RightArrowIcon
+                    className={`transition-transform duration-300 ${
+                      openSub === link.label ? 'rotate-90' : ''
+                    }`}
+                  />
+                </button>
+                {openSub === link.label && (
+                  <div className="flex flex-col pb-4">
+                    {link.children.map((child) => (
+                      <Link
+                        key={child.label}
+                        href={child.href}
+                        className="py-4 pl-4 text-lg text-black/80"
+                        onClick={onClose}
+                      >
+                        {child.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div key={link.label} className="border-b border-gray-200">
+                <Link
+                  href={link.href}
+                  className="flex justify-between text-xl items-center py-8"
+                  onClick={onClose}
+                >
+                  <span>{link.label}</span>
+                </Link>
+              </div>
+            ),
+          )}
         </nav>
 
         <div className="mt-8 pr-8">
@@ -171,7 +439,60 @@ export const Header = () => {
   // editorial reading experience while keeping it a single mouse
   // move away.
   const [isNavZoneHovered, setIsNavZoneHovered] = useState(false)
+  // Which dropdown panel is open (by nav label). Hover-intent timed —
+  // Baymard/NN/g: a 250-300ms delay stops the panel flickering open as
+  // the cursor crosses the bar, and a close delay tolerates the diagonal
+  // move from trigger to panel.
+  const [openMenu, setOpenMenu] = useState<string | null>(null)
+  // Link ← carousel sync (one-way): which image holds the hero seat
+  // drives the red link highlight. Hovering links never touches the
+  // carousel.
+  const [sheetHeroIdx, setSheetHeroIdx] = useState(1)
+  // The sheet photos mount only after the first hover intent. The sheet
+  // is max-h-0/overflow-hidden (NOT display:none — its links must stay
+  // in the server HTML for crawlers), so always-rendered <img> tags
+  // would be fetched on every page view. Flipping this during the 250ms
+  // intent delay gives the images a head start over the 500ms slide.
+  const [sheetMediaMounted, setSheetMediaMounted] = useState(false)
+  const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pathname = usePathname()
+
+  const clearMenuTimers = () => {
+    if (openTimer.current) clearTimeout(openTimer.current)
+    if (closeTimer.current) clearTimeout(closeTimer.current)
+    openTimer.current = null
+    closeTimer.current = null
+  }
+  const scheduleMenuOpen = (label: string) => {
+    clearMenuTimers()
+    setSheetMediaMounted(true)
+    openTimer.current = setTimeout(() => setOpenMenu(label), 250)
+  }
+  const scheduleMenuClose = () => {
+    clearMenuTimers()
+    closeTimer.current = setTimeout(() => setOpenMenu(null), 250)
+  }
+  const cancelMenuClose = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current)
+    closeTimer.current = null
+  }
+
+  // Escape closes an open panel (WCAG dismissible-content contract).
+  useEffect(() => {
+    if (!openMenu) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpenMenu(null)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [openMenu])
+
+  // Keyboard-focus opens skip scheduleMenuOpen, so mount the photos
+  // here too.
+  useEffect(() => {
+    if (openMenu) setSheetMediaMounted(true)
+  }, [openMenu])
 
   // Check if we're on mobile
   useEffect(() => {
@@ -222,8 +543,12 @@ export const Header = () => {
         setIsNavZoneHovered(e.clientY <= HOVER_ZONE_HEIGHT)
       })
     }
-    // If the cursor leaves the window, collapse to minimized.
-    const onLeave = () => setIsNavZoneHovered(false)
+    // If the cursor leaves the window, collapse to minimized (and drop
+    // any open dropdown panel with it).
+    const onLeave = () => {
+      setIsNavZoneHovered(false)
+      setOpenMenu(null)
+    }
     window.addEventListener('mousemove', onMove)
     document.addEventListener('mouseleave', onLeave)
     return () => {
@@ -246,7 +571,10 @@ export const Header = () => {
   // existing scroll-shrink behavior since there's no hover state to
   // drive the expand. `isExpanded` is the source of truth for "show
   // the full nav" on desktop.
-  const isExpanded = isMobile ? !isScrolled : isNavZoneHovered
+  // An open dropdown panel extends well below the 120px hover zone, so
+  // it must also hold the header expanded — otherwise moving the cursor
+  // down into the panel would collapse the whole bar.
+  const isExpanded = isMobile ? !isScrolled : isNavZoneHovered || openMenu !== null
 
   // Desktop logo sizes — small in minimized state, larger when
   // expanded. The square brand mark stays visually unambiguous at
@@ -325,19 +653,56 @@ export const Header = () => {
                 : 'opacity-0 -translate-y-2 pointer-events-none'
             }`}
           >
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                // Nav is only ever visible when expanded (white bg) — text
-                // is always black against the white panel, with a red
-                // hover. While minimized this nav has pointer-events-none
-                // and opacity-0, so the color doesn't matter visually.
-                className="text-base text-black hover:text-red-600 transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) =>
+              link.children ? (
+                // Sheet trigger — the label itself is a real crawlable
+                // link to the hub page (/about); hover or keyboard focus
+                // extends the white header downward into the seamless
+                // sheet rendered after the bar (the Musée YSL pattern —
+                // no card, no border, the header surface simply grows).
+                <div
+                  key={link.label}
+                  className="flex items-center"
+                  onMouseEnter={() => scheduleMenuOpen(link.label)}
+                  onMouseLeave={scheduleMenuClose}
+                  onFocusCapture={() => {
+                    clearMenuTimers()
+                    setOpenMenu(link.label)
+                  }}
+                  // Timed close on blur: if focus lands in the sheet, its
+                  // own focus handler cancels this before it fires.
+                  onBlurCapture={scheduleMenuClose}
+                >
+                  <Link
+                    href={link.href}
+                    aria-expanded={openMenu === link.label}
+                    aria-haspopup="true"
+                    className="text-base text-black hover:text-red-600 transition-colors flex items-center gap-1.5"
+                  >
+                    {link.label}
+                    <ChevronDownIcon
+                      className={`transition-transform duration-300 ${
+                        openMenu === link.label ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </Link>
+                </div>
+              ) : (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  // Nav is only ever visible when expanded (white bg) — text
+                  // is always black against the white panel, with a red
+                  // hover. While the sheet is open, sibling items recede
+                  // (the YSL dimming) so the open group reads as active.
+                  className={`text-base text-black hover:text-red-600 transition-all duration-300 ${
+                    openMenu ? 'opacity-40' : ''
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ),
+            )}
           </nav>
         </div>
 
@@ -366,15 +731,97 @@ export const Header = () => {
         </div>
 
         {/* HR — anchors the bottom of the expanded white nav. Shows only
-            when expanded (i.e. when the white bar is on screen). */}
+            when expanded, and hides again while the sheet is open so the
+            bar and sheet read as ONE continuous white surface. */}
         <div className="hidden md:flex justify-center w-full">
           <hr
             className={`border-t w-full transition-opacity duration-500 ${
-              isExpanded ? 'opacity-100' : 'opacity-0'
+              isExpanded && !openMenu ? 'opacity-100' : 'opacity-0'
             }`}
             style={{ borderColor: '#E6E6E6' }}
           />
         </div>
+
+        {/* The sheet — the Musée YSL treatment: the white header surface
+            extends downward and the group's pages render as large serif
+            lines directly on it. No border, no shadow, no card. ALWAYS
+            in the DOM (max-height/opacity toggled) so the links stay
+            crawlable in the server HTML. */}
+        {NAV_LINKS.filter((l) => l.children).map((link) => {
+          const open = openMenu === link.label && isExpanded
+          return (
+            <div
+              key={link.label}
+              onMouseEnter={cancelMenuClose}
+              onMouseLeave={scheduleMenuClose}
+              onFocusCapture={() => {
+                clearMenuTimers()
+                setOpenMenu(link.label)
+              }}
+              onBlurCapture={scheduleMenuClose}
+              className={`hidden md:block w-full overflow-hidden transition-all duration-500 ease-out ${
+                open ? 'max-h-[420px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
+              }`}
+              {...(open ? {} : { 'aria-hidden': true })}
+            >
+              <div className="max-w-[1920px] mx-auto flex items-center">
+                <ul
+                  className="flex flex-col gap-1 shrink-0"
+                  style={{ padding: '16px 70px 48px' }}
+                >
+                  {link.children!.map((child, ci) => (
+                    <li key={child.label}>
+                      {/* Catalogue entry: red index numeral + label. The
+                          entry whose photo holds the hero seat reads red;
+                          hover grows the label without touching the
+                          carousel. */}
+                      <Link
+                        href={child.href}
+                        onClick={() => setOpenMenu(null)}
+                        className={`inline-block origin-left text-[20px] lg:text-[22px] leading-[1.7] transition-all duration-300 hover:scale-[1.06] hover:text-red-600 ${
+                          sheetHeroIdx === ci ? 'text-red-600' : 'text-ink'
+                        }`}
+                      >
+                        {/* Serif italic numeral — the site's editorial
+                            number treatment, contrasting the sans label. */}
+                        <span className="font-script mr-3 inline-block w-6 text-[16px] lg:text-[17px] italic text-red-600">
+                          {String(ci + 1).padStart(2, '0')}
+                        </span>
+                        {child.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                {/* Photo carousel on the right — two images in view,
+                    drifting one image leftward on a loop. Decorative:
+                    hidden from AT, and mounted only after the first
+                    hover intent so the photos never load on page views
+                    that don't touch the nav. */}
+                {sheetMediaMounted && (
+                  <div
+                    aria-hidden="true"
+                    className="hidden lg:block flex-1 min-w-0"
+                    style={{ padding: '20px 70px 36px 0' }}
+                  >
+                    {/* Centred in the space left of the link column. */}
+                    <div className="max-w-[780px] mx-auto">
+                      <SheetCarousel
+                        images={link.children!.map((c) => c.image).filter((i): i is string => Boolean(i))}
+                        hrefs={link.children!.filter((c) => c.image).map((c) => c.href)}
+                        active={open}
+                        onHeroChange={setSheetHeroIdx}
+                        onNavigate={() => setOpenMenu(null)}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+              {/* Bottom separator — the same hairline as the bar's own hr,
+                  closing the sheet where it meets the page. */}
+              <hr className="w-full border-t" style={{ borderColor: '#E6E6E6' }} />
+            </div>
+          )
+        })}
       </header>
       <MobileNav isOpen={isMobileNavOpen} onClose={() => setIsMobileNavOpen(false)} />
     </>
