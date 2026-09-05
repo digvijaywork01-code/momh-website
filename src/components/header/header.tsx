@@ -494,6 +494,26 @@ export const Header = () => {
     if (openMenu) setSheetMediaMounted(true)
   }, [openMenu])
 
+  // Scrolling while the sheet is open must not move the page behind it.
+  // Element-level wheel preventDefault is unreliable against Chrome's
+  // compositor-driven scrolling, so lock the document's scroll for the
+  // sheet's lifetime instead — padding-compensated so browsers with
+  // fixed scrollbars don't shift the layout. The sheet closes the
+  // moment the cursor leaves it, so normal scrolling resumes instantly.
+  useEffect(() => {
+    if (!openMenu) return
+    const html = document.documentElement
+    const scrollbar = window.innerWidth - html.clientWidth
+    const prevOverflow = html.style.overflow
+    const prevPad = html.style.paddingRight
+    html.style.overflow = 'hidden'
+    if (scrollbar > 0) html.style.paddingRight = `${scrollbar}px`
+    return () => {
+      html.style.overflow = prevOverflow
+      html.style.paddingRight = prevPad
+    }
+  }, [openMenu])
+
   // Check if we're on mobile
   useEffect(() => {
     const checkMobile = () => {
