@@ -22,7 +22,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/founders-vision',
     '/art-and-craftsmanship',
     '/architecture',
-    '/plan-your-visit',
     '/craft-your-jewellery',
     '/museum-guidelines',
     '/personal-consultation',

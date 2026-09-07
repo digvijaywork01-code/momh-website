@@ -12,7 +12,14 @@ const redirects = async () => {
     source: '/:path((?!ie-incompatible.html$).*)', // all pages except the incompatibility page
   }
 
-  const redirects = [internetExplorerRedirect]
+  // Plan Your Visit was merged into Book Your Appointment (Sep 2026).
+  const planYourVisitRedirect = {
+    source: '/plan-your-visit',
+    destination: '/book-an-appointment',
+    permanent: true,
+  }
+
+  const redirects = [internetExplorerRedirect, planYourVisitRedirect]
 
   return redirects
 }

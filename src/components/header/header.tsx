@@ -14,7 +14,7 @@ type NavChild = { label: string; href: string; image?: string }
 type NavItem = { label: string; href: string; children?: NavChild[] }
 
 const NAV_LINKS: NavItem[] = [
-  { label: 'Visit', href: '/book-an-appointment' },
+  { label: 'Book Your Appointment', href: '/book-an-appointment' },
   {
     label: 'The Museum',
     href: '/about',
@@ -41,7 +41,6 @@ const NAV_LINKS: NavItem[] = [
       },
     ],
   },
-  { label: 'Plan Your Visit', href: '/plan-your-visit' },
   { label: 'Museum Guidelines', href: '/museum-guidelines' },
   { label: 'Craft Your Jewellery', href: '/craft-your-jewellery' },
 ]

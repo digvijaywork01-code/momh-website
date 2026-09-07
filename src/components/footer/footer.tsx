@@ -86,10 +86,11 @@ const SUPPORT_LINKS: LinkColumn = {
 const VISIT_LINKS: LinkColumn = {
   title: 'Visit',
   items: [
-    { label: 'Plan Your Visit', href: '/plan-your-visit' },
+    // "Plan Your Visit" and "Book a Visit" merged into the single
+    // Book Your Appointment page.
+    { label: 'Book Your Appointment', href: '/book-an-appointment' },
     { label: 'Museum Guidelines', href: '/museum-guidelines' },
     { label: 'Craft Your Jewellery', href: '/craft-your-jewellery' },
-    { label: 'Book a Visit', href: '/book-an-appointment' },
     // /create-your-sevak is not yet a real route on prod (404).
     { label: 'Create Your Sevak', href: '/create-your-sevak', disabled: true },
   ],
