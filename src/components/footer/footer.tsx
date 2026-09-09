@@ -91,8 +91,6 @@ const VISIT_LINKS: LinkColumn = {
     { label: 'Book Your Appointment', href: '/book-an-appointment' },
     { label: 'Museum Guidelines', href: '/museum-guidelines' },
     { label: 'Craft Your Jewellery', href: '/craft-your-jewellery' },
-    // /create-your-sevak is not yet a real route on prod (404).
-    { label: 'Create Your Sevak', href: '/create-your-sevak', disabled: true },
   ],
 }
 
