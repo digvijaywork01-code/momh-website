@@ -1311,7 +1311,7 @@ export interface VisitInfoBlock {
          */
         day: string;
         /**
-         * e.g. "11:00 AM to 6:00 PM"
+         * e.g. "10:00 AM to 7:30 PM"
          */
         hours?: string | null;
         isClosed?: boolean | null;

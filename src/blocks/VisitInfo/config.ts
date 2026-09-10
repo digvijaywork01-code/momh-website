@@ -166,7 +166,7 @@ export const VisitInfo: Block = {
             {
               name: 'hours',
               type: 'text',
-              admin: { width: '40%', description: 'e.g. "11:00 AM to 6:00 PM"' },
+              admin: { width: '40%', description: 'e.g. "10:00 AM to 7:30 PM"' },
             },
             {
               name: 'isClosed',

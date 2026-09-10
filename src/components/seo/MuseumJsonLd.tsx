@@ -9,10 +9,10 @@ import { getServerSideURL } from '@/utilities/getURL'
  *
  * Server component — emits a plain <script type="application/ld+json">.
  *
- * Opening hours: Mon–Sat 11:00–18:00 — confirmed canonical by the owner.
- * The footer previously showed a stale "10am–4pm"; that was corrected to
- * match (see footer.tsx OPENING_HOURS), so the site and the schema now
- * agree.
+ * Opening hours: 10:00–19:30, seven days a week (changed Sep 2026) —
+ * confirmed canonical by the owner. header.tsx `openingHours` and
+ * footer.tsx `OPENING_HOURS` carry the same values; keep all three in
+ * step, since this is the only JSON-LD the site emits.
  *
  * Data sources (all from the live site / footer — not fabricated):
  *  - Address: footer ADDRESS_LINES
@@ -81,9 +81,17 @@ export const MuseumJsonLd: React.FC = () => {
     ],
     openingHoursSpecification: {
       '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-      opens: '11:00',
-      closes: '18:00',
+      dayOfWeek: [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday',
+      ],
+      opens: '10:00',
+      closes: '19:30',
     },
   }
 

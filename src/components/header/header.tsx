@@ -46,13 +46,13 @@ const NAV_LINKS: NavItem[] = [
 ]
 
 const openingHours = [
-  { day: 'Monday', time: '11am – 6pm' },
-  { day: 'Tuesday', time: '11am – 6pm' },
-  { day: 'Wednesday', time: '11am – 6pm' },
-  { day: 'Thursday', time: '11am – 6pm' },
-  { day: 'Friday', time: '11am – 6pm' },
-  { day: 'Saturday', time: '11am – 6pm' },
-  { day: 'Sunday', time: 'Holiday' },
+  { day: 'Monday', time: '10am – 7:30pm' },
+  { day: 'Tuesday', time: '10am – 7:30pm' },
+  { day: 'Wednesday', time: '10am – 7:30pm' },
+  { day: 'Thursday', time: '10am – 7:30pm' },
+  { day: 'Friday', time: '10am – 7:30pm' },
+  { day: 'Saturday', time: '10am – 7:30pm' },
+  { day: 'Sunday', time: '10am – 7:30pm' },
 ]
 
 const CloseIcon = (props: React.SVGProps<SVGSVGElement>) => (
