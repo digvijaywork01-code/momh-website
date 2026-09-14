@@ -22,3 +22,9 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Local-only. Rules for AI assistants and machine-specific settings; never commit.
+CLAUDE.md
+.claude/
+# pnpm is the package manager; the npm lockfile is stale and must not return.
+package-lock.json

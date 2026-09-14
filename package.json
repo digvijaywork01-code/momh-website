@@ -1,6 +1,7 @@
 {
   "name": "momh",
   "version": "1.0.0",
+  "packageManager": "pnpm@10.28.0",
   "description": "Website template for Payload",
   "license": "MIT",
   "type": "module",
