@@ -9,13 +9,17 @@ const LOGO_SRC = '/momh-logo.jpg'
  *  tile is the same square photo. A long name can stack onto two `lines`
  *  in the panel when its tile is too narrow for it on one line;
  *  `stackWhen` holds the container-width conditions for that (see the
- *  tile-row note in the panel and NavName below). */
+ *  tile-row note in the panel and NavName below). `blurb` is the line the
+ *  panel's left column shows while the tile is hovered or focused, cut
+ *  from the page's SEO description to three lines in the 198px column
+ *  (four for Our Story, whose title is one line, like the intro's). */
 type NavChild = {
   label: string
   href: string
   image?: string
   lines?: [string, string]
   stackWhen?: string
+  blurb?: string
 }
 /** Copy for the desktop panel's left intro column (eyebrow, heading,
  *  one-line description), shown beside the tiles from md up. */
@@ -40,13 +44,15 @@ const NAV_LINKS: NavItem[] = [
     intro: {
       eyebrow: 'Explore',
       title: 'The Museum',
-      description: 'A journey through heritage, art, and craftsmanship preserved for generations.',
+      description:
+        'A journey through heritage, art, and craftsmanship preserved for generations at Shekhawat Haveli, Jaipur.',
     },
     children: [
       {
         label: 'Our Story',
         href: '/about',
         image: '/media/about-gallery-interior-500x500.jpg',
+        blurb: "The story of the museum: Jaipur's tribute to three centuries of enamelling, inside Shekhawat Haveli.",
       },
       {
         label: "Founder's Vision",
@@ -55,6 +61,7 @@ const NAV_LINKS: NavItem[] = [
         stackWhen:
           '[@container(max-width:1139.98px)]:[@media(max-width:1048.98px)]:inline',
         image: '/media/fv-founder-library-500x500.jpg',
+        blurb: 'Sunita Shekhawat on three decades of enamel and the karigars of Jaipur.',
       },
       {
         label: 'The Art & Craftsmanship',
@@ -63,6 +70,7 @@ const NAV_LINKS: NavItem[] = [
         stackWhen:
           '[@container(max-width:1193.98px)]:inline',
         image: '/media/ac-tech-painted-enamel-500x500.jpg',
+        blurb: 'How meenakari is made, from flux and colour to the fire that sets them.',
       },
       {
         label: 'The Architecture',
@@ -71,6 +79,7 @@ const NAV_LINKS: NavItem[] = [
         stackWhen:
           '[@container(max-width:1139.98px)]:[@media(max-width:1228.98px)]:inline',
         image: '/media/thank-you-architecture-500x500.jpg',
+        blurb: 'A building carved by hand in Jodhpur red sandstone, reworked by Studio Lotus.',
       },
       // The footer's Visit pages, so the panel offers the visit too.
       {
@@ -80,6 +89,7 @@ const NAV_LINKS: NavItem[] = [
         stackWhen:
           '[@container(max-width:1181.98px)]:inline',
         image: '/media/mg-experience-500x500.jpg',
+        blurb: 'Dress code, photography, accessibility and the rhythm of the galleries.',
       },
       {
         label: 'Book Your Appointment',
@@ -88,6 +98,7 @@ const NAV_LINKS: NavItem[] = [
         stackWhen:
           '[@container(max-width:1193.98px)]:inline',
         image: '/media/visit-museum-exhibit-500x500.jpg',
+        blurb: "Entry is by appointment only. We'll confirm your visit within 24 hours.",
       },
     ],
   },
@@ -112,13 +123,18 @@ const NavName = ({ child }: { child: NavChild }) =>
     <>{child.label}</>
   )
 
-/** Moves keyboard focus to a panel's first rendered link (the intro column's
- *  "View all" is display:none below lg, so skip links with no box).
- *  preventScroll stops the browser scrolling a still-collapsed
- *  overflow-hidden panel to reveal it. */
+/** A panel link a visitor can reach: it has a box (the intro column is
+ *  display:none on phones) and isn't one of the intro column's hidden
+ *  per-tile versions (visibility:hidden). */
+const isShownLink = (a: HTMLElement) =>
+  a.getClientRects().length > 0 && getComputedStyle(a).visibility !== 'hidden'
+
+/** Moves keyboard focus to a panel's first shown link. preventScroll stops
+ *  the browser scrolling a still-collapsed overflow-hidden panel to reveal
+ *  it. */
 const focusFirstPanelLink = (label: string) =>
   [...(document.getElementById(panelId(label))?.querySelectorAll<HTMLElement>('a') ?? [])]
-    .find((a) => a.getClientRects().length > 0)
+    .find(isShownLink)
     ?.focus({ preventScroll: true })
 
 const openingHours = [
@@ -396,6 +412,54 @@ export const Header = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current)
     closeTimer.current = null
   }
+  // The tile the panel's left column describes (null: the panel's own
+  // intro). Keyboard focus on a tile shows it at once; the pointer has to
+  // rest on a tile for 150ms (hover intent), so sweeping across other
+  // tiles on the way to the left column's View all link doesn't swap it.
+  // Leaving the tiles brings the intro back after a 400ms grace,
+  // cancelled by entering the left column; keyboard focus on that link
+  // also keeps it, and focus leaving the panel resets it. Each opening
+  // starts from the intro.
+  const [activeTile, setActiveTile] = useState<number | null>(null)
+  const tileResetTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const tileHoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const introRef = useRef<HTMLDivElement | null>(null)
+  const keepTile = () => {
+    if (tileResetTimer.current) clearTimeout(tileResetTimer.current)
+    tileResetTimer.current = null
+  }
+  const cancelTileHover = () => {
+    if (tileHoverTimer.current) clearTimeout(tileHoverTimer.current)
+    tileHoverTimer.current = null
+  }
+  const showTile = (index: number) => {
+    keepTile()
+    cancelTileHover()
+    setActiveTile(index)
+  }
+  const hoverTile = (index: number) => {
+    keepTile()
+    cancelTileHover()
+    tileHoverTimer.current = setTimeout(() => {
+      tileHoverTimer.current = null
+      setActiveTile(index)
+    }, 150)
+  }
+  const releaseTile = () => {
+    keepTile()
+    tileResetTimer.current = setTimeout(() => {
+      tileResetTimer.current = null
+      if (introRef.current?.contains(document.activeElement)) return
+      setActiveTile(null)
+    }, 400)
+  }
+  useEffect(
+    () => () => {
+      if (tileResetTimer.current) clearTimeout(tileResetTimer.current)
+      if (tileHoverTimer.current) clearTimeout(tileHoverTimer.current)
+    },
+    [],
+  )
   // Click (or Enter/Space) opens at once. With a mouse it never closes,
   // so a click on an already hover-opened panel leaves it open. On a
   // touch screen (no hover, see canHover) a tap on the open trigger
@@ -425,9 +489,7 @@ export const Header = () => {
   }
   const onPanelKeyDown = (label: string) => (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key !== 'Tab') return
-    const links = [...e.currentTarget.querySelectorAll<HTMLElement>('a')].filter(
-      (a) => a.getClientRects().length > 0,
-    )
+    const links = [...e.currentTarget.querySelectorAll<HTMLElement>('a')].filter(isShownLink)
     if (!links.length) return
     const trigger = triggerRefs.current[label]
     if (e.shiftKey && document.activeElement === links[0]) {
@@ -566,6 +628,11 @@ export const Header = () => {
     prevOpenMenu.current = openMenu
     if (openMenu) {
       setMenuClosing(false)
+      if (tileResetTimer.current) clearTimeout(tileResetTimer.current)
+      if (tileHoverTimer.current) clearTimeout(tileHoverTimer.current)
+      tileResetTimer.current = null
+      tileHoverTimer.current = null
+      setActiveTile(null)
       return
     }
     setPanelSettled(false)
@@ -935,6 +1002,12 @@ export const Header = () => {
                 else setMenuClosing(false)
               }}
               onKeyDown={onPanelKeyDown(link.label)}
+              onBlur={(e) => {
+                if (e.currentTarget.contains(e.relatedTarget as Node | null)) return
+                keepTile()
+                cancelTileHover()
+                setActiveTile(null)
+              }}
               // Open height: its content's exact height (--panel-h), capped
               // at the screen below the expanded bar (max(14vh, 80px) + its
               // 1px line) and scrolling past that once settled (see
@@ -965,40 +1038,84 @@ export const Header = () => {
                         logo's 70px line) as in the mock; the tile row takes
                         the remaining width (see the ul). Weights matched to
                         the mock by ink density. */}
-                    <div className="hidden w-[198px] shrink-0 flex-col items-start md:flex">
+                    <div
+                      ref={introRef}
+                      onMouseEnter={keepTile}
+                      onMouseLeave={() => activeTile !== null && releaseTile()}
+                      className="hidden w-[198px] shrink-0 flex-col items-start md:flex"
+                    >
                       <p className="font-body text-[13px] font-normal leading-4 tracking-[2px] text-[#B8AA9D] uppercase">
                         {link.intro.eyebrow}
                       </p>
-                      {/* nowrap: --font-display puts Meno Banner (Adobe kit,
-                          not wired yet) ahead of Cormorant; a wider face must
-                          not wrap the title onto two lines. */}
-                      <p className="mt-[13px] whitespace-nowrap font-display text-[38px] font-medium leading-[44px] text-black">
-                        {link.intro.title}
-                      </p>
-                      <p className="mt-[13px] font-body text-[17.5px] font-light leading-[23.5px] text-[#8A8682]">
-                        {link.intro.description}
-                      </p>
-                      <Link
-                        href={link.href}
-                        onClick={() => setOpenMenu(null)}
-                        // Visible text stays "View all"; the name adds what
-                        // it is all of, for screen-reader link lists.
-                        aria-label={`View all: ${link.intro.title}`}
-                        className="group/viewall mt-[26px] inline-flex items-center gap-[11px] font-body text-[14px] font-normal leading-4 tracking-[1.5px] text-[#9D2326] uppercase"
-                      >
-                        <span className="border-b-2 border-[#AF8286] pb-[6px]">View all</span>
-                        {/* Arrow nudges right on hover / keyboard focus. */}
-                        <svg
-                          aria-hidden="true"
-                          width="15"
-                          height="10"
-                          viewBox="0 0 15 10"
-                          fill="none"
-                          className="-mt-[6px] transition-transform duration-300 ease-out group-hover/viewall:translate-x-1 group-focus-visible/viewall:translate-x-1"
-                        >
-                          <path d="M0 5h13.5M9.5 1l4 4-4 4" stroke="currentColor" strokeWidth="1.2" />
-                        </svg>
-                      </Link>
+                      {/* The panel's own intro, then one version per tile,
+                          stacked in one grid cell: the cell is as tall as
+                          the tallest (a two-line tile title), so the panel
+                          keeps its height whichever is shown. Only the
+                          active one is visible; the rest are
+                          visibility:hidden, so they can't be focused or
+                          clicked, and it crossfades (visibility switches
+                          at the end of a fade out, at the start of a fade
+                          in). Tile titles are 32px, wrapping to at most two
+                          lines: at the intro's 38px "Craftsmanship" and
+                          "Appointment" are wider than the column. */}
+                      <div className="mt-[13px] grid items-start">
+                        {[null, ...link.children!].map((child, ci) => {
+                          const shown = activeTile === (child ? ci - 1 : null)
+                          return (
+                            <div
+                              key={child?.label ?? 'intro'}
+                              className={`col-start-1 row-start-1 flex flex-col items-start self-stretch transition-[opacity,visibility] duration-300 ${
+                                shown ? 'visible opacity-100' : 'invisible opacity-0'
+                              }`}
+                            >
+                              {/* nowrap: --font-display puts Meno Banner
+                                  (Adobe kit, not wired yet) ahead of
+                                  Cormorant; a wider face must not wrap the
+                                  intro title onto two lines. */}
+                              <p
+                                className={
+                                  child
+                                    ? 'font-display text-[32px] font-medium leading-[38px] text-black'
+                                    : 'whitespace-nowrap font-display text-[38px] font-medium leading-[44px] text-black'
+                                }
+                              >
+                                {child ? child.label : link.intro!.title}
+                              </p>
+                              <p className="mt-[13px] font-body text-[17.5px] font-light leading-[23.5px] text-[#8A8682]">
+                                {child ? child.blurb : link.intro!.description}
+                              </p>
+                              {/* Every version fills the cell and pushes its
+                                  link to the foot (at least 26px below the
+                                  text), so View all sits at the
+                                  same height whichever version is shown. */}
+                              <span aria-hidden="true" className="min-h-[26px] flex-1" />
+                              <Link
+                                href={child ? child.href : link.href}
+                                onClick={() => setOpenMenu(null)}
+                                // The visible word stays short; the name adds
+                                // where it goes, for screen-reader link lists.
+                                aria-label={`View all: ${child ? child.label : link.intro!.title}`}
+                                className="group/viewall inline-flex items-center gap-[11px] font-body text-[14px] font-normal leading-4 tracking-[1.5px] text-[#9D2326] uppercase"
+                              >
+                                <span className="border-b-2 border-[#AF8286] pb-[6px]">
+                                  View all
+                                </span>
+                                {/* Arrow nudges right on hover / keyboard focus. */}
+                                <svg
+                                  aria-hidden="true"
+                                  width="15"
+                                  height="10"
+                                  viewBox="0 0 15 10"
+                                  fill="none"
+                                  className="-mt-[6px] transition-transform duration-300 ease-out group-hover/viewall:translate-x-1 group-focus-visible/viewall:translate-x-1"
+                                >
+                                  <path d="M0 5h13.5M9.5 1l4 4-4 4" stroke="currentColor" strokeWidth="1.2" />
+                                </svg>
+                              </Link>
+                            </div>
+                          )
+                        })}
+                      </div>
                       {/* Pinned to the column's foot; pt keeps it clear of
                           "View all" when the column sets the panel height.
                           It touches the panel's left edge (-ml-[70px] undoes
@@ -1115,12 +1232,15 @@ export const Header = () => {
                     edge at every width, with the tile sizes
                     and every band above unchanged. Change it with that
                     padding or the divider's mr. */}
-                <ul className="relative left-[20.5px] mx-auto grid min-w-0 flex-1 max-w-[calc(var(--tile)*3+32px)] grid-cols-[repeat(auto-fit,var(--tile))] [@media(max-width:1023.98px)]:left-[5.5px] content-start justify-center gap-x-4 gap-y-6 self-start [--tile:182px] [@container(max-width:1139.98px)]:[--tile:calc(112px_+_(100vw_-_768px)/24)] [@container(min-width:1140px)]:[--tile:min(182px,calc((100cqw_-_340px)/6))] [@supports(container-type:inline-size)]:[@media(min-width:1024px)]:max-w-none [@supports(container-type:inline-size)]:[@media(max-width:1023.98px)]:max-w-[calc(var(--tile)*4+48px)]">
-                  {link.children!.map((child) => (
+                <ul onMouseLeave={releaseTile} className="relative left-[20.5px] mx-auto grid min-w-0 flex-1 max-w-[calc(var(--tile)*3+32px)] grid-cols-[repeat(auto-fit,var(--tile))] [@media(max-width:1023.98px)]:left-[5.5px] content-start justify-center gap-x-4 gap-y-6 self-start [--tile:182px] [@container(max-width:1139.98px)]:[--tile:calc(112px_+_(100vw_-_768px)/24)] [@container(min-width:1140px)]:[--tile:min(182px,calc((100cqw_-_340px)/6))] [@supports(container-type:inline-size)]:[@media(min-width:1024px)]:max-w-none [@supports(container-type:inline-size)]:[@media(max-width:1023.98px)]:max-w-[calc(var(--tile)*4+48px)]">
+                  {link.children!.map((child, ci) => (
                     <li key={child.label}>
                       <Link
                         href={child.href}
                         onClick={() => setOpenMenu(null)}
+                        onMouseEnter={() => hoverTile(ci)}
+                        onMouseLeave={cancelTileHover}
+                        onFocus={() => showTile(ci)}
                         className="group flex w-[var(--tile)] flex-col items-center text-center text-black"
                       >
                         {/* Name above the photo: one line, or two where
