@@ -1,6 +1,24 @@
 # Payload Website Template
 
-VERCEL DEPLOY LINK: https://api.vercel.com/v1/integrations/deploy/prj_rzytyYy9AvpkBk7PNjkWnuFHbYbb/wVb11qDatn
+## Deploying momhindia.org
+
+There is no deploy link or button for this site. The Vercel project is not connected to Git and
+has no deploy hooks, so merging a pull request deploys nothing by itself. Production deploys are
+made from the CLI, from a clean checkout of `main`:
+
+```bash
+git checkout main && git pull --ff-only
+vercel deploy --prod
+```
+
+- Vercel project: `momh-website` in the team "Sunita Shekhawat Projects". It serves momhindia.org
+  and www.momhindia.org.
+- The project's build command is `pnpm payload:migrate` (`payload migrate && next build`, Node 22),
+  so pending migrations run on every deploy.
+- Always pass `--prod`. A bare `vercel deploy` builds a Preview, and Preview shares the production
+  `DATABASE_URI`, so it would run migrations against the live database.
+- The checkout you deploy from must contain the site's images in `public/media` (gitignored). The
+  header's photo tiles are served from there.
 
 This is the official [Payload Website Template](https://github.com/payloadcms/payload/blob/main/templates/website). Use it to power websites, blogs, or portfolios from small to enterprise. This repo includes a fully-working backend, enterprise-grade admin panel, and a beautifully designed, production-ready website.
 
