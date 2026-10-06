@@ -317,7 +317,28 @@ const installSectionSnapManager = (): (() => void) => {
   // deliberate than CSS scroll-snap's instant snap, and wheel users
   // don't have the touch-direction problem.
 
+  // While the header's dropdown panel is open it locks page scroll
+  // (html overflow:hidden), but this observer scrolls with JS, which
+  // ignores that lock, and its preventDefault would also stop an
+  // over-tall panel scrolling. The header announces the lock
+  // ('momh:nav-lock', detail true/false) and marks <html data-nav-lock>
+  // while it holds; stand down meanwhile. A snap already in flight is
+  // stopped where it is (the next wheel after the panel closes snaps on
+  // to the following section), so nothing moves behind the panel.
+  const onNavLock = (e: Event) => {
+    if ((e as CustomEvent<boolean>).detail) {
+      wheelObserver.disable()
+      gsap.killTweensOf(window)
+      isAnimating = false
+    } else {
+      wheelObserver.enable()
+    }
+  }
+  window.addEventListener('momh:nav-lock', onNavLock)
+  if (document.documentElement.dataset.navLock) wheelObserver.disable()
+
   return () => {
+    window.removeEventListener('momh:nav-lock', onNavLock)
     wheelObserver.kill()
   }
 }
