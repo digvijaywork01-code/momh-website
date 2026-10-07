@@ -70,13 +70,13 @@ const ABOUT_LINKS: LinkColumn = {
 const SUPPORT_LINKS: LinkColumn = {
   title: 'Support',
   items: [
-    // Every target below returns HTTP 404 on prod — no route folder,
-    // no Page slug. Disabled until the pages are built.
+    // The disabled targets below return HTTP 404 on prod — no route
+    // folder, no Page slug. Disabled until the pages are built.
     // ("Sitemap" → /sitemap is also 404; the *real* sitemap lives at
     // /sitemap.xml for crawlers, but that's not a human-facing route.)
     { label: 'Contact Us', href: '/contact', disabled: true },
     { label: 'FAQ', href: '/faq', disabled: true },
-    { label: 'Privacy Policy', href: '/privacy-policy', disabled: true },
+    { label: 'Privacy Policy', href: '/privacy-policy' },
     { label: 'Cookies Policy', href: '/cookies-policy', disabled: true },
     { label: 'Accessibility Statement', href: '/accessibility', disabled: true },
     { label: 'Sitemap', href: '/sitemap', disabled: true },
@@ -105,11 +105,11 @@ const OPENING_HOURS: { day: string; time: string }[] = [
 ]
 
 const LEGAL_LINKS: LinkItem[] = [
-  // All three legal targets currently 404 — disabled until the pages
-  // exist. Sequenced in the footer bottom bar; rendered as plain
-  // <span>s by the disabled branch below.
+  // Copyright and Terms of Use still 404 — disabled until those pages
+  // exist. Sequenced in the footer bottom bar; disabled items render as
+  // plain <span>s by the disabled branch below.
   { label: 'Copyright', href: '/copyright', disabled: true },
-  { label: 'Privacy Policy', href: '/privacy-policy', disabled: true },
+  { label: 'Privacy Policy', href: '/privacy-policy' },
   { label: 'Terms of Use', href: '/terms', disabled: true },
 ]
 

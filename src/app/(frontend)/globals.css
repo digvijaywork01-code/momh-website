@@ -311,6 +311,222 @@ body > * {
   font-style: italic;
 }
 
+/* ─── Long-form text section + lotus divider (Privacy Policy) ───────
+ * The TextSection and Divider blocks, built from the Privacy Policy PDF.
+ *
+ * Type is the site's own (text-body, text-display, brand red). Only the
+ * layout comes from the PDF, measured on its 1920pt artboard and turned
+ * into vw from lg (1024px) up. Below lg the PDF has no layout, so plain
+ * mobile values apply.
+ *
+ * Spacing ownership (RenderBlocks adds no space between blocks):
+ *  - .text-section ends with 32px / 48px (md+) bottom padding, the same as
+ *    SectionIntro's "tight bottom", so either can sit above a divider;
+ *  - the Divider block owns the rest of each gap, above and below its art
+ *    (defined in src/blocks/Divider/Component.tsx);
+ *  - .privacy-policy-page adds the PDF's page-end space before the footer.
+ * Above 1920 the type stops growing, so every PDF length is frozen at its
+ * 1920 size: --pp-vw is 1vw up to 1920px and 19.2px after.
+ * Baselines: in Gill Sans Light at line-height 1.5 the baseline sits
+ * 1.0798em below the line-box top (0.4202em above its bottom); at
+ * line-height 1.05 it sits 0.8548em below the top (0.1952em above the
+ * bottom). The calc() constants below use those to land on baselines. */
+.text-section,
+.privacy-policy-page {
+  --pp-vw: min(1vw, 19.2px);
+}
+.text-section {
+  padding-bottom: 2rem;
+}
+@media (min-width: 768px) {
+  .text-section {
+    padding-bottom: 3rem;
+  }
+}
+
+/* Heading baseline to first body baseline: 97pt of 1920 = 5.052vw (the
+ * PDF's average), never less than 18px of clear space on small screens.
+ * scroll-margin keeps an in-page jump clear of the fixed header. */
+.text-section-heading {
+  margin-bottom: max(
+    18px,
+    calc(5.052 * var(--pp-vw) - 0.1952 * var(--fs-display) - 1.0798 * var(--fs-body))
+  );
+  scroll-margin-top: 14svh;
+}
+@media (min-width: 1024px) {
+  .text-section-heading {
+    scroll-margin-top: 8rem;
+  }
+}
+
+/* Base alignment is LEFT. Lexical writes no style for "left", so a
+ * centred wrapper would silently override it. Centre and justify arrive
+ * per paragraph from the editor as inline text-align. */
+.text-section-body {
+  text-align: left;
+  overflow-wrap: break-word;
+}
+/* One blank line between paragraphs, lists and list items. */
+.text-section-body p + p,
+.text-section-body p + ul,
+.text-section-body p + ol,
+.text-section-body ul + p,
+.text-section-body ol + p,
+.text-section-body li + li {
+  margin-top: 1.5em;
+}
+/* An empty paragraph is how an editor asks for one extra blank line: it
+ * adds its own line and no margin of its own. TextSection's converter
+ * marks it, since CSS cannot tell it from a paragraph with a line break.
+ * Phones leave it out (a double blank line reads as a hole on a narrow
+ * screen), so the normal one-line gap applies there. */
+.text-section-body p.text-section-gap {
+  margin-top: 0;
+}
+@media (max-width: 767px) {
+  .text-section-body p.text-section-gap {
+    display: none;
+  }
+}
+/* Last line of a justified paragraph: centred or left, per section. */
+.text-section-body[data-last-line='center'] p[style*='justify'] {
+  text-align-last: center;
+}
+.text-section-body[data-last-line='left'] p[style*='justify'] {
+  text-align-last: left;
+}
+/* Red highlight (the PDF's red phrases), set per word in the editor. */
+.text-section-body .text-section-red {
+  color: #f1001c; /* brand-red */
+}
+/* Links carry no underline, as in the PDF (email addresses look like the
+ * text around them; red phrases are marked by colour). The underline shows
+ * on hover and keyboard focus. */
+.text-section-body a {
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+.text-section-body a:hover,
+.text-section-body a:focus-visible {
+  text-decoration: underline;
+}
+
+/* Lists: main points carry no bullet (their bold label leads the line);
+ * only sub-points (a nested list) get the site's "•" (as BulletList),
+ * drawn inline with no hanging indent, so wrapped lines return under the
+ * dot as in the PDF. Every item is justified with a left last line.
+ * Lexical wraps a nested list in its own <li class="nestedListItem">,
+ * which gets no marker and no spacing of its own; the nested list carries
+ * the spacing instead. Numbered lists (pasted or from the toolbar) keep
+ * their numbers. */
+.text-section-body ul,
+.text-section-body ol {
+  margin: 0;
+  padding: 0;
+}
+.text-section-body ul {
+  list-style: none;
+}
+.text-section-body ol {
+  list-style: decimal outside;
+  padding-left: 1.5em;
+}
+.text-section-body li {
+  text-align: justify;
+  text-align-last: left;
+}
+.text-section-body li.nestedListItem > ul > li:not(.nestedListItem)::before {
+  content: '\2022';
+  color: rgb(0 0 0 / 0.7);
+  margin-right: 0.5em;
+}
+.text-section-body li.nestedListItem,
+.text-section-body li.nestedListItem + li {
+  margin-top: 0;
+}
+.text-section-body li.nestedListItem > ul,
+.text-section-body li.nestedListItem > ol {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+/* Phones: sub-points are indented under their parent point (from md up
+ * they sit in the narrow centred column instead). */
+@media (max-width: 767px) {
+  .text-section-body li.nestedListItem > ul,
+  .text-section-body li.nestedListItem > ol {
+    padding-left: 1.25em;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Narrow bullet column, tablets up: 837.38pt of 1920 = 43.61vw, centred,
+   * with the PDF's extra air above and below it (about 2.25 blank lines).
+   * It keeps the PDF's ratio to the text column (43.61 / 59.39 = 0.7343),
+   * so where the text column holds at its 672px minimum (tablets, and
+   * laptops up to ~1130px) it is 493.5px. Nested lists always use it;
+   * top-level lists when the section says so. */
+  .text-section-body[data-list-width='narrow'] .payload-richtext > ul,
+  .text-section-body[data-list-width='narrow'] .payload-richtext > ol,
+  .text-section-body li.nestedListItem > ul,
+  .text-section-body li.nestedListItem > ol {
+    max-width: max(493.5px, calc(43.61 * var(--pp-vw)));
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3.375em;
+    margin-bottom: 3.375em;
+  }
+}
+
+/* The Section Intro sizes to its content on this page. Its shared 40vh
+ * minimum height only binds on tall screens (2560x1600: 40vh = 640px; tall
+ * tablets), where it pads the intro above and below, so the first divider
+ * sat lower than every other one. Scoped to this page; the block itself and
+ * every other page are unchanged. NOTE: SectionIntro only emits this class
+ * while "Tight top" is unticked, which this page requires (copy sheet). */
+.privacy-policy-page .min-h-\[40vh\] {
+  min-height: 0;
+}
+/* Phones: 36px side margins on this page (TextSection uses px-9), so the
+ * intro's text lines up with the sections below it. */
+@media (max-width: 767px) {
+  .privacy-policy-page .min-h-\[40vh\] {
+    padding-left: 2.25rem;
+    padding-right: 2.25rem;
+  }
+}
+
+/* Page end: last body baseline to the end of the artboard = 228.33pt of
+ * 1920 (11.892vw), before the flower row and footer. */
+.privacy-policy-page {
+  padding-bottom: 2rem;
+}
+@media (min-width: 1024px) {
+  .privacy-policy-page {
+    padding-bottom: calc(11.892 * var(--pp-vw) - 3rem - 0.4202 * var(--fs-body));
+  }
+}
+
+/* Print: below lg the page scrolls inside #scroll-container with html and
+ * body locked to one screen, so printing (or Save as PDF) would output only
+ * the first screen. Undone for this page only. */
+@media print {
+  html:has(.privacy-policy-page),
+  html:has(.privacy-policy-page) body {
+    position: static !important;
+    inset: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  html:has(.privacy-policy-page) #scroll-container {
+    height: auto !important;
+    overflow: visible !important;
+  }
+  html:has(.privacy-policy-page) header {
+    display: none !important;
+  }
+}
+
 /* ─── ExpandableText (mobile Read More) ────────────────────────────
  * Used by the `<ExpandableText>` component to truncate long body /
  * quote text to a fixed line count on mobile. The line count is

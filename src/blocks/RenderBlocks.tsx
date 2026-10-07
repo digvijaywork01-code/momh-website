@@ -27,6 +27,8 @@ import { ContactPanelBlock } from '@/blocks/ContactPanel/Component'
 import { BulletListBlock } from '@/blocks/BulletList/Component'
 import { QuestionPanelBlock } from '@/blocks/QuestionPanel/Component'
 import { AppointmentFormBlock } from '@/blocks/AppointmentForm/Component'
+import { TextSectionBlock } from '@/blocks/TextSection/Component'
+import { DividerBlock } from '@/blocks/Divider/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -54,6 +56,8 @@ const blockComponents = {
   bulletList: BulletListBlock,
   questionPanel: QuestionPanelBlock,
   appointmentForm: AppointmentFormBlock,
+  textSection: TextSectionBlock,
+  divider: DividerBlock,
 }
 
 export const RenderBlocks: React.FC<{
