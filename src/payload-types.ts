@@ -1194,7 +1194,7 @@ export interface SectionIntroBlock {
     [k: string]: unknown;
   };
   /**
-   * Optional short editorial paragraph below the headline.
+   * Optional editorial text below the headline. Centred by default; use the align menu to justify a paragraph. An empty paragraph adds a blank line.
    */
   body?: {
     root: {
@@ -1233,6 +1233,25 @@ export interface SectionIntroBlock {
         } | null);
     url?: string | null;
   };
+  /**
+   * e.g. "Book An Appointment". Shown beside the first button. Leave blank for a single button.
+   */
+  cta2Label?: string | null;
+  cta2Style?: ('filled-red' | 'outlined') | null;
+  cta2Link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'sectionIntro';
@@ -1244,6 +1263,42 @@ export interface SectionIntroBlock {
 export interface VisitInfoBlock {
   mapPosition: 'left' | 'right';
   backgroundColor: 'ivory' | 'cream' | 'black' | 'emerald' | 'maroon';
+  /**
+   * Shown above the map, aligned to its left edge, e.g. "We are happy to *help*" (italicize a word for the red accent). Leave empty for no intro.
+   */
+  introHeadline?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Paragraph under the intro heading. Use the align menu to justify it.
+   */
+  introBody?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   /**
    * Static map image. Upload a snapshot from Google Maps showing the museum location.
    */
@@ -2597,6 +2652,16 @@ export interface SectionIntroBlockSelect<T extends boolean = true> {
         reference?: T;
         url?: T;
       };
+  cta2Label?: T;
+  cta2Style?: T;
+  cta2Link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+      };
   id?: T;
   blockName?: T;
 }
@@ -2607,6 +2672,8 @@ export interface SectionIntroBlockSelect<T extends boolean = true> {
 export interface VisitInfoBlockSelect<T extends boolean = true> {
   mapPosition?: T;
   backgroundColor?: T;
+  introHeadline?: T;
+  introBody?: T;
   mapImage?: T;
   mapImageLink?: T;
   headline?: T;

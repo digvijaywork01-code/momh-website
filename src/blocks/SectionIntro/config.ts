@@ -1,6 +1,7 @@
-import type { Block } from 'payload'
+import type { Block, Field } from 'payload'
 
 import {
+  AlignFeature,
   FixedToolbarFeature,
   InlineToolbarFeature,
   lexicalEditor,
@@ -24,6 +25,55 @@ const richTextEditor = lexicalEditor({
     InlineToolbarFeature(),
   ],
 })
+
+// Body editor adds paragraph alignment (left / centre / right / justify).
+// The front-end renderer already turns a paragraph's stored alignment into
+// inline text-align, so bodies that never set it keep rendering centred.
+// Used by the Contact page's "For specific *Enquiries*" (justified paragraphs).
+const bodyEditor = lexicalEditor({
+  features: ({ rootFeatures }) => [
+    ...rootFeatures,
+    AlignFeature(),
+    FixedToolbarFeature(),
+    InlineToolbarFeature(),
+  ],
+})
+
+// Internal page or custom URL, shared by both buttons.
+const linkGroupFields: Field[] = [
+  {
+    type: 'row',
+    fields: [
+      {
+        name: 'type',
+        type: 'radio',
+        defaultValue: 'reference',
+        admin: { layout: 'horizontal', width: '50%' },
+        options: [
+          { label: 'Internal page', value: 'reference' },
+          { label: 'Custom URL', value: 'custom' },
+        ],
+      },
+      {
+        name: 'newTab',
+        type: 'checkbox',
+        label: 'Open in new tab',
+        admin: { width: '50%' },
+      },
+    ],
+  },
+  {
+    name: 'reference',
+    type: 'relationship',
+    relationTo: ['pages', 'posts'],
+    admin: { condition: (_, sd) => sd?.type === 'reference' },
+  },
+  {
+    name: 'url',
+    type: 'text',
+    admin: { condition: (_, sd) => sd?.type === 'custom' },
+  },
+]
 
 export const SectionIntro: Block = {
   slug: 'sectionIntro',
@@ -132,9 +182,10 @@ export const SectionIntro: Block = {
     {
       name: 'body',
       type: 'richText',
-      editor: richTextEditor,
+      editor: bodyEditor,
       admin: {
-        description: 'Optional short editorial paragraph below the headline.',
+        description:
+          'Optional editorial text below the headline. Centred by default; use the align menu to justify a paragraph. An empty paragraph adds a blank line.',
       },
     },
     {
@@ -174,40 +225,50 @@ export const SectionIntro: Block = {
         hideGutter: true,
         condition: (_, siblingData) => Boolean(siblingData?.ctaLabel),
       },
+      fields: linkGroupFields,
+    },
+    // Optional second button, shown beside the first (Contact page "Find *Us*":
+    // Get Directions + Book An Appointment). Only offered once the first
+    // button has a label; with both set, the arrow style renders as outlined.
+    {
+      type: 'row',
+      admin: {
+        condition: (_, siblingData) => Boolean(siblingData?.ctaLabel),
+      },
       fields: [
         {
-          type: 'row',
-          fields: [
-            {
-              name: 'type',
-              type: 'radio',
-              defaultValue: 'reference',
-              admin: { layout: 'horizontal', width: '50%' },
-              options: [
-                { label: 'Internal page', value: 'reference' },
-                { label: 'Custom URL', value: 'custom' },
-              ],
-            },
-            {
-              name: 'newTab',
-              type: 'checkbox',
-              label: 'Open in new tab',
-              admin: { width: '50%' },
-            },
-          ],
-        },
-        {
-          name: 'reference',
-          type: 'relationship',
-          relationTo: ['pages', 'posts'],
-          admin: { condition: (_, sd) => sd?.type === 'reference' },
-        },
-        {
-          name: 'url',
+          name: 'cta2Label',
           type: 'text',
-          admin: { condition: (_, sd) => sd?.type === 'custom' },
+          label: 'Second button label (optional)',
+          admin: {
+            description:
+              'e.g. "Book An Appointment". Shown beside the first button. Leave blank for a single button.',
+            width: '60%',
+          },
+        },
+        {
+          name: 'cta2Style',
+          type: 'select',
+          defaultValue: 'filled-red',
+          options: [
+            { label: 'Filled red rectangular button', value: 'filled-red' },
+            { label: 'Outlined rectangular button', value: 'outlined' },
+          ],
+          admin: {
+            width: '40%',
+            condition: (_, sd) => Boolean(sd?.cta2Label),
+          },
         },
       ],
+    },
+    {
+      name: 'cta2Link',
+      type: 'group',
+      admin: {
+        hideGutter: true,
+        condition: (_, siblingData) => Boolean(siblingData?.ctaLabel && siblingData?.cta2Label),
+      },
+      fields: linkGroupFields,
     },
   ],
 }

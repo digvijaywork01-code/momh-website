@@ -26,6 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/museum-guidelines',
     '/personal-consultation',
     '/book-an-appointment',
+    '/contact',
   ]
 
   return routes.map((route) => ({

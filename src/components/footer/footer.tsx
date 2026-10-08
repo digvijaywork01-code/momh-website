@@ -70,11 +70,11 @@ const ABOUT_LINKS: LinkColumn = {
 const SUPPORT_LINKS: LinkColumn = {
   title: 'Support',
   items: [
+    { label: 'Contact Us', href: '/contact' },
     // Every target below returns HTTP 404 on prod — no route folder,
     // no Page slug. Disabled until the pages are built.
     // ("Sitemap" → /sitemap is also 404; the *real* sitemap lives at
     // /sitemap.xml for crawlers, but that's not a human-facing route.)
-    { label: 'Contact Us', href: '/contact', disabled: true },
     { label: 'FAQ', href: '/faq', disabled: true },
     { label: 'Privacy Policy', href: '/privacy-policy', disabled: true },
     { label: 'Cookies Policy', href: '/cookies-policy', disabled: true },

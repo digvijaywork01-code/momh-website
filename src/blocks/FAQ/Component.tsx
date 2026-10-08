@@ -117,6 +117,9 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
   return (
     <section
       ref={sectionRef}
+      // Anchor target for links such as /book-an-appointment#faq (the site
+      // has no separate FAQ page).
+      id="faq"
       className={cn(
         'w-full min-h-svh flex flex-col items-center justify-center py-20 lg:py-24 px-6 md:px-12',
         bgClass[bg],

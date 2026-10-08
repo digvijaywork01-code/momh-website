@@ -411,3 +411,22 @@ body > * {
     padding-top: 18vh;
   }
 }
+
+/* Contact page (/contact): links typed into the page's text (the email, the
+   Craft Your Jewellery and FAQ links) carry no class. No underline, as in the
+   PDF and on the Privacy Policy page; underline on hover and keyboard focus.
+   Classed links (buttons, the Getting Here email) keep their own styles. */
+.contact-page a:not([class]):hover,
+.contact-page a:not([class]):focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* /book-an-appointment#faq (linked from the Contact page): on phones and
+   tablets the FAQ heading would land under the floating MOMH logo, so the
+   jump stops a little higher. Affects anchor scrolling only, not layout. */
+@media (max-width: 1023px) {
+  #faq {
+    scroll-margin-top: 32px;
+  }
+}
