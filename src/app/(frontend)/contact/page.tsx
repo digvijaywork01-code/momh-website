@@ -35,12 +35,12 @@ export async function generateMetadata(): Promise<Metadata> {
  *
  * Same pattern as /museum-guidelines: server component, fetches the Pages
  * doc by slug with depth=2, renders `layout` via the shared `<RenderBlocks />`
- * (ImageBanner, SectionIntro, VisitInfo with its intro, then two SectionIntros:
- * "For specific Enquiries" and "Find Us" with its two buttons).
+ * (SectionIntro, VisitInfo with its intro, then two SectionIntros: "For
+ * specific Enquiries" and "Find Us" with its two buttons).
  *
  * The visible title is a <p> in SectionIntro, so a screen-reader-only <h1>
  * heads the document outline. The wrapper class scopes the page's link
- * styling (see globals.css).
+ * styling and its spacing overrides (see globals.css).
  */
 export default async function ContactPage() {
   const page = await getPublishedPage()
