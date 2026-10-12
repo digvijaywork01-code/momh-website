@@ -9,13 +9,14 @@
  * trigger line, giving a subtle scroll-driven cadence.
  */
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useId, useLayoutEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 
 import type { FAQBlock as FAQBlockProps } from '@/payload-types'
 
 import RichText from '@/components/RichText'
 import { FaqItem } from '@/components/FaqItem'
+import { FAQ_PAGE_CLOSED_FLAG, FAQ_PAGE_PHONE_QUERY } from '@/blocks/FAQ/phoneQuery'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
@@ -37,13 +38,20 @@ const bgClass: Record<BgKey, string> = {
 const isDarkBg = (bg: BgKey): boolean =>
   bg === 'black' || bg === 'emerald' || bg === 'maroon'
 
-export const FAQBlock: React.FC<FAQBlockProps> = ({
-  eyebrow,
-  headline,
-  intro,
-  items,
-  backgroundColor = 'ivory',
-}) => {
+export const FAQBlock: React.FC<
+  FAQBlockProps & {
+    /** Page-level render variant, passed by a page route through RenderBlocks
+     *  (not a CMS field). 'faq-page' = the /faq page (FAQ PDF): one block per
+     *  question group, the headline shown as a centred all-red group heading,
+     *  answers open (closed on phones), no full-screen height, no #faq anchor
+     *  (the page holds several FAQ blocks). Sizes and gaps live in the
+     *  `.faq-block--page` and `.faq-item--page` rules in globals.css.
+     *  Unset = today's block. */
+    variant?: 'faq-page'
+  }
+> = ({ eyebrow, headline, intro, items, backgroundColor = 'ivory', variant }) => {
+  const page = variant === 'faq-page'
+  const headingId = useId()
   const { setHeaderTheme } = useHeaderTheme()
   const noScrollAnim = useNoScrollAnimations()
   const sectionRef = useRef<HTMLElement | null>(null)
@@ -69,6 +77,24 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
     observer.observe(el)
     return () => observer.disconnect()
   }, [dark, setHeaderTheme])
+
+  // /faq on phones: the answers start closed (user's choice, 12 Oct; open on
+  // tablets and up, as in the PDF). On a full page load the route's inline
+  // script has already closed them before the first paint and flagged the
+  // wrapper; closing again here at hydration would shut an answer the visitor
+  // opened meanwhile, so this only runs after a client-side navigation to
+  // /faq, before the browser paints the new page.
+  useLayoutEffect(() => {
+    if (!page || !window.matchMedia(FAQ_PAGE_PHONE_QUERY).matches) return
+    const root = itemsWrapRef.current?.closest('.faq-page') as
+      | (HTMLElement & Record<string, unknown>)
+      | null
+      | undefined
+    if (root?.[FAQ_PAGE_CLOSED_FLAG]) return
+    itemsWrapRef.current?.querySelectorAll('details').forEach((d) => {
+      d.open = false
+    })
+  }, [page])
 
   useEffect(() => {
     if (prefersReducedMotion() || noScrollAnim) return
@@ -117,19 +143,25 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
   return (
     <section
       ref={sectionRef}
-      // Anchor target for links such as /book-an-appointment#faq (the site
-      // has no separate FAQ page).
-      id="faq"
-      className={cn(
-        'w-full min-h-svh flex flex-col items-center justify-center py-20 lg:py-24 px-6 md:px-12',
-        bgClass[bg],
-      )}
+      // Anchor target for links such as /book-an-appointment#faq. The /faq
+      // page holds several FAQ blocks, so its variant leaves the id off.
+      id={page ? undefined : 'faq'}
+      className={
+        page
+          ? cn('faq-block--page w-full flex flex-col items-center px-6 md:px-12', bgClass[bg])
+          : cn(
+              'w-full min-h-svh flex flex-col items-center justify-center py-20 lg:py-24 px-6 md:px-12',
+              bgClass[bg],
+            )
+      }
       data-theme={dark ? 'dark' : 'light'}
       {...(noScrollAnim ? {} : { 'data-snap-section': true })}
-      aria-label={eyebrow || 'Frequently asked questions'}
+      {...(page
+        ? { 'aria-labelledby': headingId }
+        : { 'aria-label': eyebrow || 'Frequently asked questions' })}
     >
-      <div className="w-full max-w-4xl mx-auto">
-        <div className="text-center mb-12 lg:mb-16">
+      <div className={page ? 'faq-block--page__inner w-full mx-auto' : 'w-full max-w-4xl mx-auto'}>
+        <div className={page ? 'faq-block--page__head text-center' : 'text-center mb-12 lg:mb-16'}>
           {eyebrow && (
             <p
               ref={eyebrowRef}
@@ -144,7 +176,18 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
             // at ~70px. Sized 4.5rem (72px) on lg — fits within max-w-4xl
             // without wrapping. Italic words (em/i) render in brand red
             // to match the PDF's red emphasis (e.g. "*Questions*").
-            className="editorial-display text-[2.5rem] md:text-[3.5rem] lg:text-[4.5rem] leading-[1.05] mb-6 [&_em]:text-brand-red [&_i]:text-brand-red"
+            // /faq: the headline is a group heading ("Visiting"), all red,
+            // exposed as a level-2 heading. A real <h2> cannot hold the rich
+            // text's <div><p>, hence role + aria-level.
+            {...(page ? { id: headingId, role: 'heading', 'aria-level': 2 } : {})}
+            className={
+              page
+                ? cn(
+                    'faq-block--page__heading editorial-display',
+                    dark ? 'text-offwhite' : 'text-brand-red',
+                  )
+                : 'editorial-display text-[2.5rem] md:text-[3.5rem] lg:text-[4.5rem] leading-[1.05] mb-6 [&_em]:text-brand-red [&_i]:text-brand-red'
+            }
           >
             <RichText data={headline} enableGutter={false} enableProse={false} />
           </div>
@@ -156,9 +199,13 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
         </div>
 
         <div ref={itemsWrapRef} className="flex flex-col">
-          {rows.map((row, i) => (
-            <FaqItem key={i} question={row.question} answer={row.answer} />
-          ))}
+          {rows.map((row, i) =>
+            page ? (
+              <FaqItem key={i} question={row.question} answer={row.answer} variant="faq-page" defaultOpen />
+            ) : (
+              <FaqItem key={i} question={row.question} answer={row.answer} />
+            ),
+          )}
         </div>
       </div>
     </section>

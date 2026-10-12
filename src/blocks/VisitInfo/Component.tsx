@@ -18,6 +18,7 @@ import Link from 'next/link'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { richTextHasText as hasText } from '@/utilities/richTextHasText'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
 
@@ -37,17 +38,6 @@ const bgClass: Record<BgKey, string> = {
 
 const isDarkBg = (bg: BgKey): boolean =>
   bg === 'black' || bg === 'emerald' || bg === 'maroon'
-
-// True when a rich-text value holds any visible text. An untouched field can
-// still store an empty paragraph, and a stray space must not count either.
-type LexicalNode = { text?: unknown; children?: LexicalNode[] }
-const hasText = (value: unknown): boolean => {
-  const walk = (node: LexicalNode | undefined): boolean =>
-    Boolean(node) &&
-    ((typeof node?.text === 'string' && /\S/.test(node.text)) ||
-      (Array.isArray(node?.children) && node.children.some(walk)))
-  return walk((value as { root?: LexicalNode } | null | undefined)?.root)
-}
 
 export const VisitInfoBlock: React.FC<VisitInfoBlockProps> = ({
   introHeadline,

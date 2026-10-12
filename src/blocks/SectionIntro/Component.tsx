@@ -23,6 +23,7 @@ import type {
 import RichText from '@/components/RichText'
 import { EditorialCta } from '@/components/EditorialCta'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { richTextHasText } from '@/utilities/richTextHasText'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
 
@@ -87,6 +88,7 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
   const bg = (backgroundColor || 'cream') as BgKey
   const dark = isDarkBg(bg)
   const sectionCaps = headingStyle === 'section-caps'
+  const showHeadline = richTextHasText(headline)
 
   useEffect(() => {
     const el = sectionRef.current
@@ -205,6 +207,11 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
           </p>
         )}
 
+        {/* The headline is optional (e.g. the FAQ page's buttons-only row).
+            A real text check, not a truthiness one: a headline typed and then
+            cleared is stored as an empty paragraph, which would still render
+            a blank display-size line. */}
+        {showHeadline && headline && (
         <div
           ref={headlineRef}
           // Two treatments:
@@ -229,11 +236,12 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
         >
           <RichText data={headline} enableGutter={false} enableProse={false} />
         </div>
+        )}
 
         {/* Short centred rule under a section-caps heading. The PDF draws
             it at 124px on a 1921 artboard (6.45vw) in the same maroon as
             the heading rules on the editorial bands. */}
-        {sectionCaps && (
+        {sectionCaps && showHeadline && (
           <div
             className="mx-auto w-[6.45vw] min-w-[80px] h-px bg-[#8e1e24] mb-5"
             aria-hidden="true"

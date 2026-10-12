@@ -69,8 +69,12 @@ export const RenderBlocks: React.FC<{
   /** Page-level render variant forwarded to every infoHero block.
    *  'banner-title' = italic-serif title with a red accent word. */
   infoHeroVariant?: 'banner-title'
+  /** Page-level render variant forwarded to every faq block.
+   *  'faq-page' = the /faq page (FAQ PDF): one block per question group,
+   *  all-red group heading, answers open (closed on phones). */
+  faqVariant?: 'faq-page'
 }> = (props) => {
-  const { blocks, editorialSplitVariant, infoHeroVariant } = props
+  const { blocks, editorialSplitVariant, infoHeroVariant, faqVariant } = props
 
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
@@ -84,7 +88,7 @@ export const RenderBlocks: React.FC<{
             const Block = blockComponents[blockType]
 
             if (Block) {
-              // Page-level render variant, applied only to editorialSplit.
+              // Page-level render variants (editorialSplit, infoHero, faq).
               // Kept OUT of the JSX below so the single @ts-expect-error
               // there still covers the whole element (a multi-line element
               // would push the real mismatch past the directive's one-line
@@ -94,7 +98,9 @@ export const RenderBlocks: React.FC<{
                   ? { variant: editorialSplitVariant }
                   : blockType === 'infoHero' && infoHeroVariant
                     ? { variant: infoHeroVariant }
-                    : {}
+                    : blockType === 'faq' && faqVariant
+                      ? { variant: faqVariant }
+                      : {}
 
               // No wrapper margin — editorial blocks render edge-to-edge.
               // The default Payload template had `my-16` here, which produced

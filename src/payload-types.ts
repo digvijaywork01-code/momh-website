@@ -1176,9 +1176,9 @@ export interface SectionIntroBlock {
    */
   eyebrow?: string | null;
   /**
-   * Display headline. Italicize key words (Cmd/Ctrl+I) for the Cormorant emphasis pattern, e.g. "Plan Your *Visit*".
+   * Display headline. Italicize key words (Cmd/Ctrl+I) for the Cormorant emphasis pattern, e.g. "Plan Your *Visit*". Optional: leave it empty for a buttons-only row (e.g. the two buttons at the end of the FAQ page).
    */
-  headline: {
+  headline?: {
     root: {
       type: string;
       children: {
@@ -1192,7 +1192,7 @@ export interface SectionIntroBlock {
       version: number;
     };
     [k: string]: unknown;
-  };
+  } | null;
   /**
    * Optional editorial text below the headline. Centred by default; use the align menu to justify a paragraph. An empty paragraph adds a blank line.
    */

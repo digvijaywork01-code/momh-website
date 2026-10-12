@@ -172,11 +172,10 @@ export const SectionIntro: Block = {
     {
       name: 'headline',
       type: 'richText',
-      required: true,
       editor: richTextEditor,
       admin: {
         description:
-          'Display headline. Italicize key words (Cmd/Ctrl+I) for the Cormorant emphasis pattern, e.g. "Plan Your *Visit*".',
+          'Display headline. Italicize key words (Cmd/Ctrl+I) for the Cormorant emphasis pattern, e.g. "Plan Your *Visit*". Optional: leave it empty for a buttons-only row (e.g. the two buttons at the end of the FAQ page).',
       },
     },
     {
