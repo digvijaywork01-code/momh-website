@@ -1,0 +1,3345 @@
+{
+ "title": "Privacy Policy",
+ "slug": "privacy-policy",
+ "hero": {
+  "type": "none"
+ },
+ "meta": {
+  "title": "Privacy Policy",
+  "description": "How the Museum of Meenakari Heritage collects, uses and protects personal information on momhindia.org and at the Museum in Jaipur, and the choices you have.",
+  "image": 83
+ },
+ "heroAlt": "A meenakar's hand enamelling an engraved gold bangle",
+ "layout": [
+  {
+   "blockType": "imageBanner",
+   "image": "__HERO_MEDIA_ID__",
+   "headerTheme": "dark",
+   "height": "natural"
+  },
+  {
+   "blockType": "sectionIntro",
+   "backgroundColor": "white",
+   "showTopDivider": false,
+   "headingStyle": "display",
+   "bodyWidth": "normal",
+   "tightTop": false,
+   "tightBottom": true,
+   "headline": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Privacy ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "Policy",
+         "format": 2,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The Museum of Meenakari Heritage is devoted to the art of meenakari, enamelling on gold. We extend the same care to the personal information that visitors entrust to us. This page explains what we collect through momhindia.org and at the Museum, why we collect it, who we share it with, and the choices you have. We collect very little. We do not sell personal data, we do not create visitor accounts, and we do not use advertising cookies or pixels.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Who We Are",
+   "heading": "Who We Are",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The Museum of Meenakari Heritage (the \"Museum\", \"we\", \"us\") is located at Shekhawat Haveli, E-141, Sardar Patel Marg, Durgadas Colony, C-Scheme, Ashok Nagar, Jaipur 302001, Rajasthan, India. The Museum belongs to The House of Sunita Shekhawat and is operated by Midas Signature Jewellery Private Limited, whose registered office is at Sterling Apartment, B-6-b, Prithviraj Road, C-Scheme, Jaipur 302001, India. Midas Signature Jewellery Private Limited is the data fiduciary for the personal data described in this Policy, and the controller for the purposes of the GDPR and UK GDPR.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "This Policy covers the website momhindia.org, the forms on it, and the information we collect when you visit the Museum in person. It does not cover the websites we link to, such as Google Maps or our social media pages, which have their own privacy policies.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "This Policy is published in accordance with the Information Technology Act 2000 and the Information Technology (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules 2011. It has been drafted with regard to the Digital Personal Data Protection Act 2023 and the Digital Personal Data Protection Rules 2025, and will apply their provisions as and when they are brought into force. If you are in the European Economic Area or the United Kingdom, the EU General Data Protection Regulation or the UK GDPR may also apply. Where it does, the parts of this Policy that refer to those laws apply to you.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "What We Collect and Why",
+   "heading": "What We Collect and Why",
+   "listWidth": "full",
+   "justifyLastLine": "left",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "We collect personal information only when you choose to give it to us through one of the forms on this website, and a small amount of technical information automatically when you browse. We do not ask for passwords, bank or card details, health information or biometric data, and we ask that you do not include such details in any free-text field.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [],
+       "direction": null,
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "When you book a visit",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : The Book Your Appointment form asks for your first name, last name, email address, telephone number, city, country, group size, any queries or comments, and, if you wish to tell us, how you heard about the Museum. We use your name and contact details to confirm your appointment and to reach you if we need to rearrange or cancel a visit. Your city and country help us prepare for your visit. Group size tells us how many people to expect; we do not record the details of the people accompanying you. Your queries let us answer any questions before you arrive. Telling us how you heard about the Museum is optional and helps us understand how people find us.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "When you ask about a commission",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : The Personal Consultation form, on the Personal Consultation page, asks for your first name, last name, email address, telephone or WhatsApp number, city and country. It also asks about the piece: what you would like to create, who it is for, your preferred timeline, your design idea, budget range, your preferred way to connect, and any additional notes. We use this information solely to understand your request and to reply to you through the channel you prefer. Consultation requests are handled by the atelier team of The House of Sunita Shekhawat, which is part of the same company as the Museum. The form shows a reference-image picker. Images are not currently uploaded or sent to us; if you select a file, only its file name reaches us.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "How the two forms reach us",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : Both forms are delivered to us by email, to ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "5ab5fa41e6a04915867f7672",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": ", through our transactional email provider. At the same time, a confirmation email is sent to you from ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "autolink",
+         "version": 2,
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:no-reply@momhindia.org"
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "no-reply@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": "; it greets you by name, says which kind of enquiry was received, and does not repeat anything else you submitted. Submissions from these two forms are not stored in a database on this website. The Museum retains the email correspondence in its mailbox, for the period described under Data Retention. Our mailbox is hosted by Google LLC (Google Workspace), so your enquiry is held on Google's servers for as long as we keep the email. You choose whether to use either form. Every field on the Book Your Appointment form is required except how you heard about the Museum. On the Personal Consultation form, your first name, email address, telephone number, city, country, what you would like to create, who it is for and your timeline are required; the remaining fields are optional.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "When you join the newsletter",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : When you enter your email address in the newsletter box on the home page or the Craft Your Jewellery page, we store your email address, a short label recording which sign-up box you used, and the date and time of sign-up in the website's content database. We use these details to send you the Museum newsletter and to keep a record of your subscription. We do not add you to the newsletter when you book a visit or request a consultation.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "When you browse",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : Our hosting provider keeps standard server logs (your IP address, browser type, the pages requested and the time of the request) for a short period, for security and to keep the website running. We also use the analytics tools and cookies described under Cookies and Similar Technologies. We do not use automated decision-making that produces legal or similarly significant effects on you, and we do not profile visitors for marketing.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "At the Museum",
+   "heading": "At the Museum",
+   "listWidth": "full",
+   "justifyLastLine": "left",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "When you visit in person, we collect a small amount of information on the premises.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [],
+       "direction": null,
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "CCTV",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : The Museum's galleries, entrances and grounds are monitored by closed-circuit cameras for the safety of visitors, staff and the collection, and to prevent and investigate crime. Recordings are viewed only by authorised staff. They are kept for a limited period and then overwritten, unless a recording is needed for an investigation or is requested lawfully by the police or a court.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Visitor register",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : At reception we may record basic details of each visiting party, such as a name, a contact number and the time of your visit. We use the register to match arrivals to appointments, to know who is in the building for safety reasons, and for security. It is kept only for as long as it is needed for those purposes and for our appointment records, and is then destroyed.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Photography",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : We sometimes photograph visitors, for example during events or guided walkthroughs. We will ask before photographing you and tell you how the photograph may be used, for example for the Museum's records, its website or its social media. You may decline. You may also ask us at any time to stop using a photograph in which you appear, by writing to ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "25f29be60bad0bb138f6294a",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": ". Children are photographed only with the agreement of a parent or guardian.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Cookies and Similar Technologies",
+   "heading": "Cookies and Similar Technologies",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Cookies are small text files stored on your device when you visit a website. The following cookies and browser storage are set when you use this website, either by us or by the services named:",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [],
+       "direction": null,
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "list",
+       "listType": "bullet",
+       "start": 1,
+       "tag": "ul",
+       "children": [
+        {
+         "type": "listitem",
+         "value": 1,
+         "children": [
+          {
+           "type": "text",
+           "text": "_ga",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : set by Google Analytics; distinguishes visitors for traffic statistics; lasts 2 years, as declared by Google.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 2,
+         "children": [
+          {
+           "type": "text",
+           "text": "_ga_GK6YKXRPJ8",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : set by Google Analytics; keeps session state for traffic statistics; lasts 2 years, as declared by Google.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 3,
+         "children": [
+          {
+           "type": "text",
+           "text": "_GRECAPTCHA",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : set by Google reCAPTCHA on the google.com domain, on the Book Your Appointment page only; used for spam and abuse prevention; lasts up to about 6 months (Google does not publish a fixed lifetime).",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 4,
+         "children": [
+          {
+           "type": "text",
+           "text": "payload-token",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : set by momhindia.org only when a member of Museum staff signs in to the content management system; never set for visitors; lasts about 2 hours.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 5,
+         "children": [
+          {
+           "type": "text",
+           "text": "Theme preference",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : kept in your browser's local storage (not a cookie) to remember your light or dark display choice; remains until you clear your browser storage.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 6,
+         "children": [
+          {
+           "type": "text",
+           "text": "Google Analytics",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : We use Google Analytics 4, a service of Google LLC (United States), to understand how visitors use the website. When a page loads, Google Analytics receives the address of the page, your browser and operating system versions, device type and model, screen resolution, language, and the referring page. It also receives your IP address, which Google uses only to work out an approximate, city-level location and does not store. The _ga cookies give your browser a pseudonymous identifier so that repeat visits can be counted. We do not use Google Analytics for advertising and have not linked it to advertising products to confirm Google Signals and Ads linking are switched off in the property. You can read how Google uses this information at ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "link",
+           "version": 3,
+           "id": "41077af19923bc42dd11b9b7",
+           "fields": {
+            "linkType": "custom",
+            "url": "https://policies.google.com/technologies/partner-sites",
+            "newTab": true
+           },
+           "children": [
+            {
+             "type": "text",
+             "text": "How Google uses information from sites or apps that use our services",
+             "format": 0,
+             "style": "",
+             "mode": "normal",
+             "detail": 0,
+             "version": 1,
+             "$": {
+              "color": "red"
+             }
+            }
+           ],
+           "direction": "ltr",
+           "format": "",
+           "indent": 0
+          },
+          {
+           "type": "text",
+           "text": " and in ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "link",
+           "version": 3,
+           "id": "c2db98f1543cbc995406e6ec",
+           "fields": {
+            "linkType": "custom",
+            "url": "https://policies.google.com/privacy",
+            "newTab": true
+           },
+           "children": [
+            {
+             "type": "text",
+             "text": "Google's Privacy Policy",
+             "format": 0,
+             "style": "",
+             "mode": "normal",
+             "detail": 0,
+             "version": 1,
+             "$": {
+              "color": "red"
+             }
+            }
+           ],
+           "direction": "ltr",
+           "format": "",
+           "indent": 0
+          },
+          {
+           "type": "text",
+           "text": ".",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 7,
+         "children": [
+          {
+           "type": "text",
+           "text": "Cookieless statistics",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : We also use Vercel Web Analytics and Vercel Speed Insights, services of Vercel Inc. (United States), which set no cookies. Web Analytics records the page visited, the referring site, country, region and city, browser, operating system and device type, against a hashed identifier that resets every day and cannot be traced back to you or your IP address. Speed Insights measures page-loading performance and records the page, your country, browser, operating system, device type and connection speed, without personal identifiers.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 8,
+         "children": [
+          {
+           "type": "text",
+           "text": "Spam protection",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : The Book Your Appointment page uses Google reCAPTCHA to distinguish people from automated programs. reCAPTCHA collects device and browser information, your IP address and how you interact with the page, and sets the _GRECAPTCHA cookie on google.com. Google states that this information is used for improving reCAPTCHA and for general security purposes, and is not used by Google for personalised advertising. Google processes it under its own Privacy Policy. reCAPTCHA does not load on any other page of this website.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 9,
+         "children": [
+          {
+           "type": "text",
+           "text": "Fonts",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : Two of the typefaces on this website, Cormorant and Playfair Display, are delivered by Google Fonts; the third is served from our own website. To deliver them, Google receives your IP address, the font requested, your browser details and the page you are on. Google Fonts sets no cookies, and Google states that it does not use this information to build profiles of visitors or for advertising.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 10,
+         "children": [
+          {
+           "type": "text",
+           "text": "Your choices",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : This website does not currently show a cookie banner, so the Google Analytics cookies are set when a page loads. You can control them in the following ways:",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 11,
+         "children": [
+          {
+           "type": "list",
+           "listType": "bullet",
+           "start": 1,
+           "tag": "ul",
+           "children": [
+            {
+             "type": "listitem",
+             "value": 1,
+             "children": [
+              {
+               "type": "text",
+               "text": "Block or delete cookies in your browser settings. Most browsers let you refuse all cookies, refuse cookies from particular sites, and delete cookies already stored.",
+               "format": 0,
+               "style": "",
+               "mode": "normal",
+               "detail": 0,
+               "version": 1
+              }
+             ],
+             "direction": "ltr",
+             "format": "",
+             "indent": 1,
+             "version": 1
+            },
+            {
+             "type": "listitem",
+             "value": 2,
+             "children": [
+              {
+               "type": "text",
+               "text": "Install ",
+               "format": 0,
+               "style": "",
+               "mode": "normal",
+               "detail": 0,
+               "version": 1
+              },
+              {
+               "type": "link",
+               "version": 3,
+               "id": "28c2107a716960184e99288f",
+               "fields": {
+                "linkType": "custom",
+                "url": "https://tools.google.com/dlpage/gaoptout",
+                "newTab": true
+               },
+               "children": [
+                {
+                 "type": "text",
+                 "text": "Google's opt-out browser add-on",
+                 "format": 0,
+                 "style": "",
+                 "mode": "normal",
+                 "detail": 0,
+                 "version": 1,
+                 "$": {
+                  "color": "red"
+                 }
+                }
+               ],
+               "direction": "ltr",
+               "format": "",
+               "indent": 0
+              },
+              {
+               "type": "text",
+               "text": ", which stops Google Analytics from receiving information about your visits to any website.",
+               "format": 0,
+               "style": "",
+               "mode": "normal",
+               "detail": 0,
+               "version": 1
+              }
+             ],
+             "direction": "ltr",
+             "format": "",
+             "indent": 1,
+             "version": 1
+            },
+            {
+             "type": "listitem",
+             "value": 3,
+             "children": [
+              {
+               "type": "text",
+               "text": "Clear your browser's local storage to remove the theme preference.",
+               "format": 0,
+               "style": "",
+               "mode": "normal",
+               "detail": 0,
+               "version": 1
+              }
+             ],
+             "direction": "ltr",
+             "format": "",
+             "indent": 1,
+             "version": 1
+            }
+           ],
+           "direction": "ltr",
+           "format": "",
+           "indent": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "format": "",
+       "indent": 0,
+       "version": 1
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Blocking cookies does not affect your ability to read this website. We do not use advertising cookies, pixels, session recording or remarketing tools. We will update this section if we introduce a cookie consent control.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Lawful Basis for Processing",
+   "heading": "Lawful Basis for Processing",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "We process your personal data on one or more of the following bases. They are drawn from the EU General Data Protection Regulation and the UK GDPR, and from the corresponding provisions of Indian law, including the Digital Personal Data Protection Act 2023 as its provisions come into force:",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [],
+       "direction": null,
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "list",
+       "listType": "bullet",
+       "start": 1,
+       "tag": "ul",
+       "children": [
+        {
+         "type": "listitem",
+         "value": 1,
+         "children": [
+          {
+           "type": "text",
+           "text": "Your request",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : to arrange and confirm the visit or consultation you have asked for, and to reply to your questions. Under the GDPR, this is processing needed to take steps at your request before entering into a contract with us. Where no contract arises, for example a free visit, we rely on our legitimate interest in answering a request you have made to us. Under the DPDP Act, once section 7 is in force, it is the use of personal data you gave us voluntarily for that purpose.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 2,
+         "children": [
+          {
+           "type": "text",
+           "text": "Consent",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : to send you the newsletter, and to photograph you at the Museum. You may withdraw consent at any time without affecting the lawfulness of processing carried out before withdrawal.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 3,
+         "children": [
+          {
+           "type": "text",
+           "text": "Safety and security",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : to operate CCTV and keep the visitor register, in our legitimate interest in protecting visitors, staff and the collection.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 4,
+         "children": [
+          {
+           "type": "text",
+           "text": "Google Analytics cookies",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : for visitors in India and elsewhere, our legitimate interest in understanding how the website is used. For visitors in the European Economic Area and the United Kingdom, the law requires your consent before these cookies are set. This website does not yet have a consent control; until one is in place, you can prevent these cookies by the means described under Your choices.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 5,
+         "children": [
+          {
+           "type": "text",
+           "text": "Legitimate interests",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : to run, secure and improve the website, to keep server logs, to measure page performance through cookieless tools, and to keep a record of our correspondence with you, balanced against your rights and interests.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 6,
+         "children": [
+          {
+           "type": "text",
+           "text": "Legal obligation",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : to keep records or respond to requests where a law applicable to us requires it.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "format": "",
+       "indent": 0,
+       "version": 1
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "How We Share Information",
+   "heading": "How We Share Information",
+   "listWidth": "narrow",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "We share personal data only in the following circumstances.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "With service providers. We use a small number of vendors to run this website and the Museum's mailbox. Vercel and Resend, and Google in respect of Google Analytics, are bound by data-processing terms that require them to protect your data and to use it only to provide the service to us. ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "To confirm the Google Ads Data Processing Terms are accepted in the Google Analytics property and the \"Google products and services\" data-sharing settings are switched off.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1,
+         "$": {
+          "color": "red"
+         }
+        },
+        {
+         "type": "text",
+         "text": " Google's data-processing terms for Google Workspace apply to our mailbox, and Railway's published Data Processing Addendum sets out how it handles data on our behalf. Google processes reCAPTCHA and Google Fonts data under its own terms and Privacy Policy rather than under a contract with us. Google states that it does not use Google Fonts data to build profiles or for advertising, and that reCAPTCHA data is used for improving reCAPTCHA and for general security purposes and not for personalised advertising.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "list",
+       "listType": "bullet",
+       "start": 1,
+       "tag": "ul",
+       "children": [
+        {
+         "type": "listitem",
+         "value": 1,
+         "children": [
+          {
+           "type": "text",
+           "text": "Google LLC (United States)",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : Google Analytics, reCAPTCHA, Google Fonts, and Google Workspace, which hosts the ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "link",
+           "version": 3,
+           "id": "27eaf2653f702c3a7b6a4a91",
+           "fields": {
+            "linkType": "custom",
+            "url": "mailto:info@momhindia.org",
+            "newTab": false
+           },
+           "children": [
+            {
+             "type": "text",
+             "text": "info@momhindia.org",
+             "format": 0,
+             "style": "",
+             "mode": "normal",
+             "detail": 0,
+             "version": 1
+            }
+           ],
+           "direction": "ltr",
+           "format": "",
+           "indent": 0
+          },
+          {
+           "type": "text",
+           "text": " mailbox in which your enquiry is kept.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 2,
+         "children": [
+          {
+           "type": "text",
+           "text": "Vercel Inc. (United States)",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : website hosting, including the servers that process your form submission and newsletter sign-up, server logs, Web Analytics, Speed Insights, and storage of the Museum's own images. Your form submission passes through Vercel's servers on its way to our email provider and is not kept there beyond the short-lived server logs.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 3,
+         "children": [
+          {
+           "type": "text",
+           "text": "Plus Five Five, Inc., trading as Resend (United States)",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : transactional email. Resend delivers your form submission to us and your confirmation to you, and keeps a copy of the message and its delivery logs for 30 days.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 4,
+         "children": [
+          {
+           "type": "text",
+           "text": "Railway Corporation (United States), in its EU West region in Amsterdam, the Netherlands",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : hosting of the website's content database, which holds the newsletter list, staff accounts and website content.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "format": "",
+       "indent": 0,
+       "version": 1
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Within our company. Consultation requests are handled by the atelier team of The House of Sunita Shekhawat, which is part of Midas Signature Jewellery Private Limited, the same company that operates the Museum. For legal compliance. When required by law, court order, or to protect our legal rights or prevent fraud. We do not sell personal data to third parties. We do not share personal data with social media platforms; the social media icons on this website are links only, and no data is passed to those platforms when you click them.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Data Retention",
+   "heading": "Data Retention",
+   "listWidth": "narrow",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "We retain personal information only for as long as is reasonably necessary to fulfil the purposes for which it was collected, or as required by applicable law. The periods below are indicative:",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "list",
+       "listType": "bullet",
+       "start": 1,
+       "tag": "ul",
+       "children": [
+        {
+         "type": "listitem",
+         "value": 1,
+         "children": [
+          {
+           "type": "text",
+           "text": "Appointment and consultation emails",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : kept in the Museum's mailbox for 24 months after the visit or the last exchange, then deleted.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 2,
+         "children": [
+          {
+           "type": "text",
+           "text": "Copies of form emails and confirmation emails at our email provider, with delivery logs",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : 30 days.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 3,
+         "children": [
+          {
+           "type": "text",
+           "text": "Newsletter subscription",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : until you unsubscribe or ask to be removed. After that we keep a minimal record of your email address so that we do not contact you again.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 4,
+         "children": [
+          {
+           "type": "text",
+           "text": "Google Analytics visitor-level and event-level data",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : to confirm 2 or 14 months, as set in the Google Analytics property from the date of collection; aggregated statistics are kept for longer.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 5,
+         "children": [
+          {
+           "type": "text",
+           "text": "Vercel Web Analytics",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : aggregated statistics are available to us for 12 months; Vercel states it may hold the underlying records for longer. The daily visitor hash is discarded within 24 hours.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 6,
+         "children": [
+          {
+           "type": "text",
+           "text": "Vercel Speed Insights",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : aggregated performance data, available to us for 7 days.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 7,
+         "children": [
+          {
+           "type": "text",
+           "text": "Hosting logs",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : the request logs available to us are kept for one day; Vercel may retain security and operational logs for longer under its own privacy policy.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 8,
+         "children": [
+          {
+           "type": "text",
+           "text": "CCTV recordings",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : a limited period, after which they are overwritten, unless needed for an investigation or a lawful request.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 9,
+         "children": [
+          {
+           "type": "text",
+           "text": "Visitor register",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : for as long as needed for security and our appointment records, then destroyed.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 10,
+         "children": [
+          {
+           "type": "text",
+           "text": "Photographs of visitors",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : for as long as we use them for the purpose we told you about; removed on request.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "format": "",
+       "indent": 0,
+       "version": 1
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "We periodically review the data we hold and delete records that are no longer required. You may request earlier deletion by contacting us as described in the Your Rights section, subject to any period we are required by law to keep records.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Your Rights",
+   "heading": "Your Rights",
+   "listWidth": "narrow",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "You have the following rights regarding your personal information:",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "list",
+       "listType": "bullet",
+       "start": 1,
+       "tag": "ul",
+       "children": [
+        {
+         "type": "listitem",
+         "value": 1,
+         "children": [
+          {
+           "type": "text",
+           "text": "Access",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : request a copy of the personal data we hold about you.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 2,
+         "children": [
+          {
+           "type": "text",
+           "text": "Correction",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : ask us to correct or complete inaccurate data.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 3,
+         "children": [
+          {
+           "type": "text",
+           "text": "Deletion",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : request that we delete your data, subject to any legal retention requirements.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 4,
+         "children": [
+          {
+           "type": "text",
+           "text": "Restriction",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : ask us to limit how we process your data.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 5,
+         "children": [
+          {
+           "type": "text",
+           "text": "Portability",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : receive your data in a structured, machine-readable format where technically feasible.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 6,
+         "children": [
+          {
+           "type": "text",
+           "text": "Objection",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : object to processing based on our legitimate interests, or to direct marketing, at any time.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 7,
+         "children": [
+          {
+           "type": "text",
+           "text": "Withdrawal of consent",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : where processing is based on consent, withdraw it at any time.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 8,
+         "children": [
+          {
+           "type": "text",
+           "text": "Nomination",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " : once section 14 of the Digital Personal Data Protection Act 2023 is in force, nominate another individual to exercise your rights in the event of your death or incapacity; until then we will honour such a request as a matter of practice.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "format": "",
+       "indent": 0,
+       "version": 1
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Some of these rights arise under the GDPR and UK GDPR, or under provisions of the DPDP Act that are not yet in force. We extend them to every visitor as a matter of practice, subject to the limits described above.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "To exercise any of these rights, email us at ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "8bd50bcbd57daa3d1f0acd7e",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " or write to the address in the Contact Us section. We will use the email address you gave on the form or at newsletter sign-up to verify that the request comes from you. We respond within 30 days and free of charge. If a request is complex we may need up to two further months, and we will tell you within the first month if so.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "To leave the newsletter, use the unsubscribe link in any issue or write to ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "0ff4b15a56c97ffb008e0b42",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " at any time.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "If you are in the European Economic Area or the United Kingdom, you have the right to lodge a complaint with your local data protection authority (in the United Kingdom, the Information Commissioner's Office). If you are in India, you may raise a grievance with our Grievance Officer (details below). Once the relevant provisions of the Digital Personal Data Protection Act 2023 are in force, an unresolved grievance may be taken to the Data Protection Board of India.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Children's Data",
+   "heading": "Children's Data",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Children are welcome at the Museum, and we are glad to see families visit. This website, however, is not directed at children. Appointments and consultation requests must be submitted by an adult aged 18 or over; the group-size field counts the people in your party, including children, without recording their details. We do not knowingly collect personal information through this website from anyone under 18.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "If you believe a child has provided personal information to us, please contact us at ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "d80896a65860429bb6326235",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " and we will delete it promptly.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "How We Protect Your Information",
+   "heading": "How We Protect Your Information",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "We take reasonable technical, administrative and organisational measures designed to safeguard the personal data we hold against accidental or unlawful destruction, loss, alteration, unauthorised disclosure or access. These measures include encrypted connections (HTTPS) across the website, access controls on our content management system and mailbox, restricted access to CCTV recordings, and due diligence on the vendors we use.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "No method of transmission over the internet or electronic storage is entirely secure, and we cannot guarantee absolute security. In the event of a personal data breach, we will take steps consistent with applicable law to address the incident, and will inform affected individuals and the relevant authority where the law requires it, without undue delay.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "International Data Transfers",
+   "heading": "International Data Transfers",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The Museum is located in India, and your personal data is held here under this Policy and Indian law. India is not currently covered by an adequacy decision of the European Commission or of the United Kingdom.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The servers that handle your form submissions and newsletter sign-ups run in the United States, in Vercel's Washington, D.C. region. Our service providers Google LLC (Analytics, reCAPTCHA and Fonts), Vercel Inc. and Plus Five Five, Inc. (Resend) process data there. Our Google Workspace mailbox is stored in Google's data centres, which may be located outside India. The newsletter list is held in a database hosted by Railway Corporation (United States) in its EU West region in Amsterdam, the Netherlands. This means that enquiries, newsletter sign-ups, our mailbox and analytics data are stored or processed outside India.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "For visitors in the European Economic Area and the United Kingdom, we rely on the European Commission's Standard Contractual Clauses, together with the UK International Data Transfer Addendum. These are incorporated in the data-processing terms of Google (for Google Analytics and Google Workspace), Vercel and Resend. The newsletter database is held within the European Union, and Railway's Data Processing Addendum governs any access to it from the United States. Google, Vercel and Resend are also certified under the EU-US Data Privacy Framework and its UK Extension. Because the Museum is established outside the EU and the UK, we treat that certification as an additional assurance of the protection your data receives in the United States, rather than as the legal basis for the transfer. We review these arrangements when a provider's terms or certification changes.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "For all visitors, transfers are made in accordance with Indian law, including any restrictions the Central Government may notify under section 16 of the Digital Personal Data Protection Act 2023.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Contact Us",
+   "heading": "Contact Us",
+   "listWidth": "full",
+   "justifyLastLine": "left",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "For any privacy-related questions, requests to exercise your rights, or concerns about how we handle your data, please contact:",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The Museum of Meenakari Heritage",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "The House of Sunita Shekhawat",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "(Operated by Midas Signature Jewellery Private Limited)",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Shekhawat Haveli, E-141, Sardar Patel Marg, Durgadas Colony, C-Scheme, Ashok Nagar, Jaipur 302001, Rajasthan, India.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Email",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "0bd10c8c839f76199599de58",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "Phone",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : +91 6377 490 417",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Registered office",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : Sterling Apartment, B-6-b, Prithviraj Road, C-Scheme, Jaipur 302001, India.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "We aim to respond to all enquiries within 30 days, subject to identity verification.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Grievance Officer",
+   "heading": "Grievance Officer",
+   "listWidth": "full",
+   "justifyLastLine": "left",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "In accordance with Rule 5(9) of the Information Technology (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules 2011, our designated Grievance Officer is:",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Name",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : Sanjay Sharma",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "Designation",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : Company Secretary",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "Email",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "41c991b0e9a6ffa6ed33a19d",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:support@sunitashekhawat.com",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "support@sunitashekhawat.com",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "Phone",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : +919119113401",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "Address",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " : Sterling Apartment, B-6-b, Prithviraj Road, C-Scheme, Jaipur 302001, India.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The Grievance Officer will acknowledge receipt of a complaint within 7 days and resolve it within 30 days of receipt. The same officer will be the contact person for questions about the processing of your personal data under the Digital Personal Data Protection Act 2023 once its provisions are in force.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Governing Law and Jurisdiction",
+   "heading": "Governing Law and Jurisdiction",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "This Privacy Policy is governed by and construed in accordance with the laws of the Republic of India. Any disputes arising out of or in connection with this Policy shall be subject to the exclusive jurisdiction of the competent courts located in Jaipur, Rajasthan, India.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "This Policy does not affect any non-waivable rights you may have under the law of your country of residence. Nothing in this section limits the right of a person in the European Economic Area or the United Kingdom to complain to their supervisory authority, or to bring proceedings in the courts of their own country where the law gives them that right.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Severability and Changes",
+   "heading": "Severability and Changes",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "If any provision of this Privacy Policy is held by a court or competent authority to be unlawful or unenforceable, the remaining provisions shall continue in full force and effect.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "We may update this Privacy Policy from time to time to reflect changes in our practices or in the law. That includes the further provisions of the Digital Personal Data Protection Act 2023, and the Rules made under it, as they come into force. The Last Updated date at the foot of this Policy shows when it was most recently revised. Where changes are material, we will give reasonable notice on this website or by direct communication.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Thank you for your interest in the Museum and in the art of meenakari. If anything on this page is unclear, write to us at ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "e6a3ff1b21315a7f42b66f02",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " and we will gladly explain.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  }
+ ]
+}
