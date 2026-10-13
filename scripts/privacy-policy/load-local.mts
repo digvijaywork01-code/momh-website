@@ -37,13 +37,18 @@ for (const k of ['VERCEL', 'VERCEL_ENV', 'VERCEL_URL', 'AWS_LAMBDA_FUNCTION_NAME
 if (process.env.BLOB_READ_WRITE_TOKEN) fail('BLOB_READ_WRITE_TOKEN is set; uploads would go to production')
 let dbHost = ''
 let dbName = ''
+let queryHost = false
 try {
   const u = new URL(process.env.DATABASE_URI || '')
   dbHost = u.hostname
   dbName = decodeURIComponent(u.pathname.replace(/^\//, ''))
+  // pg takes host and hostaddr from the query string ahead of the URL's own
+  // host, so `127.0.0.1/x_local?host=remote` would connect to "remote".
+  queryHost = u.searchParams.has('host') || u.searchParams.has('hostaddr')
 } catch {
   fail('DATABASE_URI is unset or unparseable')
 }
+if (queryHost) fail('DATABASE_URI sets a host in its query string')
 if (!['127.0.0.1', 'localhost', '::1', '[::1]'].includes(dbHost)) fail(`database host ${dbHost} is not local`)
 if (!dbName.endsWith('_local')) fail(`database ${dbName} does not end in _local`)
 if (!fs.existsSync(HERO_FILE) || !fs.existsSync(PAGE_FILE)) fail('page.json or privacy-policy-hero.jpg missing next to this script')
@@ -53,6 +58,11 @@ console.log(`target: ${dbHost} / ${dbName}`)
 const repo = process.cwd()
 const configPath = path.join(repo, 'src', 'payload.config.ts')
 if (!fs.existsSync(configPath)) fail(`run this from a MOMH checkout (no ${configPath})`)
+// The repo's @payloadcms/email-resend version differs from payload's (on main
+// too). Payload's dev-only dependency check then throws in a promise nobody
+// awaits, which ends a `payload run` process before anything loads (`pnpm dev`
+// only logs it). The check says nothing about this script, so skip it here.
+process.env.PAYLOAD_DISABLE_DEPENDENCY_CHECKER = 'true'
 // payload and the config are imported only here, after every guard above has
 // passed, so nothing is loaded or connected before the target is checked.
 const payloadEntry = createRequire(path.join(repo, 'package.json')).resolve('payload')
