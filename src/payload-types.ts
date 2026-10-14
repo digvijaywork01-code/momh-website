@@ -214,6 +214,8 @@ export interface Page {
     | BulletListBlock
     | QuestionPanelBlock
     | AppointmentFormBlock
+    | TextSectionBlock
+    | DividerBlock
     | CallToActionBlock
     | ContentBlock
     | MediaBlock
@@ -1832,6 +1834,54 @@ export interface AppointmentFormBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TextSectionBlock".
+ */
+export interface TextSectionBlock {
+  /**
+   * Rendered centred in brand red. Leave empty for a section without a heading.
+   */
+  heading?: string | null;
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  listWidth: 'full' | 'narrow';
+  justifyLastLine: 'center' | 'left';
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'textSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DividerBlock".
+ */
+export interface DividerBlock {
+  showOn: 'all' | 'desktop' | 'mobile';
+  /**
+   * Measured from a Text Section above. Large is the Privacy Policy design.
+   */
+  desktopSpacing?: ('large' | 'medium' | 'small' | 'none') | null;
+  /**
+   * Measured from a Text Section above. Large is the Privacy Policy design.
+   */
+  mobileSpacing?: ('large' | 'medium' | 'small' | 'none') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'divider';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
@@ -2325,6 +2375,8 @@ export interface PagesSelect<T extends boolean = true> {
         bulletList?: T | BulletListBlockSelect<T>;
         questionPanel?: T | QuestionPanelBlockSelect<T>;
         appointmentForm?: T | AppointmentFormBlockSelect<T>;
+        textSection?: T | TextSectionBlockSelect<T>;
+        divider?: T | DividerBlockSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
@@ -2811,6 +2863,29 @@ export interface AppointmentFormBlockSelect<T extends boolean = true> {
         newTab?: T;
         appearance?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TextSectionBlock_select".
+ */
+export interface TextSectionBlockSelect<T extends boolean = true> {
+  heading?: T;
+  body?: T;
+  listWidth?: T;
+  justifyLastLine?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DividerBlock_select".
+ */
+export interface DividerBlockSelect<T extends boolean = true> {
+  showOn?: T;
+  desktopSpacing?: T;
+  mobileSpacing?: T;
   id?: T;
   blockName?: T;
 }

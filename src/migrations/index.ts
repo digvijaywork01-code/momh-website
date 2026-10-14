@@ -5,6 +5,7 @@ import * as migration_20260818_123947_art_craftsmanship_blocks from './20260818_
 import * as migration_20260827_095503_architecture_blocks from './20260827_095503_architecture_blocks';
 import * as migration_20260902_073136_art_craftsmanship_overlay_cards from './20260902_073136_art_craftsmanship_overlay_cards';
 import * as migration_20260902_103528_flux_single_carousel from './20260902_103528_flux_single_carousel';
+import * as migration_20261007_121934_privacy_policy_blocks from './20261007_121934_privacy_policy_blocks';
 
 export const migrations = [
   {
@@ -40,6 +41,11 @@ export const migrations = [
   {
     up: migration_20260902_103528_flux_single_carousel.up,
     down: migration_20260902_103528_flux_single_carousel.down,
-    name: '20260902_103528_flux_single_carousel'
+    name: '20260902_103528_flux_single_carousel',
+  },
+  {
+    up: migration_20261007_121934_privacy_policy_blocks.up,
+    down: migration_20261007_121934_privacy_policy_blocks.down,
+    name: '20261007_121934_privacy_policy_blocks'
   },
 ];
