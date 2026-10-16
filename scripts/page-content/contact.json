@@ -1,0 +1,740 @@
+{
+ "title": "Contact Us",
+ "slug": "contact",
+ "hero": {
+  "type": "none"
+ },
+ "meta": {
+  "title": "Contact Us",
+  "description": "Contact the Museum of Meenakari Heritage at Shekhawat Haveli, C-Scheme, Jaipur: address, opening hours, directions, and how to reach us for visits, bespoke jewellery, press and group enquiries.",
+  "image": "__OG_MEDIA_ID__"
+ },
+ "layout": [
+  {
+   "blockType": "sectionIntro",
+   "backgroundColor": "white",
+   "showTopDivider": false,
+   "headingStyle": "display",
+   "tightTop": false,
+   "tightBottom": true,
+   "headline": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Contact ",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": "Us",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 2,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Whether you are planning a visit, researching the collection, or considering a commission, our team is glad to help.",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "visitInfo",
+   "mapPosition": "left",
+   "backgroundColor": "ivory",
+   "introHeadline": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "We are happy to ",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": "help",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 2,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "introBody": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "The quickest way to reach us is by email, and we usually respond within 24 hours. For anything that needs a longer conversation, we are happy to arrange a call.",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "mapImage": "__MAP_MEDIA_ID__",
+   "mapImageLink": "https://maps.google.com/?cid=12916303950302817297",
+   "headline": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Getting ",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": "Here",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 2,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "address": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Shekhawat Haveli, E141, Sardar Patel Marg",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Durgadas Colony, C-Scheme, Ashok Nagar",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Jaipur, Rajasthan 302001",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "helperText": "Looking for something specific? Our team is happy to help.",
+   "contactEmail": "info@momhindia.org",
+   "ctas": [
+    {
+     "label": "Get Directions",
+     "href": "https://www.google.com/maps/dir/?api=1&destination=26.9053956,75.7941591",
+     "newTab": true
+    },
+    {
+     "label": "Book An Appointment",
+     "href": "/book-an-appointment",
+     "newTab": false
+    }
+   ],
+   "hours": [
+    {
+     "day": "Monday – Sunday",
+     "hours": "10:00 AM to 7:30 PM",
+     "isClosed": false
+    }
+   ],
+   "hoursNote": "Closed on select Indian public holidays. Please confirm before your visit."
+  },
+  {
+   "blockType": "sectionIntro",
+   "backgroundColor": "white",
+   "showTopDivider": false,
+   "headingStyle": "display",
+   "tightTop": true,
+   "tightBottom": true,
+   "headline": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "For specific ",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": "Enquiries",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 2,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "To visit the museum,",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 1,
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": " please book an appointment, as entry is by prior appointment only.",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [],
+       "direction": null,
+       "textStyle": "",
+       "textFormat": 0
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "For bespoke jewellery,",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 1,
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": " our team can begin a private consultation through the ",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "6c572cbcd6a94ba5a7ea9e02",
+         "fields": {
+          "linkType": "custom",
+          "url": "/personal-consultation",
+          "newTab": false
+         },
+         "children": [
+          {
+           "mode": "normal",
+           "text": "Craft Your Jewellery enquiry",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "mode": "normal",
+         "text": ".",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [],
+       "direction": null,
+       "textStyle": "",
+       "textFormat": 0
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "For press editorial or image requests,",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 1,
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": " please write to us with your publication and your deadline.",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [],
+       "direction": null,
+       "textStyle": "",
+       "textFormat": 0
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "For group, school, or research visits,",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 1,
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": " kindly give us at least two weeks’ notice so we can prepare.",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [],
+       "direction": null,
+       "textStyle": "",
+       "textFormat": 0
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "For everything else,",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 1,
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": " write to us at ",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "b7728da81d454ab1a5ad55b5",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "mode": "normal",
+           "text": "info@momhindia.org",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "mode": "normal",
+         "text": ", or browse our ",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "83380aec2f3141db9615381e",
+         "fields": {
+          "linkType": "custom",
+          "url": "/book-an-appointment#faq",
+          "newTab": false
+         },
+         "children": [
+          {
+           "mode": "normal",
+           "text": "Frequently Asked Questions",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "mode": "normal",
+         "text": " for the most common queries.",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "sectionIntro",
+   "backgroundColor": "white",
+   "showTopDivider": false,
+   "headingStyle": "display",
+   "tightTop": false,
+   "tightBottom": false,
+   "headline": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Find ",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": "Us",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 2,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Shekhawat Haveli sits in Jaipur’s C-Scheme, minutes from the city’s major heritage landmarks and well connected from both Jaipur Airport and the railway station.",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "ctaLabel": "Get Directions",
+   "ctaStyle": "outlined",
+   "ctaLink": {
+    "type": "custom",
+    "url": "https://www.google.com/maps/dir/?api=1&destination=26.9053956,75.7941591",
+    "newTab": true
+   },
+   "cta2Label": "Book An Appointment",
+   "cta2Style": "filled-red",
+   "cta2Link": {
+    "type": "custom",
+    "url": "/book-an-appointment",
+    "newTab": false
+   }
+  }
+ ]
+}
