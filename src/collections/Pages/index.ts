@@ -27,6 +27,8 @@ import { ContactPanel } from '../../blocks/ContactPanel/config'
 import { BulletList } from '../../blocks/BulletList/config'
 import { QuestionPanel } from '../../blocks/QuestionPanel/config'
 import { AppointmentForm } from '../../blocks/AppointmentForm/config'
+import { Divider } from '../../blocks/Divider/config'
+import { TextSection } from '../../blocks/TextSection/config'
 import { hero } from '@/heros/config'
 import { slugField } from '@/fields/slug'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -116,6 +118,8 @@ export const Pages: CollectionConfig<'pages'> = {
                 BulletList,
                 QuestionPanel,
                 AppointmentForm,
+                TextSection,
+                Divider,
                 CallToAction,
                 Content,
                 MediaBlock,
