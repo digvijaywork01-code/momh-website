@@ -53,6 +53,16 @@ export async function generateMetadata(): Promise<Metadata> {
  * class scopes the page's link styling and its spacing overrides (see
  * globals.css).
  */
+/**
+ * Phone menu icon: the header draws it white, for a dark photo at the top of
+ * the page. This page starts with its title instead (no hero yet), so while
+ * its first section is the title block (.editorial-display) the icon is ink;
+ * once a hero photo is added as the first block, the rule stops matching and
+ * the icon is white again. Only the phone header has this icon.
+ */
+const MENU_ICON_ON_LIGHT_TOP =
+  '[html:has(&>section:first-of-type_.editorial-display)_header_button>svg.text-white]:text-ink'
+
 export default async function FaqPage() {
   const page = await getPublishedPage()
 
@@ -64,7 +74,7 @@ export default async function FaqPage() {
   }
 
   return (
-    <div className="faq-page">
+    <div className={`faq-page ${MENU_ICON_ON_LIGHT_TOP}`}>
       <h1 className="sr-only">Frequently Asked Questions</h1>
       <RenderBlocks blocks={layout} faqVariant="faq-page" />
       <script dangerouslySetInnerHTML={{ __html: CLOSE_ON_PHONES }} />
