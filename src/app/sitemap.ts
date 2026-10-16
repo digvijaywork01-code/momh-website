@@ -28,6 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/book-an-appointment',
     '/contact',
     '/faq',
+    '/privacy-policy',
   ]
 
   return routes.map((route) => ({
