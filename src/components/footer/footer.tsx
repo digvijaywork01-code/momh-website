@@ -78,7 +78,7 @@ const SUPPORT_LINKS: LinkColumn = {
     // ("Sitemap" → /sitemap is also 404; the *real* sitemap lives at
     // /sitemap.xml for crawlers, but that's not a human-facing route.)
     { label: 'Cookies Policy', href: '/cookies-policy', disabled: true },
-    { label: 'Accessibility Statement', href: '/accessibility', disabled: true },
+    { label: 'Accessibility Statement', href: '/accessibility' },
     { label: 'Sitemap', href: '/sitemap', disabled: true },
   ],
 }
