@@ -216,6 +216,7 @@ export interface Page {
     | AppointmentFormBlock
     | TextSectionBlock
     | DividerBlock
+    | PressGridBlock
     | CallToActionBlock
     | ContentBlock
     | MediaBlock
@@ -1937,6 +1938,43 @@ export interface DividerBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PressGridBlock".
+ */
+export interface PressGridBlock {
+  order: 'newest' | 'manual';
+  /**
+   * Shown in capitals under every card. Type it in normal case.
+   */
+  linkLabel: string;
+  items: {
+    /**
+     * Portrait photo, 0.72 wide to 1 tall (e.g. 1568 x 2178). It is fitted, never cropped. Give it alt text in the media library.
+     */
+    image: number | Media;
+    /**
+     * The date the publication gives the piece.
+     */
+    date: string;
+    /**
+     * e.g. Condé Nast Traveller India
+     */
+    publication: string;
+    /**
+     * Our own short summary of the piece (about 15 to 25 words).
+     */
+    summary: string;
+    /**
+     * The publication's own page for the piece. Opens in a new tab.
+     */
+    url: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pressGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
@@ -2432,6 +2470,7 @@ export interface PagesSelect<T extends boolean = true> {
         appointmentForm?: T | AppointmentFormBlockSelect<T>;
         textSection?: T | TextSectionBlockSelect<T>;
         divider?: T | DividerBlockSelect<T>;
+        pressGrid?: T | PressGridBlockSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
@@ -2953,6 +2992,26 @@ export interface DividerBlockSelect<T extends boolean = true> {
   showOn?: T;
   desktopSpacing?: T;
   mobileSpacing?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PressGridBlock_select".
+ */
+export interface PressGridBlockSelect<T extends boolean = true> {
+  order?: T;
+  linkLabel?: T;
+  items?:
+    | T
+    | {
+        image?: T;
+        date?: T;
+        publication?: T;
+        summary?: T;
+        url?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }
