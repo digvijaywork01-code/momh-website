@@ -1,8 +1,18 @@
 /**
  * PRODUCTION: adds the new MOMH pages (Contact Us, FAQ, Accessibility
- * Statement) to the live database, from the same <slug>.json files the local
- * loader uses, so production gets exactly the pages reviewed on localhost.
- * Run by hand on a developer's machine, never on Vercel.
+ * Statement, Press) to the live database, from the same <slug>.json files the
+ * local loader uses, so production gets exactly the pages reviewed on
+ * localhost. Run by hand on a developer's machine, never on Vercel.
+ *
+ * PRESS (feat/press-page): before step 1, upload the 34 press photos to the
+ * production media library by hand, named exactly momh-press-01.jpg ... momh-press-34.jpg,
+ * with their alt text (the list is in the PR). The script finds them by file
+ * name and stops if one is missing. press.json must have every article
+ * address filled in: the script stops while any card still points at
+ * https://url-needed.invalid/. If Contact, FAQ and Accessibility went live
+ * before Press, they print "already there and identical, skip"; if one of them
+ * was edited in the admin since, it differs and stops the run: then add Press
+ * alone with ONLY=press ALLOW_PARTIAL=1 (their routes are already live).
  *
  * ORDER, so no visitor ever sees "page not found":
  *   0. The release ships every page here at once (routes and footer links in
@@ -11,7 +21,8 @@
  *      into its <slug>.json before step 2.
  *   1. From the reviewed branch, apply its migration to production first
  *      (`pnpm payload migrate` with production's DATABASE_URI). It only adds
- *      empty columns; the live site ignores them.
+ *      empty columns and the Press Grid's empty tables; the live site ignores
+ *      them.
  *   2. Run this script: a dry run, then APPLY (below), for EVERY page (no
  *      ONLY). The pages are added and published, but nobody can reach them
  *      yet: the live code has no /contact, /faq or /accessibility route.
@@ -35,9 +46,8 @@
  *   - Adds a page only if no page has its slug. A page that is already there
  *     and matches its file is skipped. A page that is there but differs (for
  *     example edited in the admin) stops the whole run before any write.
- *   - Stops unless the migration 20261016_104012_contact_page_fields is
- *     applied, unless both images exist, and if a redirect is set on any of
- *     the pages' addresses.
+ *   - Stops unless the migration MIGRATION (below) is applied, unless every
+ *     image exists, and if a redirect is set on any of the pages' addresses.
  *   - Uploads nothing. The images are existing media rows found by filename.
  *   - Never changes the database structure: Payload's dev-mode schema push is
  *     off (NODE_ENV=production) and the config's onInit table bootstrap is
@@ -67,12 +77,17 @@ import { createRequire } from 'node:module'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
-const MIGRATION = '20261016_104012_contact_page_fields'
+// The newest migration these pages need (Press Grid; it comes after
+// 20261016_104012_contact_page_fields, so that one is applied too).
+const MIGRATION = '20261017_100728_press_grid_block'
 // Placeholders a page's JSON may use, and the media file each one stands for.
 const MEDIA: Record<string, string> = {
   __OG_MEDIA_ID__: 'og-momh.jpg', // the share image
   __MAP_MEDIA_ID__: 'momh-jaipur-map.png', // the map used on Book Your Appointment
 }
+// A page's JSON may also name any media file directly, as "__MEDIA:<file name>__"
+// (the Press page's photos: "__MEDIA:momh-press-01.jpg__" ...).
+const FILE_PLACEHOLDER = /__MEDIA:([A-Za-z0-9._-]+)__/g
 const LOCK_SECONDS = 300 // an admin edit lock younger than this blocks UNDO
 
 const APPLY = process.env.APPLY === '1'
@@ -280,6 +295,28 @@ for (const [placeholder, filename] of Object.entries(MEDIA)) {
   mediaIds[placeholder] = found.docs[0].id
 }
 console.log(`images: ${Object.entries(MEDIA).map(([p, f]) => `${f} = ${mediaIds[p]}`).join(', ')}`)
+const missingFiles: string[] = []
+const fileRows: string[] = []
+for (const slug of slugs) {
+  const raw = fs.readFileSync(path.join(here, `${slug}.json`), 'utf8')
+  for (const [placeholder, filename] of raw.matchAll(FILE_PLACEHOLDER)) {
+    if (placeholder in mediaIds) continue
+    const found = await payload.find({ collection: 'media', where: { filename: { equals: filename } }, depth: 0, limit: 2 })
+    if (found.docs.length !== 1) {
+      missingFiles.push(`${filename} (${found.docs.length} found)`)
+      continue
+    }
+    const m = found.docs[0] as { id: number; width?: number; height?: number; createdAt?: string; alt?: string }
+    mediaIds[placeholder] = m.id
+    fileRows.push(`  ${filename} = ${m.id} (${m.width}x${m.height}, added ${String(m.createdAt).slice(0, 10)}${m.alt ? '' : ', NO ALT TEXT'})`)
+  }
+}
+if (missingFiles.length) {
+  fail(`these images must each exist exactly once in the media library first: ${missingFiles.join(', ')}. Nothing was written.`)
+}
+// Printed so the person running this can see each photo is the one just
+// uploaded (size and date), not an older file that happens to share its name.
+if (fileRows.length) console.log(`and ${fileRows.length} more images found by file name:\n${fileRows.join('\n')}`)
 
 // A redirect on a page's address would send visitors elsewhere instead.
 const redirects = await payload.find({ collection: 'redirects', depth: 0, limit: 1000, pagination: false })
@@ -298,6 +335,8 @@ for (const slug of slugs) {
   if (page.slug !== slug) fail(`${slug}.json holds slug "${page.slug}"`)
   const unknownPlaceholder = (raw.match(/__[A-Z_]+_MEDIA_ID__/g) || []).find((p) => !(p in MEDIA))
   if (unknownPlaceholder) fail(`${slug}.json uses an unknown placeholder ${unknownPlaceholder}`)
+  const pending = raw.match(/[^"]*url-needed\.invalid[^"]*/gi)
+  if (pending) fail(`${slug}.json still has ${pending.length} article address(es) to fill in (${pending.join(', ')}). Nothing was written.`)
   const fill = (v: unknown): unknown =>
     typeof v === 'string' && v in mediaIds
       ? mediaIds[v]
@@ -307,6 +346,11 @@ for (const slug of slugs) {
           ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, fill(x)]))
           : v
   const data = { ...(fill(page) as Doc), _status: 'published' }
+  // Anything still looking like a media placeholder after the swap (a typo such
+  // as "__MEDIA:press 01.jpg__") would only fail at write time, part-way
+  // through the run, so it stops the dry run instead.
+  const leftover = JSON.stringify(data).match(/__[A-Za-z_]*MEDIA[^"]*__/i)
+  if (leftover) fail(`${slug}.json has a media placeholder that matches no rule: ${leftover[0]}. Nothing was written.`)
 
   if (redirected(slug).length) problems.push(`${slug}: a redirect is set on /${slug}; remove it first`)
   const existing = await payload.find({ collection: 'pages', where: { slug: { equals: slug } }, draft: true, depth: 0, limit: 5 })
