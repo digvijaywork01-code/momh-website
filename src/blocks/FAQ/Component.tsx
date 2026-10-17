@@ -122,6 +122,9 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
       id="faq"
       className={cn(
         'w-full min-h-svh flex flex-col items-center justify-center py-20 lg:py-24 px-6 md:px-12',
+        // Phones and tablets: the #faq jump from the Contact page stops 32px
+        // higher, below the floating logo (anchor scrolling only, no layout change).
+        '[@media(max-width:1023px)]:scroll-mt-[32px]',
         bgClass[bg],
       )}
       data-theme={dark ? 'dark' : 'light'}
