@@ -1,6 +1,6 @@
 /**
- * LOCAL-ONLY loader for the MOMH pages built from existing blocks (Contact
- * Us, FAQ and the Accessibility Statement).
+ * LOCAL-ONLY loader for the MOMH pages built in this folder (Contact Us, FAQ,
+ * the Accessibility Statement and Press).
  *
  * Every `<slug>.json` next to this script is one page (title, slug, meta,
  * layout). The loader puts those pages into a LOCAL database, so they can be
@@ -30,6 +30,11 @@ const MEDIA: Record<string, string> = {
   __OG_MEDIA_ID__: 'og-momh.jpg', // the share image
   __MAP_MEDIA_ID__: 'momh-jaipur-map.png', // the map used on Book Your Appointment
 }
+// A page's JSON may also name any media file directly, as "__MEDIA:<file name>__"
+// (the Press page's 34 photos: "__MEDIA:momh-press-01.jpg__" ...).
+const PLACEHOLDER = /__[A-Z_]+_MEDIA_ID__|__MEDIA:[A-Za-z0-9._-]+__/g
+const fileFor = (placeholder: string): string | undefined =>
+  MEDIA[placeholder] ?? placeholder.match(/^__MEDIA:([A-Za-z0-9._-]+)__$/)?.[1]
 
 const fail = (msg: string): never => {
   console.error(`REFUSED: ${msg}`)
@@ -90,7 +95,7 @@ const payload = await getPayload({ config })
 const mediaIds: Record<string, number> = {}
 const mediaId = async (placeholder: string): Promise<number> => {
   if (!(placeholder in mediaIds)) {
-    const filename = MEDIA[placeholder]
+    const filename = fileFor(placeholder)
     const found = await payload.find({
       collection: 'media',
       where: { filename: { equals: filename } },
@@ -109,12 +114,16 @@ for (const slug of slugs) {
   if (page.slug !== slug) fail(`${slug}.json holds slug "${page.slug}"`)
 
   // swap each placeholder for the id of the media row it stands for
-  const used = [...new Set(raw.match(/__[A-Z_]+_MEDIA_ID__/g) || [])]
+  const used = [...new Set(raw.match(PLACEHOLDER) || [])]
   const ids: Record<string, number> = {}
   for (const p of used) {
-    if (!(p in MEDIA)) fail(`${slug}.json uses an unknown placeholder ${p}`)
+    if (!fileFor(p)) fail(`${slug}.json uses an unknown placeholder ${p}`)
     ids[p] = await mediaId(p)
   }
+  // An article address still to come is written as https://url-needed.invalid/...
+  // (a name that can never resolve). Fine on localhost; apply-production refuses it.
+  const pending = raw.match(/url-needed\.invalid/gi)?.length
+  if (pending) console.log(`${slug}: ${pending} article address(es) still to fill in (url-needed.invalid)`)
   const fill = (v: unknown): unknown =>
     typeof v === 'string' && v in ids
       ? ids[v]
@@ -124,6 +133,8 @@ for (const slug of slugs) {
           ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, fill(x)]))
           : v
   const filled = fill(page) as typeof page
+  const leftover = JSON.stringify(filled).match(/__[A-Za-z_]*MEDIA[^"]*__/i)
+  if (leftover) fail(`${slug}.json has a media placeholder that matches no rule: ${leftover[0]}`)
 
   const existing = await payload.find({
     collection: 'pages',

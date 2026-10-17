@@ -32,6 +32,7 @@ const NO_ANIM_PATHS = [
   '/contact',
   '/faq',
   '/accessibility',
+  '/press',
 ]
 
 export const useNoScrollAnimations = (): boolean => {
