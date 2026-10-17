@@ -98,8 +98,7 @@ export const FAQBlock: React.FC<
     /** Page-level render variant, passed by a page route through RenderBlocks
      *  (not a CMS field). 'faq-page' = the /faq page (FAQ PDF): one block per
      *  question group, the headline shown as a centred all-red group heading,
-     *  answers open (closed on phones), no full-screen height, no #faq anchor
-     *  (the page holds several FAQ blocks). Sizes and gaps live in the
+     *  answers open (closed on phones), no full-screen height. Sizes and gaps live in the
      *  PAGE_*_CLASSES above and in FaqItem's page variant.
      *  Unset = today's block. */
     variant?: 'faq-page'
@@ -198,17 +197,11 @@ export const FAQBlock: React.FC<
   return (
     <section
       ref={sectionRef}
-      // Anchor target for links such as /book-an-appointment#faq. The /faq
-      // page holds several FAQ blocks, so its variant leaves the id off.
-      id={page ? undefined : 'faq'}
       className={
         page
           ? cn(PAGE_SECTION_CLASSES, 'w-full flex flex-col items-center px-6 md:px-12', bgClass[bg])
           : cn(
               'w-full min-h-svh flex flex-col items-center justify-center py-20 lg:py-24 px-6 md:px-12',
-              // Phones and tablets: the #faq jump from the Contact page stops 32px
-              // higher, below the floating logo (anchor scrolling only, no layout change).
-              '[@media(max-width:1023px)]:scroll-mt-[32px]',
               bgClass[bg],
             )
       }
