@@ -1,0 +1,876 @@
+{
+ "title": "Frequently Asked Questions",
+ "slug": "faq",
+ "hero": {
+  "type": "none"
+ },
+ "meta": {
+  "description": "Answers to common questions about visiting the Museum of Meenakari Heritage in Jaipur: opening hours, booking, access, photography, guided tours, commissions and events.",
+  "image": "__OG_MEDIA_ID__"
+ },
+ "layout": [
+  {
+   "blockType": "sectionIntro",
+   "backgroundColor": "ivory",
+   "showTopDivider": false,
+   "headingStyle": "display",
+   "tightTop": false,
+   "tightBottom": false,
+   "headline": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Frequently Asked ",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": "Questions",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 2,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Everything you need for a thoughtful, unhurried visit. If your question is not answered here, our team is always happy to help.",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "faq",
+   "backgroundColor": "ivory",
+   "headline": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Visiting",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 2,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "items": [
+    {
+     "question": "Where is the museum located?",
+     "answer": {
+      "root": {
+       "type": "root",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "paragraph",
+         "format": "",
+         "indent": 0,
+         "version": 1,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "The Museum of Meenakari Heritage is located inside Shekhawat Haveli at E141, Sardar Patel Marg, Durgadas Colony, C-Scheme, Jaipur. We are minutes from the city’s major heritage landmarks and well connected from both Jaipur Airport and the railway station.",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "textStyle": "",
+         "textFormat": 0
+        }
+       ],
+       "direction": "ltr"
+      }
+     }
+    },
+    {
+     "question": "What are your opening hours?",
+     "answer": {
+      "root": {
+       "type": "root",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "paragraph",
+         "format": "",
+         "indent": 0,
+         "version": 1,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "The museum is open every day, 10:00 AM to 7:30 PM. We are closed on select Indian public holidays.",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "textStyle": "",
+         "textFormat": 0
+        }
+       ],
+       "direction": "ltr"
+      }
+     }
+    },
+    {
+     "question": "Do I need to book in advance?",
+     "answer": {
+      "root": {
+       "type": "root",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "paragraph",
+         "format": "",
+         "indent": 0,
+         "version": 1,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "Yes. Entry is by prior appointment only. This allows us to keep the galleries calm and to give each visitor the attention the work deserves.",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "textStyle": "",
+         "textFormat": 0
+        }
+       ],
+       "direction": "ltr"
+      }
+     }
+    },
+    {
+     "question": "How do I book a visit?",
+     "answer": {
+      "root": {
+       "type": "root",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "paragraph",
+         "format": "",
+         "indent": 0,
+         "version": 1,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "Please use our ",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          },
+          {
+           "type": "link",
+           "version": 3,
+           "id": "876e4ee7d3954b788a7adfbd",
+           "fields": {
+            "linkType": "custom",
+            "url": "/book-an-appointment",
+            "newTab": false
+           },
+           "children": [
+            {
+             "mode": "normal",
+             "text": "Book an Appointment form",
+             "type": "text",
+             "style": "",
+             "detail": 0,
+             "format": 0,
+             "version": 1
+            }
+           ],
+           "direction": "ltr",
+           "format": "",
+           "indent": 0
+          },
+          {
+           "mode": "normal",
+           "text": ". Tell us a little about your visit, and our team will be in touch within 24 hours to confirm your slot.",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "textStyle": "",
+         "textFormat": 0
+        }
+       ],
+       "direction": "ltr"
+      }
+     }
+    },
+    {
+     "question": "How long does a visit take?",
+     "answer": {
+      "root": {
+       "type": "root",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "paragraph",
+         "format": "",
+         "indent": 0,
+         "version": 1,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "Most visitors spend between 60 and 90 minutes. Private guided walkthroughs run longer, depending on your interest.",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "textStyle": "",
+         "textFormat": 0
+        }
+       ],
+       "direction": "ltr"
+      }
+     }
+    },
+    {
+     "question": "Is there an admission fee?",
+     "answer": {
+      "root": {
+       "type": "root",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "paragraph",
+         "format": "",
+         "indent": 0,
+         "version": 1,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "There is no admission fee. Admission is by prior booking only, and is confirmed once our team has reviewed and approved your request.",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "textStyle": "",
+         "textFormat": 0
+        }
+       ],
+       "direction": "ltr"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "blockType": "faq",
+   "backgroundColor": "ivory",
+   "headline": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Access and ",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": "Experience",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 2,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "items": [
+    {
+     "question": "Is photography allowed inside the museum?",
+     "answer": {
+      "root": {
+       "type": "root",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "paragraph",
+         "format": "",
+         "indent": 0,
+         "version": 1,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "Photography is welcome in select zones. Flash and video are not permitted, in order to protect the works on display. Our team will guide you on arrival.",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "textStyle": "",
+         "textFormat": 0
+        }
+       ],
+       "direction": "ltr"
+      }
+     }
+    },
+    {
+     "question": "Is the museum wheelchair accessible?",
+     "answer": {
+      "root": {
+       "type": "root",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "paragraph",
+         "format": "",
+         "indent": 0,
+         "version": 1,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "Yes. The museum is fully wheelchair accessible, with ramps and elevator access throughout. If you have specific requirements, please write to us in advance.",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "textStyle": "",
+         "textFormat": 0
+        }
+       ],
+       "direction": "ltr"
+      }
+     }
+    },
+    {
+     "question": "Are guided tours available?",
+     "answer": {
+      "root": {
+       "type": "root",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "paragraph",
+         "format": "",
+         "indent": 0,
+         "version": 1,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "Yes. Private guided walkthroughs are offered at curated hours each day. Please request one at the time of booking.",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "textStyle": "",
+         "textFormat": 0
+        }
+       ],
+       "direction": "ltr"
+      }
+     }
+    },
+    {
+     "question": "In what languages are the exhibits labelled?",
+     "answer": {
+      "root": {
+       "type": "root",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "paragraph",
+         "format": "",
+         "indent": 0,
+         "version": 1,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "All exhibits carry bilingual labels, in English and Hindi.",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "textStyle": "",
+         "textFormat": 0
+        }
+       ],
+       "direction": "ltr"
+      }
+     }
+    },
+    {
+     "question": "Are children welcome?",
+     "answer": {
+      "root": {
+       "type": "root",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "paragraph",
+         "format": "",
+         "indent": 0,
+         "version": 1,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "Yes, we welcome thoughtful visitors of every age. We do ask that families plan ahead so younger guests can move through the galleries comfortably.",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "textStyle": "",
+         "textFormat": 0
+        }
+       ],
+       "direction": "ltr"
+      }
+     }
+    },
+    {
+     "question": "Is parking available?",
+     "answer": {
+      "root": {
+       "type": "root",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "paragraph",
+         "format": "",
+         "indent": 0,
+         "version": 1,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "For parking and drop-off arrangements, please ",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          },
+          {
+           "type": "link",
+           "version": 3,
+           "id": "bcbe44eae3a041dfb03129c1",
+           "fields": {
+            "linkType": "custom",
+            "url": "/contact",
+            "newTab": false
+           },
+           "children": [
+            {
+             "mode": "normal",
+             "text": "contact us",
+             "type": "text",
+             "style": "",
+             "detail": 0,
+             "format": 0,
+             "version": 1
+            }
+           ],
+           "direction": "ltr",
+           "format": "",
+           "indent": 0
+          },
+          {
+           "mode": "normal",
+           "text": " before your visit.",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "textStyle": "",
+         "textFormat": 0
+        }
+       ],
+       "direction": "ltr"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "blockType": "faq",
+   "backgroundColor": "ivory",
+   "headline": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Commissions, Events and More",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "items": [
+    {
+     "question": "Can I commission a piece of jewellery?",
+     "answer": {
+      "root": {
+       "type": "root",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "paragraph",
+         "format": "",
+         "indent": 0,
+         "version": 1,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "Yes. The museum offers private consultations with our master artisans for bespoke commissions. A typical commission takes six to eight months from concept to completion. You can begin through our ",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          },
+          {
+           "type": "link",
+           "version": 3,
+           "id": "cbe21854bd974f8abf20ed68",
+           "fields": {
+            "linkType": "custom",
+            "url": "/personal-consultation",
+            "newTab": false
+           },
+           "children": [
+            {
+             "mode": "normal",
+             "text": "Craft Your Jewellery enquiry",
+             "type": "text",
+             "style": "",
+             "detail": 0,
+             "format": 0,
+             "version": 1
+            }
+           ],
+           "direction": "ltr",
+           "format": "",
+           "indent": 0
+          },
+          {
+           "mode": "normal",
+           "text": ".",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "textStyle": "",
+         "textFormat": 0
+        }
+       ],
+       "direction": "ltr"
+      }
+     }
+    },
+    {
+     "question": "Do you host events?",
+     "answer": {
+      "root": {
+       "type": "root",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "paragraph",
+         "format": "",
+         "indent": 0,
+         "version": 1,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "Yes. The museum hosts a calendar of events and masterclasses with artisans and historians throughout the year. Subscribe to our newsletter to hear about them first.",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "textStyle": "",
+         "textFormat": 0
+        }
+       ],
+       "direction": "ltr"
+      }
+     }
+    },
+    {
+     "question": "I have a press or research enquiry. Who do I contact?",
+     "answer": {
+      "root": {
+       "type": "root",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "paragraph",
+         "format": "",
+         "indent": 0,
+         "version": 1,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "Please write to us at ",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          },
+          {
+           "type": "link",
+           "version": 3,
+           "id": "c4e298721a154de2a505f064",
+           "fields": {
+            "linkType": "custom",
+            "url": "mailto:info@momhindia.org",
+            "newTab": false
+           },
+           "children": [
+            {
+             "mode": "normal",
+             "text": "info@momhindia.org",
+             "type": "text",
+             "style": "",
+             "detail": 0,
+             "format": 0,
+             "version": 1
+            }
+           ],
+           "direction": "ltr",
+           "format": "",
+           "indent": 0
+          },
+          {
+           "mode": "normal",
+           "text": " with the details of your request, and we will be glad to help.",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "textStyle": "",
+         "textFormat": 0
+        }
+       ],
+       "direction": "ltr"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "blockType": "sectionIntro",
+   "backgroundColor": "ivory",
+   "showTopDivider": false,
+   "headingStyle": "display",
+   "tightTop": false,
+   "tightBottom": false,
+   "ctaLabel": "Book An Appointment",
+   "ctaStyle": "filled-red",
+   "ctaLink": {
+    "type": "custom",
+    "url": "/book-an-appointment",
+    "newTab": false
+   },
+   "cta2Label": "Contact Us",
+   "cta2Style": "outlined",
+   "cta2Link": {
+    "type": "custom",
+    "url": "/contact",
+    "newTab": false
+   }
+  }
+ ]
+}

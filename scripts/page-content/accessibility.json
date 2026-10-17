@@ -1,0 +1,955 @@
+{
+ "title": "Accessibility Statement",
+ "slug": "accessibility",
+ "slugLock": false,
+ "hero": {
+  "type": "none"
+ },
+ "meta": {
+  "description": "How accessible the Museum of Meenakari Heritage is, at Shekhawat Haveli in Jaipur and on momhindia.org: what works today, what we are still working on, and how to tell us about a problem.",
+  "image": "__OG_MEDIA_ID__"
+ },
+ "layout": [
+  {
+   "blockType": "sectionIntro",
+   "backgroundColor": "white",
+   "showTopDivider": false,
+   "headingStyle": "display",
+   "bodyWidth": "normal",
+   "tightTop": false,
+   "tightBottom": true,
+   "headline": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Accessibility",
+         "format": 2,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " Statement",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Everyone should be able to visit the Museum of Meenakari Heritage, at Shekhawat Haveli in Jaipur and on momhindia.org, with ease and dignity. This page says what we can offer today, what we are still working on, and how to reach us.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Visiting the Museum",
+   "heading": "Visiting the Museum",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The museum occupies Shekhawat Haveli, a restored heritage building set across a series of courtyards, galleries and salons. There is no admission fee. Entry is by prior appointment only, and we do not sell tickets at the door. The museum is fully wheelchair accessible, with ramps and elevator access throughout. For parking and drop-off arrangements, please ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "e274dd067a1448428127034b",
+         "fields": {
+          "linkType": "custom",
+          "url": "/contact",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "contact us",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " before your visit.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "All exhibits carry bilingual labels in English and Hindi. The galleries are self-paced, so you may take as long as you need. Private guided walkthroughs are offered at curated hours each day; request one when you book. Most visitors spend between 60 and 90 minutes, and private guided walkthroughs run longer. Photography is permitted in select zones; flash and video are not. Children are welcome, and we ask families to plan ahead so that younger guests can move through the galleries comfortably.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "If you have specific access requirements, tell us when you book, by email at ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "d9f6e3810dfd4e8493e10562",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " or by phone on ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "30987aba442a4d38bab1a423",
+         "fields": {
+          "linkType": "custom",
+          "url": "tel:+916377490417",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "+91 6377 490 417",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": ". Because every visit is booked in advance, what you tell us reaches our team before you arrive, and we will help you plan a comfortable visit. We confirm appointment requests within 24 hours. For private collection viewings or group visits, please write to us at least two weeks in advance.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "This Website",
+   "heading": "This Website",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "We want momhindia.org to be usable by everyone, whatever technology you use. We are working towards the Web Content Accessibility Guidelines (WCAG) 2.2 at Level AA, published by the World Wide Web Consortium. We do not yet claim conformance. The checks we have done, and what they found, are set out below.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "What works",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " :",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "list",
+       "listType": "bullet",
+       "start": 1,
+       "tag": "ul",
+       "direction": "ltr",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "listitem",
+         "value": 1,
+         "children": [
+          {
+           "type": "text",
+           "text": "Every page declares its language, and every visible form field has a label. Every image carries a text alternative, though some still need better descriptions.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 2,
+         "children": [
+          {
+           "type": "text",
+           "text": "The header, navigation and footer are marked as landmarks, so a screen reader can jump between regions of a page.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 3,
+         "children": [
+          {
+           "type": "text",
+           "text": "On a computer, the navigation, including the dropdown panel, can be operated by keyboard alone, with a visible focus outline, and the Escape key closes an open panel.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 4,
+         "children": [
+          {
+           "type": "text",
+           "text": "Pages can be zoomed in the browser and pinched on a phone, and layouts reflow to a single column on narrow screens.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 5,
+         "children": [
+          {
+           "type": "text",
+           "text": "If your device is set to reduce motion, entrance animations, smooth scrolling and automatic carousels switch off. The home page film is the exception, listed below.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        }
+       ]
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Known limitations",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " :",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "list",
+       "listType": "bullet",
+       "start": 1,
+       "tag": "ul",
+       "direction": "ltr",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "listitem",
+         "value": 1,
+         "children": [
+          {
+           "type": "text",
+           "text": "There is no skip-to-content link, and the main content of each page is not marked as a landmark, so keyboard and screen-reader users must pass through the menu on every page.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 2,
+         "children": [
+          {
+           "type": "text",
+           "text": "On phones, the menu and close buttons have no names for screen readers, and the closed menu still takes keyboard focus. When the menu is open, the Escape key does not close it and focus is not held inside it. The footer sections on phones do not tell screen readers whether they are open or closed.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 3,
+         "children": [
+          {
+           "type": "text",
+           "text": "Some text and button colours do not meet the WCAG AA contrast level, mainly white text on our red buttons and red text on light backgrounds.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 4,
+         "children": [
+          {
+           "type": "text",
+           "text": "Headings are uneven: of the four pages we checked, two have no main heading, one skips a heading level, and on phones the home page’s main heading is empty (on computers it has none).",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 5,
+         "children": [
+          {
+           "type": "text",
+           "text": "Some image carousels advance automatically with no pause control, and some carousel dots are too small to tap comfortably. The background film on the home page cannot be paused and does not respond to the reduce-motion setting. It is silent and decorative, and nothing it shows is needed to use the site.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 6,
+         "children": [
+          {
+           "type": "text",
+           "text": "Two keyboard targets on the home page show no focus outline, and two image strips on the Book an Appointment page can be moved only by dragging or swiping. On phones, the home page’s opening section acts as one large button with a smaller “Read more” button inside it, which screen readers may not announce clearly.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 7,
+         "children": [
+          {
+           "type": "text",
+           "text": "The booking form does not check required fields before sending, and its error messages are not announced to screen readers. The form includes a Google reCAPTCHA check; if this is a barrier, write or call us and we will book your visit by hand.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 8,
+         "children": [
+          {
+           "type": "text",
+           "text": "Most body text and main headings use fixed sizes, so they do not follow your browser’s default text-size setting; menus, the footer and the booking form do. Browser zoom works on the pages we checked, though at 400% zoom the home page’s opening text is cut off.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        }
+       ]
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "What Has Not Been Done",
+   "heading": "What Has Not Been Done",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The website has not been audited by an external specialist, and it has not been tested with screen readers such as NVDA, JAWS, VoiceOver or TalkBack, or with switch, voice-control or magnification software. Our own check, on 13 October 2026, used the axe-core 4.10.2 automated test against WCAG 2.0, 2.1 and 2.2 at Levels A and AA on four pages in desktop and mobile layouts (the home page, Book an Appointment, Museum Guidelines, and Art and Craftsmanship), together with a keyboard walk of the navigation and a review of the site’s code. The remaining pages have not yet been checked.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Telling Us About a Problem",
+   "heading": "Telling Us About a Problem",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "If you find a page or feature difficult to use, or anything at the museum that gets in your way, please tell us the page address or the place and what went wrong. We usually respond within 24 hours.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Museum of Meenakari Heritage",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "(Operated by Midas Signature Jewellery Private Limited, which also operates sunitashekhawat.com)",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "Shekhawat Haveli, E141, Sardar Patel Marg, Durgadas Colony, C-Scheme, Ashok Nagar, Jaipur 302001, Rajasthan, India",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Email: ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "2a28f627dacd4854804f4dae",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "Phone: ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "ae1636edb1e84388b52e005d",
+         "fields": {
+          "linkType": "custom",
+          "url": "tel:+916377490417",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "+91 6377 490 417",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Our reference points are the Rights of Persons with Disabilities Act, 2016 and the accessibility standards notified under it, and, for the website, WCAG 2.2. If you are not satisfied with our response, you may approach the State Commissioner for Persons with Disabilities, Rajasthan, or the Chief Commissioner for Persons with Disabilities, Government of India (",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "0364872066ce42be9af354fb",
+         "fields": {
+          "linkType": "custom",
+          "url": "https://ccpd.nic.in/",
+          "newTab": true
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "ccpd.nic.in",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": "). We would be grateful for the chance to put things right first.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [],
+       "direction": null,
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "We will review this statement when the site changes substantially, and in any case within twelve months.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  }
+ ]
+}

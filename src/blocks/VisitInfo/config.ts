@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import {
+  AlignFeature,
   FixedToolbarFeature,
   InlineToolbarFeature,
   lexicalEditor,
@@ -22,6 +23,16 @@ import {
 const richTextEditor = lexicalEditor({
   features: ({ rootFeatures }) => [
     ...rootFeatures,
+    FixedToolbarFeature(),
+    InlineToolbarFeature(),
+  ],
+})
+
+// Intro text adds paragraph alignment, so the paragraph can be justified.
+const introBodyEditor = lexicalEditor({
+  features: ({ rootFeatures }) => [
+    ...rootFeatures,
+    AlignFeature(),
     FixedToolbarFeature(),
     InlineToolbarFeature(),
   ],
@@ -64,6 +75,29 @@ export const VisitInfo: Block = {
           admin: { width: '50%' },
         },
       ],
+    },
+    // Optional intro above the map + details, left-aligned on the map's edge
+    // (Contact page "We are happy to *help*"). Leave both empty for no intro;
+    // the block then renders exactly as before.
+    {
+      name: 'introHeadline',
+      type: 'richText',
+      editor: richTextEditor,
+      label: 'Intro heading (optional)',
+      admin: {
+        description:
+          'Shown above the map, aligned to its left edge, e.g. "We are happy to *help*" (italicize a word for the red accent). Leave empty for no intro.',
+      },
+    },
+    {
+      name: 'introBody',
+      type: 'richText',
+      editor: introBodyEditor,
+      label: 'Intro text (optional)',
+      admin: {
+        description:
+          'Paragraph under the intro heading. Use the align menu to justify it.',
+      },
     },
     {
       name: 'mapImage',

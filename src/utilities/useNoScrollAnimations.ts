@@ -29,6 +29,9 @@ const NO_ANIM_PATHS = [
   '/book-an-appointment',
   '/thank-you',
   '/privacy-policy',
+  '/contact',
+  '/faq',
+  '/accessibility',
 ]
 
 export const useNoScrollAnimations = (): boolean => {

@@ -23,6 +23,7 @@ import type {
 import RichText from '@/components/RichText'
 import { EditorialCta } from '@/components/EditorialCta'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { richTextHasText } from '@/utilities/richTextHasText'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
 
@@ -71,6 +72,9 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
   ctaLabel,
   ctaStyle,
   ctaLink,
+  cta2Label,
+  cta2Style,
+  cta2Link,
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
   const noScrollAnim = useNoScrollAnimations()
@@ -84,6 +88,7 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
   const bg = (backgroundColor || 'cream') as BgKey
   const dark = isDarkBg(bg)
   const sectionCaps = headingStyle === 'section-caps'
+  const showHeadline = richTextHasText(headline)
 
   useEffect(() => {
     const el = sectionRef.current
@@ -202,6 +207,11 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
           </p>
         )}
 
+        {/* The headline is optional (e.g. the FAQ page's buttons-only row).
+            A real text check, not a truthiness one: a headline typed and then
+            cleared is stored as an empty paragraph, which would still render
+            a blank display-size line. */}
+        {showHeadline && headline && (
         <div
           ref={headlineRef}
           // Two treatments:
@@ -226,11 +236,12 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
         >
           <RichText data={headline} enableGutter={false} enableProse={false} />
         </div>
+        )}
 
         {/* Short centred rule under a section-caps heading. The PDF draws
             it at 124px on a 1921 artboard (6.45vw) in the same maroon as
             the heading rules on the editorial bands. */}
-        {sectionCaps && (
+        {sectionCaps && showHeadline && (
           <div
             className="mx-auto w-[6.45vw] min-w-[80px] h-px bg-[#8e1e24] mb-5"
             aria-hidden="true"
@@ -271,6 +282,62 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
               ? { rel: 'noopener noreferrer' as const, target: '_blank' as const }
               : {}
 
+            // Rectangular button classes, shared by the single button and the pair.
+            const buttonClass = (filled: boolean) =>
+              cn(
+                // Mobile: smaller horizontal padding (px-6) + allow
+                // the label to wrap so long CTAs like "Book Your
+                // Personal Consultation" don't push the button (and
+                // its containing block) past the 375px viewport on
+                // iPhone SE. `text-center` keeps wrapped labels
+                // visually centered. `max-w-full` is the hard cap
+                // so the button can never exceed its parent width.
+                // lg+: original generous padding + nowrap (plenty
+                // of horizontal room on desktop, the editorial
+                // single-line CTA is intentional).
+                'inline-flex items-center justify-center px-6 py-3 lg:px-8 font-body uppercase text-center max-w-full lg:whitespace-nowrap',
+                'text-sm md:text-base tracking-wider transition-colors duration-200',
+                filled
+                  ? 'bg-brand-red text-white border border-brand-red hover:bg-brand-red/90'
+                  : dark
+                    ? 'border border-offwhite/60 text-offwhite hover:bg-offwhite hover:text-ink'
+                    : 'border border-warm-gray/60 text-warm-gray hover:bg-warm-gray hover:text-cream',
+              )
+
+            // Optional second button: the pair sits side by side from `sm`,
+            // stacked full width on phones (as in VisitInfo). The arrow style
+            // has no paired form, so a first button set to arrow renders
+            // outlined here.
+            const href2 = cta2Label ? resolveLinkHref(cta2Link) : null
+            if (cta2Label && href2) {
+              const target2Props = cta2Link?.newTab
+                ? { rel: 'noopener noreferrer' as const, target: '_blank' as const }
+                : {}
+              return (
+                <div
+                  ref={ctaRef}
+                  className="mt-8 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 w-full max-w-full"
+                >
+                  <Link
+                    href={href}
+                    {...targetProps}
+                    className={buttonClass(style === 'filled-red')}
+                    style={{ fontWeight: 400, letterSpacing: '0.08em' }}
+                  >
+                    {ctaLabel}
+                  </Link>
+                  <Link
+                    href={href2}
+                    {...target2Props}
+                    className={buttonClass((cta2Style || 'filled-red') === 'filled-red')}
+                    style={{ fontWeight: 400, letterSpacing: '0.08em' }}
+                  >
+                    {cta2Label}
+                  </Link>
+                </div>
+              )
+            }
+
             if (style === 'arrow') {
               return (
                 <div ref={ctaRef} className="mt-8 flex justify-center">
@@ -292,25 +359,7 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
                 <Link
                   href={href}
                   {...targetProps}
-                  className={cn(
-                    // Mobile: smaller horizontal padding (px-6) + allow
-                    // the label to wrap so long CTAs like "Book Your
-                    // Personal Consultation" don't push the button (and
-                    // its containing block) past the 375px viewport on
-                    // iPhone SE. `text-center` keeps wrapped labels
-                    // visually centered. `max-w-full` is the hard cap
-                    // so the button can never exceed its parent width.
-                    // lg+: original generous padding + nowrap (plenty
-                    // of horizontal room on desktop, the editorial
-                    // single-line CTA is intentional).
-                    'inline-flex items-center justify-center px-6 py-3 lg:px-8 font-body uppercase text-center max-w-full lg:whitespace-nowrap',
-                    'text-sm md:text-base tracking-wider transition-colors duration-200',
-                    filled
-                      ? 'bg-brand-red text-white border border-brand-red hover:bg-brand-red/90'
-                      : dark
-                        ? 'border border-offwhite/60 text-offwhite hover:bg-offwhite hover:text-ink'
-                        : 'border border-warm-gray/60 text-warm-gray hover:bg-warm-gray hover:text-cream',
-                  )}
+                  className={buttonClass(filled)}
                   style={{ fontWeight: 400, letterSpacing: '0.08em' }}
                 >
                   {ctaLabel}

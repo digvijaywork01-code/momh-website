@@ -18,6 +18,7 @@ import Link from 'next/link'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { richTextHasText as hasText } from '@/utilities/richTextHasText'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
 
@@ -39,6 +40,8 @@ const isDarkBg = (bg: BgKey): boolean =>
   bg === 'black' || bg === 'emerald' || bg === 'maroon'
 
 export const VisitInfoBlock: React.FC<VisitInfoBlockProps> = ({
+  introHeadline,
+  introBody,
   mapImage,
   mapImageLink,
   mapPosition = 'left',
@@ -54,6 +57,7 @@ export const VisitInfoBlock: React.FC<VisitInfoBlockProps> = ({
   const { setHeaderTheme } = useHeaderTheme()
   const noScrollAnim = useNoScrollAnimations()
   const sectionRef = useRef<HTMLElement | null>(null)
+  const introRef = useRef<HTMLDivElement | null>(null)
   const mapWrapRef = useRef<HTMLDivElement | null>(null)
   const headlineRef = useRef<HTMLDivElement | null>(null)
   const addressRef = useRef<HTMLDivElement | null>(null)
@@ -87,6 +91,7 @@ export const VisitInfoBlock: React.FC<VisitInfoBlockProps> = ({
 
     const contentEls = (
       [
+        introRef.current,
         headlineRef.current,
         addressRef.current,
         ctasRef.current,
@@ -155,6 +160,37 @@ export const VisitInfoBlock: React.FC<VisitInfoBlockProps> = ({
     </div>
   ) : null
 
+  // Optional intro (heading + paragraph) above the grid, on the map's left
+  // edge. Without it the grid is returned untouched, so existing pages keep
+  // exactly the same markup.
+  const showIntroHeadline = hasText(introHeadline)
+  const showIntroBody = hasText(introBody)
+  const withIntro = (grid: React.ReactNode) =>
+    showIntroHeadline || showIntroBody ? (
+      <div className="w-full max-w-screen-2xl mx-auto">
+        <div
+          ref={introRef}
+          // PDF: the paragraph runs 62.4% of the 1920 artboard, and the map
+          // starts ~8.5vw below its last line.
+          className="mb-10 lg:mb-[min(8.5vw,164px)] lg:max-w-[min(62.4vw,1198px)]"
+        >
+          {showIntroHeadline && introHeadline && (
+            <div className="editorial-display text-[2.25rem] md:text-[3rem] lg:text-[3.5rem] leading-tight [&_em]:text-brand-red [&_i]:text-brand-red">
+              <RichText data={introHeadline} enableGutter={false} enableProse={false} />
+            </div>
+          )}
+          {showIntroBody && introBody && (
+            <div className={cn('font-body text-body opacity-95', showIntroHeadline && 'mt-4 lg:mt-5')}>
+              <RichText data={introBody} enableGutter={false} enableProse={false} />
+            </div>
+          )}
+        </div>
+        {grid}
+      </div>
+    ) : (
+      grid
+    )
+
   return (
     <section
       ref={sectionRef}
@@ -176,6 +212,7 @@ export const VisitInfoBlock: React.FC<VisitInfoBlockProps> = ({
           doesn't sprawl on ultrawide displays, and use a 12-column
           grid sized 7/5 (~58% map / 42% content) to match the PDF
           proportions where the map dominates. */}
+      {withIntro(
       <div className="w-full max-w-screen-2xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 items-start">
         {/* Map column — 7/12 (~58%) on lg+, matches PDF dominance. */}
         <div className={cn('lg:col-span-7', mapFirst ? 'lg:order-1' : 'lg:order-2')}>
@@ -232,7 +269,18 @@ export const VisitInfoBlock: React.FC<VisitInfoBlockProps> = ({
             // 50/50 split at 375px even with whitespace-nowrap, so the
             // text gets clipped). md+: revert to the side-by-side
             // paired layout from the PDF.
-            <div ref={ctasRef} className="flex flex-col sm:grid sm:grid-cols-2 gap-3 sm:gap-4 mt-2">
+            // Two buttons: at lg the 5/12 column is too narrow for "BOOK AN
+            // APPOINTMENT" on one line until ~1400px, so the pair stacks
+            // full width there and sits side by side from 1400px. With one
+            // button the class string is unchanged. (`min-[1400px]:` is not
+            // generated here: the custom raw screens disable min-* variants.)
+            <div
+              ref={ctasRef}
+              className={cn(
+                'flex flex-col sm:grid sm:grid-cols-2 gap-3 sm:gap-4 mt-2',
+                ctas.length > 1 && 'lg:grid-cols-1 [@media(min-width:1400px)]:grid-cols-2',
+              )}
+            >
               {ctas.map((cta, i) => {
                 const isFilled = i === 1
                 const targetProps = cta.newTab
@@ -291,7 +339,8 @@ export const VisitInfoBlock: React.FC<VisitInfoBlockProps> = ({
             </div>
           )}
         </div>
-      </div>
+      </div>,
+      )}
     </section>
   )
 }
