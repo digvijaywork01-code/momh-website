@@ -124,8 +124,7 @@ const NavName = ({ child }: { child: NavChild }) =>
   )
 
 /** A panel link a visitor can reach: it has a box (the intro column is
- *  display:none on phones) and isn't one of the intro column's hidden
- *  per-tile versions (visibility:hidden). */
+ *  display:none on phones) and isn't visibility:hidden. */
 const isShownLink = (a: HTMLElement) =>
   a.getClientRects().length > 0 && getComputedStyle(a).visibility !== 'hidden'
 
@@ -637,10 +636,21 @@ export const Header = () => {
     }
     setPanelSettled(false)
     if (!wasOpen) return
+    // The left column keeps its version through the collapse: a pending
+    // hover intent or release would swap it while the panel still shows.
+    // It goes back to the intro when the collapse ends, unseen, so the next
+    // opening starts on the intro with no swap playing.
+    if (tileResetTimer.current) clearTimeout(tileResetTimer.current)
+    if (tileHoverTimer.current) clearTimeout(tileHoverTimer.current)
+    tileResetTimer.current = null
+    tileHoverTimer.current = null
     setMenuClosing(true)
     // Normally released by the panel's own max-height transitionend (it
     // starts a frame or two after the close); this is the fallback.
-    const t = setTimeout(() => setMenuClosing(false), 450)
+    const t = setTimeout(() => {
+      setMenuClosing(false)
+      setActiveTile(null)
+    }, 450)
     return () => clearTimeout(t)
   }, [openMenu])
 
@@ -989,6 +999,12 @@ export const Header = () => {
             order and the accessibility tree. */}
         {NAV_LINKS.filter((l) => l.children).map((link) => {
           const open = openMenu === link.label && isExpanded
+          // The tile the left column shows (null: the intro), for View all.
+          const shownTile = activeTile === null ? null : link.children![activeTile]
+          // Closed and done collapsing: the left column swaps with no
+          // transition, so its reset to the intro is instant and a quick
+          // re-open finds it settled instead of mid-swap.
+          const closedAtRest = !open && !menuClosing
           return (
             <div
               key={link.label}
@@ -998,15 +1014,29 @@ export const Header = () => {
               onMouseLeave={scheduleMenuClose}
               onTransitionEnd={(e) => {
                 if (e.target !== e.currentTarget || e.propertyName !== 'max-height') return
-                if (open) setPanelSettled(true)
-                else setMenuClosing(false)
+                if (open) {
+                  setPanelSettled(true)
+                } else {
+                  // Closed: release the bar; the left column goes back to
+                  // the intro now that nothing of it shows.
+                  setMenuClosing(false)
+                  setActiveTile(null)
+                }
               }}
               onKeyDown={onPanelKeyDown(link.label)}
               onBlur={(e) => {
                 if (e.currentTarget.contains(e.relatedTarget as Node | null)) return
                 keepTile()
                 cancelTileHover()
-                setActiveTile(null)
+                // Focus left a panel that stays open (Shift+Tab back to its
+                // trigger): back to the intro. Focus leaving as the panel
+                // closes (Tab out, Escape, leaving the header) leaves the
+                // column alone; the reset at the collapse's end does it
+                // unseen. Checked a frame later, once this event's close
+                // has committed (prevOpenMenu then holds openMenu).
+                requestAnimationFrame(() => {
+                  if (prevOpenMenu.current === link.label) setActiveTile(null)
+                })
               }}
               // Open height: its content's exact height (--panel-h), capped
               // at the screen below the expanded bar (max(14vh, 80px) + its
@@ -1051,21 +1081,42 @@ export const Header = () => {
                           stacked in one grid cell: the cell is as tall as
                           the tallest (a two-line tile title), so the panel
                           keeps its height whichever is shown. Only the
-                          active one is visible; the rest are
-                          visibility:hidden, so they can't be focused or
-                          clicked, and it crossfades (visibility switches
-                          at the end of a fade out, at the start of a fade
-                          in). Tile titles are 32px, wrapping to at most two
-                          lines: at the intro's 38px "Craftsmanship" and
+                          active one is visible. A swap runs out, then in,
+                          so the two barely overlap: the old title and
+                          text fade out in 280ms (ease-in), then the new
+                          ones fade in and rise 8px over 680ms
+                          (ease-out-quint) from 240ms. Title and text each
+                          animate on their own, in parallel, on the same
+                          timing. Each direction takes the transition of
+                          the state it enters. A hidden version is
+                          visibility:hidden once its fade ends, and drops
+                          back to its 8px start only then. Under reduced
+                          motion globals.css cuts every duration to
+                          0.001ms; the delays are dropped here too, so the
+                          swap is instant rather than a 240ms blank. Tile
+                          titles are 32px, wrapping to at most two lines:
+                          at the intro's 38px "Craftsmanship" and
                           "Appointment" are wider than the column. */}
                       <div className="mt-[13px] grid items-start">
                         {[null, ...link.children!].map((child, ci) => {
                           const shown = activeTile === (child ? ci - 1 : null)
+                          // Full literals, so Tailwind finds every class.
+                          const fade = closedAtRest
+                            ? shown
+                              ? 'opacity-100'
+                              : 'translate-y-2 opacity-0'
+                            : shown
+                              ? 'opacity-100 [transition:opacity_680ms_cubic-bezier(0.22,1,0.36,1)_240ms,transform_680ms_cubic-bezier(0.22,1,0.36,1)_240ms] motion-reduce:[transition-delay:0s]'
+                              : 'translate-y-2 opacity-0 [transition:opacity_280ms_cubic-bezier(0.4,0,1,1),transform_0s_280ms] motion-reduce:[transition-delay:0s]'
                           return (
                             <div
                               key={child?.label ?? 'intro'}
-                              className={`col-start-1 row-start-1 flex flex-col items-start self-stretch transition-[opacity,visibility] duration-300 ${
-                                shown ? 'visible opacity-100' : 'invisible opacity-0'
+                              className={`col-start-1 row-start-1 flex flex-col items-start self-stretch ${
+                                shown
+                                  ? 'visible'
+                                  : closedAtRest
+                                    ? 'invisible'
+                                    : 'invisible [transition:visibility_0s_280ms] motion-reduce:[transition-delay:0s]'
                               }`}
                             >
                               {/* nowrap: --font-display puts Meno Banner
@@ -1073,49 +1124,48 @@ export const Header = () => {
                                   Cormorant; a wider face must not wrap the
                                   intro title onto two lines. */}
                               <p
-                                className={
+                                className={`${
                                   child
                                     ? 'font-display text-[32px] font-medium leading-[38px] text-black'
                                     : 'whitespace-nowrap font-display text-[38px] font-medium leading-[44px] text-black'
-                                }
+                                } ${fade}`}
                               >
                                 {child ? child.label : link.intro!.title}
                               </p>
-                              <p className="mt-[13px] font-body text-[17.5px] font-light leading-[23.5px] text-[#8A8682]">
+                              <p
+                                className={`mt-[13px] font-body text-[17.5px] font-light leading-[23.5px] text-[#8A8682] ${fade}`}
+                              >
                                 {child ? child.blurb : link.intro!.description}
                               </p>
-                              {/* Every version fills the cell and pushes its
-                                  link to the foot (at least 26px below the
-                                  text), so View all sits at the
-                                  same height whichever version is shown. */}
-                              <span aria-hidden="true" className="min-h-[26px] flex-1" />
-                              <Link
-                                href={child ? child.href : link.href}
-                                onClick={() => setOpenMenu(null)}
-                                // The visible word stays short; the name adds
-                                // where it goes, for screen-reader link lists.
-                                aria-label={`View all: ${child ? child.label : link.intro!.title}`}
-                                className="group/viewall inline-flex items-center gap-[11px] font-body text-[14px] font-normal leading-4 tracking-[1.5px] text-[#9D2326] uppercase"
-                              >
-                                <span className="border-b-2 border-[#AF8286] pb-[6px]">
-                                  View all
-                                </span>
-                                {/* Arrow nudges right on hover / keyboard focus. */}
-                                <svg
-                                  aria-hidden="true"
-                                  width="15"
-                                  height="10"
-                                  viewBox="0 0 15 10"
-                                  fill="none"
-                                  className="-mt-[6px] transition-transform duration-300 ease-out group-hover/viewall:translate-x-1 group-focus-visible/viewall:translate-x-1"
-                                >
-                                  <path d="M0 5h13.5M9.5 1l4 4-4 4" stroke="currentColor" strokeWidth="1.2" />
-                                </svg>
-                              </Link>
                             </div>
                           )
                         })}
                       </div>
+                      {/* One View all for every version, so it never fades
+                          with them: it follows the shown version's page.
+                          26px under the tallest version, the same height
+                          whichever is shown. */}
+                      <Link
+                        href={shownTile ? shownTile.href : link.href}
+                        onClick={() => setOpenMenu(null)}
+                        // The visible word stays short; the name adds
+                        // where it goes, for screen-reader link lists.
+                        aria-label={`View all: ${shownTile ? shownTile.label : link.intro.title}`}
+                        className="group/viewall mt-[26px] inline-flex items-center gap-[11px] font-body text-[14px] font-normal leading-4 tracking-[1.5px] text-[#9D2326] uppercase"
+                      >
+                        <span className="border-b-2 border-[#AF8286] pb-[6px]">View all</span>
+                        {/* Arrow nudges right on hover / keyboard focus. */}
+                        <svg
+                          aria-hidden="true"
+                          width="15"
+                          height="10"
+                          viewBox="0 0 15 10"
+                          fill="none"
+                          className="-mt-[6px] transition-transform duration-300 ease-out group-hover/viewall:translate-x-1 group-focus-visible/viewall:translate-x-1"
+                        >
+                          <path d="M0 5h13.5M9.5 1l4 4-4 4" stroke="currentColor" strokeWidth="1.2" />
+                        </svg>
+                      </Link>
                       {/* Pinned to the column's foot; pt keeps it clear of
                           "View all" when the column sets the panel height.
                           It touches the panel's left edge (-ml-[70px] undoes
