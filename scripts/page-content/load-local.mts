@@ -1,11 +1,12 @@
 /**
  * LOCAL-ONLY loader for the MOMH pages built from existing blocks (Contact
- * Us, and on later branches FAQ and the Accessibility Statement).
+ * Us, FAQ and the Accessibility Statement).
  *
  * Every `<slug>.json` next to this script is one page (title, slug, meta,
  * layout). The loader puts those pages into a LOCAL database, so they can be
- * reviewed on localhost. Production content is entered by hand in
- * momhindia.org/admin, never by this script. It refuses to run against
+ * reviewed on localhost. Production gets the same files through
+ * apply-production.mts (guarded, run by hand), never through this script,
+ * which runs Payload in dev mode (it syncs the schema). It refuses to run against
  * anything that is not a local `*_local` database, refuses on Vercel, and
  * refuses when a Blob token is set. It uploads nothing: the images a page
  * uses are existing media rows, looked up by filename, never by id.

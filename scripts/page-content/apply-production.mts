@@ -5,12 +5,16 @@
  * Run by hand on a developer's machine, never on Vercel.
  *
  * ORDER, so no visitor ever sees "page not found":
+ *   0. The release ships every page here at once (routes and footer links in
+ *      one deploy), so every page's wording must be signed off first, the
+ *      Accessibility Statement included (owner and legal). Any change goes
+ *      into its <slug>.json before step 2.
  *   1. From the reviewed branch, apply its migration to production first
  *      (`pnpm payload migrate` with production's DATABASE_URI). It only adds
  *      empty columns; the live site ignores them.
- *   2. Run this script: a dry run, then APPLY (below). The pages are added and
- *      published, but nobody can reach them yet: the live code has no
- *      /contact, /faq or /accessibility route.
+ *   2. Run this script: a dry run, then APPLY (below), for EVERY page (no
+ *      ONLY). The pages are added and published, but nobody can reach them
+ *      yet: the live code has no /contact, /faq or /accessibility route.
  *   3. Deploy straight after step 2. The build renders the pages with their
  *      content and switches the footer links on with them. Until this deploy
  *      is live, nobody may edit or publish Contact, FAQ or Accessibility in
@@ -47,9 +51,13 @@
  *
  * RUN from the repo root (Node 22), with production's DATABASE_URI:
  *   pnpm payload run scripts/page-content/apply-production.mts                   dry run, every page
- *   ONLY=contact,faq pnpm payload run scripts/page-content/apply-production.mts  dry run, these pages
- *   APPLY=1 CONFIRM_DB=<database> ONLY=contact,faq pnpm payload run scripts/page-content/apply-production.mts
+ *   APPLY=1 CONFIRM_DB=<database> pnpm payload run scripts/page-content/apply-production.mts   add every page
  *   UNDO=<record folder> pnpm payload run scripts/page-content/apply-production.mts   (dry run; add APPLY=1 CONFIRM_DB=<database> to remove)
+ *   ONLY=contact,faq   limit to these pages: dry runs only. With APPLY it is
+ *                      refused, because adding some pages and deploying would
+ *                      ship the others' routes and links with no page behind
+ *                      them (and a cached "page not found"). ALLOW_PARTIAL=1
+ *                      overrides that, for a deliberate partial add only.
  *   SHOW=1   also print each page as it would be written
  */
 import fs from 'node:fs'
@@ -94,6 +102,12 @@ const available = fs
   .sort()
 if (ONLY?.some((s) => !available.includes(s))) fail(`ONLY must be a comma-separated list of: ${available.join(', ')}`)
 if (ONLY && new Set(ONLY).size !== ONLY.length) fail('ONLY names a page twice. Nothing was written.')
+if (APPLY && !UNDO && ONLY && ONLY.length < available.length && process.env.ALLOW_PARTIAL !== '1') {
+  fail(
+    `APPLY with ONLY adds only ${ONLY.join(', ')}; the deploy ships every page's route and footer link, ` +
+      'so add them all (drop ONLY). For a deliberate partial add set ALLOW_PARTIAL=1. Nothing was written.',
+  )
+}
 const slugs = ONLY ?? available
 if (!slugs.length) fail('no <slug>.json page files next to this script')
 
