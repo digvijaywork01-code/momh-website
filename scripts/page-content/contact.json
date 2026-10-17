@@ -606,7 +606,7 @@
          "id": "83380aec2f3141db9615381e",
          "fields": {
           "linkType": "custom",
-          "url": "/book-an-appointment#faq",
+          "url": "/faq",
           "newTab": false
          },
          "children": [
