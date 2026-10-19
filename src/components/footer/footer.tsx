@@ -53,7 +53,7 @@ const ABOUT_LINKS: LinkColumn = {
   title: 'About',
   items: [
     // "Our Story" -> /about, "Founder's Vision" -> /founders-vision and
-    // "As Seen On" -> /press are real pages now. The remaining two anchor IDs
+    // "Press" -> /press are real pages now. The remaining two anchor IDs
     // (#blogs / #testimonials) are absent from the rendered home page DOM, so
     // those labels silently scroll nowhere. Marked disabled until matching
     // sections gain those ids.
@@ -61,7 +61,7 @@ const ABOUT_LINKS: LinkColumn = {
     { label: "Founder's Vision", href: '/founders-vision' },
     { label: 'The Art & Craftsmanship', href: '/art-and-craftsmanship' },
     { label: 'The Architecture', href: '/architecture' },
-    { label: 'As Seen On', href: '/press' },
+    { label: 'Press', href: '/press' },
     { label: 'Blog', href: '/#blogs', disabled: true },
     { label: 'Testimonials', href: '/#testimonials', disabled: true },
   ],
