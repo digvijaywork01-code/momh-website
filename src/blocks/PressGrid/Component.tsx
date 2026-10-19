@@ -93,14 +93,21 @@ export const PressGridBlock: React.FC<PressGridBlockProps> = ({
   order = 'newest',
   linkLabel,
 }) => {
-  if (!Array.isArray(items) || items.length === 0) return null
+  // Only items whose photo is there: one deleted from the media library leaves
+  // its item with no image (the link is cleared), and a card with an empty
+  // frame would break the grid, so it is left out until a photo is chosen
+  // again (as the SS press page does).
+  const withPhoto = Array.isArray(items)
+    ? items.filter((item) => item.image && typeof item.image === 'object')
+    : []
+  if (withPhoto.length === 0) return null
 
   // Newest day first. Array.prototype.sort is stable, so items from the same
   // day keep the order they were entered in; items with no date go last.
   const cards =
     order === 'manual'
-      ? items
-      : [...items].sort((a, b) => {
+      ? withPhoto
+      : [...withPhoto].sort((a, b) => {
           const [x, y] = [dayKey(a.date), dayKey(b.date)]
           return x === y ? 0 : x < y ? 1 : -1
         })
