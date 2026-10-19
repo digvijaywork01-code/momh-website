@@ -105,12 +105,12 @@ const OPENING_HOURS: { day: string; time: string }[] = [
 ]
 
 const LEGAL_LINKS: LinkItem[] = [
-  // Copyright and Terms of Use still 404 — disabled until those pages
-  // exist. Sequenced in the footer bottom bar; disabled items render as
-  // plain <span>s by the disabled branch below.
+  // Copyright still 404s — disabled until its page exists. Sequenced in
+  // the footer bottom bar; disabled items render as plain <span>s by the
+  // disabled branch below.
   { label: 'Copyright', href: '/copyright', disabled: true },
   { label: 'Privacy Policy', href: '/privacy-policy' },
-  { label: 'Terms of Use', href: '/terms', disabled: true },
+  { label: 'Terms of Use', href: '/terms' },
 ]
 
 const ADDRESS_LINES = [

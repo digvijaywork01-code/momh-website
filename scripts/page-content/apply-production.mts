@@ -29,6 +29,19 @@
  *   clear it. To recover: open the page in the live admin and publish it once
  *   (that refreshes its path); last resort, purge Vercel's Data Cache.
  *
+ * LATER PAGES (Terms of Use, feat/terms-of-use): run the dry run and APPLY
+ * from the exact commit that will be deployed. When the earlier pages are
+ * already live, the dry run should print "already there and identical, skip"
+ * for them and "will add" for the new page only: then APPLY with no ONLY and
+ * deploy straight after (no migration: Terms uses existing blocks and the
+ * share image og-momh.jpg). If a live page was edited in the admin since, or
+ * its newest draft moved to another slug, the run stops. Then add the new page
+ * alone with ONLY=terms ALLOW_PARTIAL=1, but only if every other page with a
+ * <slug>.json in that commit is already live on momhindia.org (for example
+ * /press, once Press is merged); otherwise the deploy would ship a route with
+ * no page behind it. After the deploy, check the live site itself, not only
+ * the dry run: /terms returns 200 and the footer's Terms of Use is a link.
+ *
  * WHAT IT DOES
  *   - Dry run by default: prints what it would do and writes nothing.
  *   - Writes only with APPLY=1 and CONFIRM_DB=<the database name it prints>.
@@ -317,7 +330,19 @@ for (const slug of slugs) {
     if (diff) problems.push(`${slug}: page ${existing.docs[0].id} already exists and differs from ${slug}.json (first at ${diff})`)
     else plans.push({ slug, data, state: 'same' })
   } else {
-    plans.push({ slug, data, state: 'add' })
+    // The lookup above reads each page's newest version. A live page whose
+    // newest draft moved to another slug (slugLock on: opening it in the admin
+    // rewrites the slug from its title) is invisible to it, and adding would
+    // publish a second page on this slug. So look at the live rows too.
+    const live = await payload.find({ collection: 'pages', where: { slug: { equals: slug } }, depth: 0, limit: 5 })
+    if (live.docs.length) {
+      problems.push(
+        `${slug}: page ${live.docs[0].id} is live on /${slug}, but its newest draft has another slug; ` +
+          `open it in the admin, set the slug back to "${slug}" and publish, then run this again`,
+      )
+    } else {
+      plans.push({ slug, data, state: 'add' })
+    }
   }
   if (SHOW) console.log(`\n${slug} as it would be written:\n${JSON.stringify(data, null, 1)}`)
 }
@@ -332,7 +357,10 @@ if (!toAdd.length) {
   process.exit(0)
 }
 if (!APPLY) {
-  console.log(`\nDry run. To add: APPLY=1 CONFIRM_DB=${dbName}${ONLY ? ` ONLY=${ONLY.join(',')}` : ''} (same command)`)
+  console.log(
+    `\nDry run. To add: APPLY=1 CONFIRM_DB=${dbName}` +
+      `${ONLY ? ` ONLY=${ONLY.join(',')}${ONLY.length < available.length ? ' ALLOW_PARTIAL=1' : ''}` : ''} (same command)`,
+  )
   process.exit(0)
 }
 
