@@ -29,6 +29,7 @@ const NO_ANIM_PATHS = [
   '/book-an-appointment',
   '/thank-you',
   '/privacy-policy',
+  '/terms',
   '/contact',
   '/faq',
   '/accessibility',
