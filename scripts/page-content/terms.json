@@ -1,0 +1,1854 @@
+{
+ "title": "Terms of Use",
+ "slug": "terms",
+ "slugLock": false,
+ "hero": {
+  "type": "none"
+ },
+ "meta": {
+  "description": "The terms for using momhindia.org, the Museum of Meenakari Heritage website: booking a visit, commission enquiries, copyright and our liability.",
+  "image": "__OG_MEDIA_ID__"
+ },
+ "layout": [
+  {
+   "blockType": "sectionIntro",
+   "backgroundColor": "white",
+   "showTopDivider": false,
+   "headingStyle": "display",
+   "bodyWidth": "normal",
+   "tightTop": false,
+   "tightBottom": true,
+   "headline": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Terms ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "of Use",
+         "format": 2,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "This website, momhindia.org, introduces the Museum of Meenakari Heritage and lets you request a visit or ask about a bespoke commission. These Terms of Use set out the conditions on which you may use it. Our ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "bdc0dd7e414486ac673a8b68",
+         "fields": {
+          "linkType": "custom",
+          "url": "/privacy-policy",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "Privacy Policy",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " explains how we handle personal information and the ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "07f26996ae2488a677012621",
+         "fields": {
+          "linkType": "custom",
+          "url": "/privacy-policy#cookies-and-similar-technologies",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "cookies",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " this website uses.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Who We Are",
+   "heading": "Who We Are",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The Museum of Meenakari Heritage (the \"Museum\", \"we\", \"us\") is located at Shekhawat Haveli, E141, Sardar Patel Marg, Durgadas Colony, C-Scheme, Ashok Nagar, Jaipur 302001, Rajasthan, India. The Museum belongs to The House of Sunita Shekhawat and is operated by Midas Signature Jewellery Private Limited, whose registered office is at E-141, Sardar Patel Marg, C-Scheme, Ashok Nagar, Jaipur 302001, India. In these Terms, \"we\" and \"us\" include Midas Signature Jewellery Private Limited, which operates the Museum.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Using This Website",
+   "heading": "Using This Website",
+   "listWidth": "full",
+   "justifyLastLine": "left",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "These Terms apply to everyone who uses this website. By using it, you agree to them. If you do not agree, please do not use this website.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "No accounts or online sales.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " Visitors cannot create accounts on this website, and no goods are sold or payments taken on it. The Museum Boutique offers a limited selection of enamel pieces, prints and archival books, available exclusively on-site.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Your personal information.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " Our ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "221ca53e23e662cbfde16eb6",
+         "fields": {
+          "linkType": "custom",
+          "url": "/privacy-policy",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "Privacy Policy",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1,
+           "$": {
+            "color": "red"
+           }
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " explains how we handle personal information and names our Grievance Officer, to whom you may address any complaint about personal data.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Booking a Visit",
+   "heading": "Booking a Visit",
+   "listWidth": "full",
+   "justifyLastLine": "left",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "By appointment only.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " Entry to the Museum is by prior appointment only. There is no admission fee, and no tickets are sold at the door.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Your request.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " Sending the ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "6fc71db1b8cb89af09a98d88",
+         "fields": {
+          "linkType": "custom",
+          "url": "/book-an-appointment",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "Book Your Appointment",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1,
+           "$": {
+            "color": "red"
+           }
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " form is a request for a visit. Your visit is booked once our team confirms your slot. We will be in touch within 24 hours of your request to confirm it. If your plans change, please write to ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "c738761e3dbb8f86fb3ffb2a",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " and we will happily reschedule.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Other ways to book.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " If the security check on the booking form is a barrier for you, you can book by email or telephone, using the details under ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "6b6491b4e2688ffd8914975e",
+         "fields": {
+          "linkType": "custom",
+          "url": "#contact",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "Contact below",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1,
+           "$": {
+            "color": "red"
+           }
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": ".",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "During your visit.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " The rules for visiting, including the dress code, photography and conduct in the galleries, are set out on our ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "205e7ddcfc7b031d8b7ed950",
+         "fields": {
+          "linkType": "custom",
+          "url": "/museum-guidelines",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "Museum Guidelines page",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1,
+           "$": {
+            "color": "red"
+           }
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": ". Please read them before your visit.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Special visits.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " For private collection viewings, editorial collaborations and international group visits, please write to us at least two weeks in advance.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Commission Enquiries",
+   "heading": "Commission Enquiries",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "2640bae93f1a5b5d5542a7ab",
+         "fields": {
+          "linkType": "custom",
+          "url": "/personal-consultation",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "Personal Consultation",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1,
+           "$": {
+            "color": "red"
+           }
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " form is for enquiries about bespoke commissions. Sending it is an enquiry only. It does not place an order or commit you or us to a commission. Consultation requests are handled by the atelier team of The House of Sunita Shekhawat, part of the company that operates the Museum. Any commission or other arrangement made with us is governed by the terms agreed for it.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The form shows a reference-image picker, but files are not currently uploaded. If you select a file, only its file name reaches us.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "What You Send Us",
+   "heading": "What You Send Us",
+   "listWidth": "full",
+   "justifyLastLine": "left",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Age.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " Appointments and consultation requests must be submitted by an adult aged 18 or over.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Replying to you.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " Sending a form asks us to contact you about that request, using the details you give us. We handle any personal information you send us, through a form or by email, as described in our ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "926fdcb86aaee65a79f5edb1",
+         "fields": {
+          "linkType": "custom",
+          "url": "/privacy-policy",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "Privacy Policy",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1,
+           "$": {
+            "color": "red"
+           }
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": ".",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Your material stays yours.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " Sending us material does not transfer its ownership to us, and we do not claim any licence to publish it.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Acceptable Use",
+   "heading": "Acceptable Use",
+   "listWidth": "full",
+   "justifyLastLine": "left",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "When using this website, please do not:",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "list",
+       "listType": "bullet",
+       "start": 1,
+       "tag": "ul",
+       "direction": "ltr",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "listitem",
+         "value": 1,
+         "children": [
+          {
+           "type": "text",
+           "text": "try to gain unauthorised access to this website or to the systems behind it;",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 2,
+         "children": [
+          {
+           "type": "text",
+           "text": "introduce viruses or other harmful code, or disrupt how this website works;",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 3,
+         "children": [
+          {
+           "type": "text",
+           "text": "send a form in another person's name or with false details; or",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 4,
+         "children": [
+          {
+           "type": "text",
+           "text": "copy this website's content in bulk by automated means, such as scraping, without our written permission.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        }
+       ]
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "This does not stop search engines from indexing this website.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Copyright and Content",
+   "heading": "Copyright and Content",
+   "listWidth": "full",
+   "justifyLastLine": "left",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Our content.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " The content of this website is protected by copyright, to the extent the law provides. Content created by or for the Museum is owned by, or licensed to, Midas Signature Jewellery Private Limited.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Works by others.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " Some photographs of our galleries show works that may belong to others, such as archival images, an antique map and paintings. Any rights in those works remain with their owners, and nothing on this website gives permission to reuse them. The appearance of a work on this website does not, by itself, mean that its owner endorses the Museum or is connected with it.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "What you may do.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " You may view this website, print or save pages for your own personal, non-commercial use, and share links to it. This permission covers our own content. Works by others shown on this website remain subject to their owners' rights, as explained above. Any other copying, adaptation or publication of our content needs our written permission, unless the law allows it. Nothing in these Terms limits any use the Copyright Act 1957 allows. That includes fair dealing for research or other private or personal use, for criticism or review, and for reporting current events.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Press and image requests.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " For press, editorial or image requests, please write to ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "ddb2466fa7cc012cb231840a",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " with the name of the publication and your deadline.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "If you think we have used your work.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " If you believe content on this website uses your work without permission, please write to ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "5544fb13e1f831476d792a8b",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " with details of the work and where it appears.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Names and Logos",
+   "heading": "Names and Logos",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The names and logos of the Museum and of The House of Sunita Shekhawat identify the Museum and the House. Please do not use them in a way that suggests a connection with us, or our approval, without our written permission.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Links to Other Websites",
+   "heading": "Links to Other Websites",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "This website links to websites and services run by others, including press articles, Google Maps directions and social media profiles on Instagram, Facebook, YouTube, LinkedIn, Pinterest and X. We do not control them and are not responsible for their content or practices. Their own terms and privacy policies apply.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Accuracy and Availability",
+   "heading": "Accuracy and Availability",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "We try to keep the information on this website accurate and up to date, but details such as opening hours and closures can change. The Museum is closed on select Indian public holidays, so please confirm before visiting. We may update, suspend or withdraw any part of this website.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Our Liability",
+   "heading": "Our Liability",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "This website is provided free of charge for general information. To the extent the law allows, we are not liable for any loss that arises from this website being unavailable or from relying on the general information on it, or for any indirect or consequential loss. Nothing in these Terms limits liability for fraud, or any other liability that cannot be limited under the law. Nothing in them affects any rights you have under consumer protection law.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Governing Law and Jurisdiction",
+   "heading": "Governing Law and Jurisdiction",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "These Terms are governed by and construed in accordance with the laws of the Republic of India. Any disputes arising out of or in connection with these Terms shall be subject to the exclusive jurisdiction of the competent courts located in Jaipur, Rajasthan, India.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "This does not affect any right you may have to bring a complaint before a consumer commission where the law allows, including where you live or work, or before any other authority the law provides. It also does not affect any non-waivable rights you may have under the law of your country of residence.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Severability, Waiver and Changes",
+   "heading": "Severability, Waiver and Changes",
+   "listWidth": "full",
+   "justifyLastLine": "left",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "If any part of these Terms is found to be invalid or unenforceable, the rest of these Terms will continue to apply. If we do not enforce any part of these Terms straight away, we may still enforce it later.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "We may update these Terms from time to time. Where changes are material, we will give reasonable notice on this website or by direct communication.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "You may send any notice about these Terms to ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "f114bddd7f6c615233078ab2",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": ".",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Thank you for your interest in the Museum and in the art of meenakari. If anything on this page is unclear, write to us at ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "331857a411c73c8ee87ca9a2",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " and we will gladly explain.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Contact",
+   "heading": "Contact",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Museum of Meenakari Heritage",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "(Operated by Midas Signature Jewellery Private Limited, which also operates sunitashekhawat.com)",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "Shekhawat Haveli, E141, Sardar Patel Marg, Durgadas Colony, C-Scheme, Ashok Nagar, Jaipur 302001, Rajasthan, India",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Email: ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "6861079f2e14bc6b2422863c",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "Phone: ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "3fcb7948ddb2c008d4c20719",
+         "fields": {
+          "linkType": "custom",
+          "url": "tel:+916377490417",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "+91 6377 490 417",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  }
+ ]
+}
