@@ -1,0 +1,312 @@
+{
+ "set": "press",
+ "note": "The 34 Press page photos (the client's compressed set, 17 Oct 2026). Uploaded by scripts/page-content/upload-media.mts; used by press.json as __MEDIA:<file>__.",
+ "files": [
+  {
+   "file": "momh-press-01.jpg",
+   "card": 1,
+   "alt": "The entrance of Shekhawat Haveli, its name carved in Hindi above an arched window, behind a railing and frangipani trees",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 955209,
+   "sha256": "a14f23140ab60e2b6083e44da547559c4ee0bdf247ae4efdf3428e9859c56863"
+  },
+  {
+   "file": "momh-press-02.jpg",
+   "card": 2,
+   "alt": "Shekhawat Haveli at dusk, its curved sandstone facade and arched entrance lit gold",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 907350,
+   "sha256": "2a8fda35a425187d916501b92672dfb37f56fd3d19053dc2b5c63e422babf570"
+  },
+  {
+   "file": "momh-press-03.jpg",
+   "card": 3,
+   "alt": "Three people laughing together over architectural drawings",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 955606,
+   "sha256": "6b6063bb86dcb3c7672d266087e5123f5a91ee851f62780fe72b29834ad283fc"
+  },
+  {
+   "file": "momh-press-04.jpg",
+   "card": 4,
+   "alt": "An enamelled carousel with hot-air balloons, on a bed of red petals",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 854828,
+   "sha256": "c4bb3db93070016017b8285e7596bf4a9adbb56d33b86b0d0740240e7e7a7f8e"
+  },
+  {
+   "file": "momh-press-05.jpg",
+   "card": 5,
+   "alt": "A man in a black hat holding a clear block set with coloured enamel pieces",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 832600,
+   "sha256": "4dc53d6060740cbb9cbf326f36bf66e461e18c65471e1956f458001ba1af9361"
+  },
+  {
+   "file": "momh-press-06.jpg",
+   "card": 6,
+   "alt": "Two women looking at an enamelled carousel",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 840132,
+   "sha256": "3f3504af30638c90194ed00e1eb7ea2849160012557dd1f15c0cff7a6dac8be1"
+  },
+  {
+   "file": "momh-press-07.jpg",
+   "card": 7,
+   "alt": "Hands in water wearing enamelled rings and bracelets",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 902573,
+   "sha256": "3b992eb2f744c00227495006872d632dbd8079528ff4db3982c0a1adeefd8315"
+  },
+  {
+   "file": "momh-press-08.jpg",
+   "card": 8,
+   "alt": "A gallery wall hung with rows of framed images",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 832393,
+   "sha256": "f68d6e9d6bce261bd75dc98109ded2e855e0a252b8a1d437e42a6ce938788316"
+  },
+  {
+   "file": "momh-press-09.jpg",
+   "card": 9,
+   "alt": "A lounge with armchairs and bookshelves under a painted ceiling",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 749463,
+   "sha256": "a62fb76f430b8934107c8d2d76211883e86181b25b893ac5b0853ada45c9f9ca"
+  },
+  {
+   "file": "momh-press-10.jpg",
+   "card": 10,
+   "alt": "A spiral staircase over a black marble floor",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 815444,
+   "sha256": "54f5836db077984c1681343cfd57ee968de947f4ab0d97f97eb5ef5a299ef9a0"
+  },
+  {
+   "file": "momh-press-11.jpg",
+   "card": 11,
+   "alt": "The sandstone facade of Shekhawat Haveli against a blue sky",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 743911,
+   "sha256": "19ebce41cc4d7100815c4f2a6fdbf769acc048fb3ad53f9439946dd35cd50693"
+  },
+  {
+   "file": "momh-press-12.jpg",
+   "card": 12,
+   "alt": "Four photographs: an enamelled necklace, a pink sandstone arch, a woman in a gallery and the Haveli entrance",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 936921,
+   "sha256": "3c8f91b800facd937a779d007d12055527b6565a89abcff50231d3706d64dc8b"
+  },
+  {
+   "file": "momh-press-13.jpg",
+   "card": 13,
+   "alt": "A woman and a man seated before a carved stone screen",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 752631,
+   "sha256": "966c3a3443abaa4231d9fa8316a55fe973e045318fa9c9f4baefe5be48a41540"
+  },
+  {
+   "file": "momh-press-14.jpg",
+   "card": 14,
+   "alt": "A gold necklace with pearl drops on a display bust",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 930721,
+   "sha256": "636dbab240abfa465a30a932b46fee6ab7fdab4b5f6ba20580f36937d7a631a1"
+  },
+  {
+   "file": "momh-press-15.jpg",
+   "card": 15,
+   "alt": "The curved sandstone top of the Haveli, seen through leaves",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 863763,
+   "sha256": "baf511635a0dbcecd5be0d179cd068fd2e8097033e312dee651d7d85732802f7"
+  },
+  {
+   "file": "momh-press-16.jpg",
+   "card": 16,
+   "alt": "An enamelled medallion of flowers and birds with a gold animal-head clasp",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 852914,
+   "sha256": "4521f94ed4b4cb8472449f8939faa6423990d488b2c8e64e8e3cd8428d9e8641"
+  },
+  {
+   "file": "momh-press-17.jpg",
+   "card": 17,
+   "alt": "A pale room with a red chair under a ceiling painted with vines",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 867227,
+   "sha256": "3601312a6d3d2b5e727dc4124a61d5a414df1207a535e759f36ce11706f18aaa"
+  },
+  {
+   "file": "momh-press-18.jpg",
+   "card": 18,
+   "alt": "A blue and green enamel necklace on black",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 846310,
+   "sha256": "d1a0eb445e0fa81e96ce9068aa97875fc0a97e47dd49db83211b48be97cda0a4"
+  },
+  {
+   "file": "momh-press-19.jpg",
+   "card": 19,
+   "alt": "A gold jewel lit inside a display case",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 634411,
+   "sha256": "a8c1d5ae0fb8709cbccf3d5703e24b32a6558350fb809fb1b2a86ac46f0e7166"
+  },
+  {
+   "file": "momh-press-20.jpg",
+   "card": 20,
+   "alt": "Light falling through carved stone jaali screens",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 904634,
+   "sha256": "57e7c7009397cb0c70b1b5c5faa58420acbae8aaa1dc06c9ebafdeba406783b5"
+  },
+  {
+   "file": "momh-press-21.jpg",
+   "card": 21,
+   "alt": "A corner of the Haveli at dusk, its carved screens lit",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 759403,
+   "sha256": "28451bb06727e4255b458de6a3fb6bcbb62bbd5708f757561ddd224dbf098118"
+  },
+  {
+   "file": "momh-press-22.jpg",
+   "card": 22,
+   "alt": "A gallery wall of framed paintings, jewels and labels",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 675772,
+   "sha256": "b34832b0fa8bec4bc2634161ad5b8c91d0f2574a5ae9fde761995dc6d630a25f"
+  },
+  {
+   "file": "momh-press-23.jpg",
+   "card": 23,
+   "alt": "An enamelled box with a floral lid, shown open",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 865658,
+   "sha256": "942b0a124306d0d4c97a7cf456787d9aa669477e74b9aa5b0b6fba10ac47fde1"
+  },
+  {
+   "file": "momh-press-24.jpg",
+   "card": 24,
+   "alt": "The Haveli at sunset, its name carved beside the lit entrance",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 935985,
+   "sha256": "66c3f05dd2a25fae5d4af1c034914e907a03a848b67674d57fee998f02830056"
+  },
+  {
+   "file": "momh-press-25.jpg",
+   "card": 25,
+   "alt": "The Haveli entrance below its carved Hindi name",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 946063,
+   "sha256": "45f7f0940c2bc26c960f9eab506eb09bf7735845c072ff47daf6fefcb76586f6"
+  },
+  {
+   "file": "momh-press-26.jpg",
+   "card": 26,
+   "alt": "An enamelled ornament with birds and a floral medallion on magenta",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 921934,
+   "sha256": "02a3afd8c9171c4911385398e3227fa988a099122073fee5aaeb936fd1eb5379"
+  },
+  {
+   "file": "momh-press-27.jpg",
+   "card": 27,
+   "alt": "Shekhawat Haveli seen from the street under a blue sky",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 812286,
+   "sha256": "80bc5b5dd78c77a65d2d234c75c7650fe9e703add1d4bdcba582029992e4cac5"
+  },
+  {
+   "file": "momh-press-28.jpg",
+   "card": 28,
+   "alt": "Looking up at a painted ceiling of palace scenes",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 775692,
+   "sha256": "0e4df04152cc7845713b22f164657c0c835096b113048544c8ff0b4e20df0b5b"
+  },
+  {
+   "file": "momh-press-29.jpg",
+   "card": 29,
+   "alt": "A seating area under a ceiling painted with clouds",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 782674,
+   "sha256": "40346173554f725c0688c24f4a5a9a194ef5633c68fb3e17824ed38d5bc7583f"
+  },
+  {
+   "file": "momh-press-30.jpg",
+   "card": 30,
+   "alt": "The carved sandstone facade with its jaali windows",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 797272,
+   "sha256": "ef669140dc295108389775442059157b6374b490147f1b2d2e087992024f1a8a"
+  },
+  {
+   "file": "momh-press-31.jpg",
+   "card": 31,
+   "alt": "A dark gallery with display cases and a spiral staircase",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 721469,
+   "sha256": "7184001751c837ffa7b89d4aeae21df82de7e2579a842ad7d06fbca1cb26147e"
+  },
+  {
+   "file": "momh-press-32.jpg",
+   "card": 32,
+   "alt": "Framed miniature paintings around a jewel display",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 870891,
+   "sha256": "b2442680a1591bb944f3bcfb78073956229a5e7f26ee057ca1d90dc7d8dfdfcc"
+  },
+  {
+   "file": "momh-press-33.jpg",
+   "card": 33,
+   "alt": "The Haveli lit at dusk, its name above the arched entrance",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 764535,
+   "sha256": "3bb2d21d12878c787ac6d109c0e174bb06b1c3c86bc76d5eec21e72411d4aaaf"
+  },
+  {
+   "file": "momh-press-34.jpg",
+   "card": 34,
+   "alt": "A woman studying drawings at a table",
+   "width": 1568,
+   "height": 2178,
+   "bytes": 969893,
+   "sha256": "2eda2e0ecbcab2799211f69fef291d4e78f5ec417f0e22623aa9c64f4cd2c840"
+  }
+ ]
+}

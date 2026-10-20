@@ -4,10 +4,11 @@
  * local loader uses, so production gets exactly the pages reviewed on
  * localhost. Run by hand on a developer's machine, never on Vercel.
  *
- * PRESS (feat/press-page): before step 1, upload the 34 press photos to the
- * production media library by hand, named exactly momh-press-01.jpg ... momh-press-34.jpg,
- * with their alt text (the list is in the PR). The script finds them by file
- * name and stops if one is missing. press.json must have every article
+ * PRESS (feat/press-page): before step 1, upload the 34 press photos with
+ * upload-media.mts (dry run, then APPLY; see its header). This script finds
+ * them by file name and, when it adds the Press page, stops if one is missing,
+ * appears twice, or is not the photo shipped in media/press/ (pixel size,
+ * stored size or alt text differs). press.json must have every article
  * address filled in: the script stops while any card still points at
  * https://url-needed.invalid/. If Contact, FAQ and Accessibility went live
  * before Press, they print "already there and identical, skip"; if one of them
@@ -168,7 +169,26 @@ if (!fs.existsSync(configPath)) fail(`run this from the MOMH repo root (no ${con
 // cannot change the database structure. The dependency check is dev-only noise
 // here (email-resend vs payload versions, also on main).
 Object.assign(process.env, { NODE_ENV: 'production', PAYLOAD_DISABLE_DEPENDENCY_CHECKER: 'true' })
-const payloadEntry = createRequire(path.join(repo, 'package.json')).resolve('payload')
+const requireFromRepo = createRequire(path.join(repo, 'package.json'))
+// The database must exist and hold a pages table BEFORE Payload connects:
+// Payload's adapter creates a database that does not exist, so a mistyped name
+// would otherwise make a new, empty database on that server.
+{
+  const pgEntry = createRequire(requireFromRepo.resolve('@payloadcms/db-postgres')).resolve('pg')
+  const pg = (await import(pathToFileURL(pgEntry).href)).default
+  const client = new pg.Client({ connectionString: process.env.DATABASE_URI })
+  let table: string | null = null
+  try {
+    await client.connect()
+    table = (await client.query("select to_regclass('public.pages')::text as t")).rows[0]?.t ?? null
+  } catch (err) {
+    fail(`cannot open ${dbName}: ${(err as Error).message}. Nothing was written.`)
+  } finally {
+    await client.end().catch(() => {})
+  }
+  if (!table) fail(`${dbName} has no pages table; is it the right database? Nothing was written.`)
+}
+const payloadEntry = requireFromRepo.resolve('payload')
 const { getPayload } = await import(pathToFileURL(payloadEntry).href)
 const { default: config } = await import(pathToFileURL(configPath).href)
 // disableOnInit: the config's onInit runs table DDL (the newsletter bootstrap);
@@ -310,6 +330,21 @@ for (const [placeholder, filename] of Object.entries(MEDIA)) {
 console.log(`images: ${Object.entries(MEDIA).map(([p, f]) => `${f} = ${mediaIds[p]}`).join(', ')}`)
 const missingFiles: string[] = []
 const fileRows: string[] = []
+// The photos shipped with the pages (media/<set>/manifest.json, uploaded by
+// upload-media.mts). A photo a page uses must still be that photo: same pixel
+// size, same stored size (Payload re-saves a photo without its embedded
+// metadata; worked out here the same way) and same alt text. Checked only for
+// pages this run adds (below), so a later alt-text edit in the admin does not
+// block releasing other pages.
+const sharp = (await import(pathToFileURL(requireFromRepo.resolve('sharp')).href)).default
+const manifestEntries = new Map<string, { set: string; file: string; width: number; height: number; alt: string }>()
+const shippedDiff = new Map<string, string>() // file -> how the media record differs from media/<set>/
+const mediaRoot = path.join(here, 'media')
+for (const set of fs.existsSync(mediaRoot) ? fs.readdirSync(mediaRoot) : []) {
+  const file = path.join(mediaRoot, set, 'manifest.json')
+  if (!fs.existsSync(file)) continue
+  for (const f of JSON.parse(fs.readFileSync(file, 'utf8')).files || []) manifestEntries.set(f.file, { set, ...f })
+}
 for (const slug of slugs) {
   const raw = fs.readFileSync(path.join(here, `${slug}.json`), 'utf8')
   for (const [placeholder, filename] of raw.matchAll(FILE_PLACEHOLDER)) {
@@ -319,9 +354,23 @@ for (const slug of slugs) {
       missingFiles.push(`${filename} (${found.docs.length} found)`)
       continue
     }
-    const m = found.docs[0] as { id: number; width?: number; height?: number; createdAt?: string; alt?: string }
+    const m = found.docs[0] as { id: number; width?: number; height?: number; filesize?: number; createdAt?: string; alt?: string }
+    const shipped = manifestEntries.get(filename)
+    if (shipped) {
+      const buf = fs.readFileSync(path.join(mediaRoot, shipped.set, shipped.file))
+      const stored = (await sharp(buf).rotate().toBuffer()).length
+      const diff = [
+        (m.width !== shipped.width || m.height !== shipped.height) && `pixels ${m.width}x${m.height} vs ${shipped.width}x${shipped.height}`,
+        m.filesize !== stored && `stored size ${m.filesize} vs ${stored}`,
+        (m.alt || '') !== shipped.alt && `alt text "${m.alt || ''}" vs the manifest's`,
+      ].filter(Boolean)
+      if (diff.length) shippedDiff.set(filename, `media ${m.id} differs from media/${shipped.set}/manifest.json (${diff.join(', ')})`)
+    }
     mediaIds[placeholder] = m.id
-    fileRows.push(`  ${filename} = ${m.id} (${m.width}x${m.height}, added ${String(m.createdAt).slice(0, 10)}${m.alt ? '' : ', NO ALT TEXT'})`)
+    fileRows.push(
+      `  ${filename} = ${m.id} (${m.width}x${m.height}, added ${String(m.createdAt).slice(0, 10)}${m.alt ? '' : ', NO ALT TEXT'}` +
+        `${shipped ? (shippedDiff.has(filename) ? `, DIFFERS from media/${shipped.set}/` : `, matches media/${shipped.set}/`) : ''})`,
+    )
   }
 }
 if (missingFiles.length) {
@@ -393,6 +442,13 @@ for (const slug of slugs) {
 for (const p of plans) {
   const blocks = (p.data.layout as unknown[]).length
   console.log(`${p.slug.padEnd(14)} ${p.state === 'add' ? `will add (${blocks} blocks, published)` : 'already there and identical, skip'}`)
+}
+for (const p of plans.filter((x) => x.state === 'add')) {
+  const raw = fs.readFileSync(path.join(here, `${p.slug}.json`), 'utf8')
+  for (const [, filename] of raw.matchAll(FILE_PLACEHOLDER)) {
+    const d = shippedDiff.get(filename)
+    if (d) problems.push(`${p.slug} uses ${filename}: ${d}; make the media record match it in the admin, or upload the right photo (upload-media.mts)`)
+  }
 }
 if (problems.length) fail(`${problems.join('; ')}. Nothing was written.`)
 const toAdd = plans.filter((p) => p.state === 'add')
