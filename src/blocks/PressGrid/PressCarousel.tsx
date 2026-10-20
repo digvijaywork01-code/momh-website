@@ -1,7 +1,17 @@
 'use client'
 
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
+
+import {
+  REVEAL,
+  REVEAL_LIVE,
+  REVEAL_MARGIN,
+  REVEAL_MAX_WAIT,
+  REVEAL_OBSERVER,
+  REVEAL_OFF,
+  REVEAL_STAGGER,
+} from './reveal'
 
 /** Phones only: from 768px up the list is the plain grid and Embla is off. */
 const CAROUSEL_OFF = '(min-width: 768px)'
@@ -114,6 +124,13 @@ const Dots: React.FC<{ index: number; count: number }> = ({ index, count }) => {
  *
  * The cards themselves (the `<li>`s) are rendered by the server component and
  * passed in as children; `listClassName` carries the grid layout for 768px up.
+ *
+ * Reveal (768px up; see reveal.ts): each card is marked `data-shown` as it
+ * comes into view, which lets it rise and fade in. Cards arriving together
+ * (on load, or a fast scroll) go in reading order, one every 0.05s; a group
+ * arriving while the previous one is still starting follows on from it, but
+ * waits at most 0.1s for it, so even a fast scroll never leaves a card on
+ * screen waiting long.
  */
 export const PressCarousel: React.FC<{
   count: number
@@ -218,6 +235,57 @@ export const PressCarousel: React.FC<{
       else delete li.dataset.current
     })
   }, [active, index])
+
+  // The card reveal. On a full page load START_REVEAL (an inline script) has
+  // already started it: take its observer over, so it stops when the page is
+  // left. After a client-side navigation (no inline scripts) start it here, in
+  // a layout effect, so the cards are hidden before the browser draws them.
+  useLayoutEffect(() => {
+    const html = document.documentElement
+    const list = listRef.current as
+      | (HTMLUListElement & { [REVEAL_OBSERVER]?: IntersectionObserver })
+      | null
+    const items = Array.from(list?.children ?? []) as HTMLElement[]
+    const clear = () =>
+      [REVEAL, REVEAL_LIVE, REVEAL_OFF].forEach((name) => html.removeAttribute(name))
+    const started = list?.[REVEAL_OBSERVER]
+    if (list && started) {
+      delete list[REVEAL_OBSERVER]
+      return () => {
+        started.disconnect()
+        clear()
+      }
+    }
+    // The safety net already showed every card, or the browser cannot tell
+    // what is on screen: leave every card as it is, shown.
+    if (html.hasAttribute(REVEAL_OFF) || typeof IntersectionObserver === 'undefined') return clear
+    html.setAttribute(REVEAL, '')
+    html.setAttribute(REVEAL_LIVE, '')
+    let next = 0 // when the next card may start (performance.now() time)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const now = performance.now()
+        let start = now + Math.min(Math.max(next - now, 0), REVEAL_MAX_WAIT)
+        entries
+          .filter((entry) => entry.isIntersecting)
+          .map((entry) => entry.target as HTMLElement)
+          .sort((a, b) => items.indexOf(a) - items.indexOf(b))
+          .forEach((li) => {
+            observer.unobserve(li)
+            li.style.transitionDelay = `${Math.round(start - now)}ms`
+            li.dataset.shown = ''
+            next = start + REVEAL_STAGGER
+            start = next
+          })
+      },
+      { rootMargin: REVEAL_MARGIN },
+    )
+    items.filter((li) => !li.hasAttribute('data-shown')).forEach((li) => observer.observe(li))
+    return () => {
+      observer.disconnect()
+      clear()
+    }
+  }, [])
 
   // The automatic sliding: the next card AUTO_DELAY after the last change.
   // Never under a finger: while one is down, the turn waits for another delay.

@@ -5,6 +5,7 @@ import type { PressGridBlock as PressGridBlockProps } from '@/payload-types'
 import { Media } from '@/components/Media'
 
 import { PressCarousel } from './PressCarousel'
+import { ARM_REVEAL, START_REVEAL } from './reveal'
 
 type Item = NonNullable<PressGridBlockProps['items']>[number]
 
@@ -73,6 +74,61 @@ const dayKey = (value: Item['date']): string => {
  * 4.4:1, under the 4.5:1 that 18px regular text needs.
  */
 /**
+ * Card hover (computers and tablets with a mouse or trackpad only, i.e.
+ * (hover: hover); phones and touch screens never see it): pointing at a card,
+ * or tabbing to its link with the keyboard, enlarges the whole card 5% from its
+ * centre (photo and text together; it grows into the gap around it, so nothing
+ * else moves) and lifts it off the page: a white surface 0.75em larger than the
+ * card (CARD_SURFACE) fades in behind it, carrying a soft shadow. With "reduce
+ * motion" the card does not enlarge; the surface and shadow still fade in.
+ * Smooth by construction: only transform and opacity animate (the browser
+ * moves and fades the card without repainting it every frame), both over 0.7s
+ * on ease-in-out, cubic-bezier(0.4, 0, 0.2, 1): a soft start and a soft
+ * landing. The card rises above its neighbours at once, and on the way back
+ * keeps that place until it has settled (z-index changes in one step after
+ * 0.7s, not frame by frame, which would repaint every step). z-0 makes the
+ * card its own layer, which keeps the surface behind the card's content; the
+ * surface ignores the pointer, so only the card reacts to it.
+ * Phones keep only `relative` on the card and never display the surface (an
+ * empty span), so nothing changes there.
+ * Keyboard focus is :focus-visible (via :has), so clicking "Read the full
+ * story" with the mouse does not leave the card raised after the pointer
+ * moves away.
+ */
+const CARD_HOVER = [
+  'relative [@media(hover:hover)]:z-0 [@media(hover:hover)]:[transition:transform_700ms_cubic-bezier(0.4,0,0.2,1),z-index_0s_700ms]',
+  '[@media(hover:hover)]:hover:z-10 [@media(hover:hover)]:has-[a:focus-visible]:z-10',
+  '[@media(hover:hover)]:hover:[transition:transform_700ms_cubic-bezier(0.4,0,0.2,1),z-index_0s]',
+  '[@media(hover:hover)]:has-[a:focus-visible]:[transition:transform_700ms_cubic-bezier(0.4,0,0.2,1),z-index_0s]',
+  '[@media(hover:hover)]:hover:scale-105 [@media(hover:hover)]:has-[a:focus-visible]:scale-105',
+  'motion-reduce:[@media(hover:hover)]:hover:scale-100 motion-reduce:[@media(hover:hover)]:has-[a:focus-visible]:scale-100',
+].join(' ')
+const CARD_SURFACE = [
+  'pointer-events-none absolute -inset-[0.75em] -z-10 hidden bg-white opacity-0 [@media(hover:hover)]:block',
+  'shadow-[0_2px_6px_rgba(0,0,0,0.04),0_14px_32px_-12px_rgba(0,0,0,0.16),0_30px_60px_-24px_rgba(0,0,0,0.24)]',
+  'transition-opacity duration-700 ease-in-out',
+  'group-hover/card:opacity-100 group-has-[a:focus-visible]/card:opacity-100',
+].join(' ')
+
+/**
+ * Card reveal (see reveal.ts): from 768px up, on screen (not when printing)
+ * and without "reduce motion", a card not yet shown waits 30px low and
+ * transparent while <html> carries data-press-reveal; once PressCarousel marks
+ * it data-shown it rises and fades in over 0.8s on ease-in-out,
+ * cubic-bezier(0.4, 0, 0.2, 1), the card hover's curve: a soft start and a
+ * long, soft landing (the site's GSAP 0.9s power3.out was measured to jump a
+ * card to 44% visible in its first 0.13s, which reads as a pop). The delay
+ * that makes them follow one another is set per card by PressCarousel. Shown,
+ * a card has no transform or opacity left, so the page at rest is unchanged,
+ * and the card hover works as before.
+ */
+const REVEAL = [
+  'md:motion-safe:[@media_screen]:[transition:opacity_800ms_cubic-bezier(0.4,0,0.2,1),transform_800ms_cubic-bezier(0.4,0,0.2,1)]',
+  'md:motion-safe:[@media_screen]:[html[data-press-reveal]_&:not([data-shown])]:translate-y-[30px]',
+  'md:motion-safe:[@media_screen]:[html[data-press-reveal]_&:not([data-shown])]:opacity-0',
+].join(' ')
+
+/**
  * Text entrance on the phone carousel: each slide carries data-current (set by
  * PressCarousel, phones only). The text of the other cards waits 12px low and
  * transparent; when a card becomes current its date, publication, summary and
@@ -122,6 +178,8 @@ export const PressGridBlock: React.FC<PressGridBlockProps> = ({
         'pt-4 lg:pt-[max(1rem,calc(10.833*var(--pp-vw)_-_3rem_-_0.4202*var(--fs-body)))] pb-8 md:pb-12',
       ].join(' ')}
     >
+      {/* Hides the cards before the browser first draws them (reveal.ts). */}
+      <script dangerouslySetInnerHTML={{ __html: ARM_REVEAL }} />
       <PressCarousel
         count={cards.length}
         listClassName={[
@@ -140,9 +198,14 @@ export const PressGridBlock: React.FC<PressGridBlockProps> = ({
           return (
             <li
               key={item.id ?? index}
-              className="group m-0 min-w-0 shrink-0 grow-0 basis-full px-9 py-0 md:basis-auto md:p-0"
+              // START_REVEAL marks the card (data-shown, its delay) before React
+              // takes the page over; React leaves both alone.
+              suppressHydrationWarning
+              className={`group m-0 min-w-0 shrink-0 grow-0 basis-full px-9 py-0 md:basis-auto md:p-0 ${REVEAL}`}
             >
-              <article className="mx-auto flex h-full w-full max-w-[360px] flex-col font-body text-[length:var(--pg-fs)] leading-[1.5] md:max-w-none">
+              <article
+                className={`group/card mx-auto flex h-full w-full max-w-[360px] flex-col font-body text-[length:var(--pg-fs)] leading-[1.5] md:max-w-none ${CARD_HOVER}`}
+              >
                 <div className="relative aspect-[377/524] w-full overflow-hidden">
                   {item.image && typeof item.image === 'object' && (
                     <Media
@@ -180,11 +243,15 @@ export const PressGridBlock: React.FC<PressGridBlockProps> = ({
                     </a>
                   </p>
                 )}
+                {/* the hover surface (CARD_SURFACE); -z-10 keeps it behind the card */}
+                <span aria-hidden="true" className={CARD_SURFACE} />
               </article>
             </li>
           )
         })}
       </PressCarousel>
+      {/* Starts revealing the cards at once, before the page's script (reveal.ts). */}
+      <script dangerouslySetInnerHTML={{ __html: START_REVEAL }} />
     </div>
   )
 }
