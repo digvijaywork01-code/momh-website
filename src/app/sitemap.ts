@@ -31,6 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/privacy-policy',
     '/terms',
     '/accessibility',
+    '/press',
   ]
 
   return routes.map((route) => ({

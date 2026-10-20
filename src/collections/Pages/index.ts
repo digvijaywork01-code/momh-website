@@ -29,6 +29,7 @@ import { QuestionPanel } from '../../blocks/QuestionPanel/config'
 import { AppointmentForm } from '../../blocks/AppointmentForm/config'
 import { Divider } from '../../blocks/Divider/config'
 import { TextSection } from '../../blocks/TextSection/config'
+import { PressGrid } from '../../blocks/PressGrid/config'
 import { hero } from '@/heros/config'
 import { slugField } from '@/fields/slug'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -120,6 +121,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 AppointmentForm,
                 TextSection,
                 Divider,
+                PressGrid,
                 CallToAction,
                 Content,
                 MediaBlock,

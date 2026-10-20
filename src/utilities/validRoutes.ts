@@ -32,6 +32,7 @@ export const VALID_ROUTES: ReadonlySet<string> = new Set([
   '/thank-you',
   '/terms',
   '/privacy-policy',
+  '/press',
 ])
 
 /**

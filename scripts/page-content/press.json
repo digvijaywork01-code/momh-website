@@ -1,0 +1,1521 @@
+{
+ "title": "The Museum in the Press",
+ "slug": "press",
+ "slugLock": false,
+ "hero": {
+  "type": "none"
+ },
+ "meta": {
+  "description": "Press coverage of the Museum of Meenakari Heritage at Shekhawat Haveli, Jaipur, since it opened in March 2024, newest first, with press and image requests and the Museum at a glance.",
+  "image": "__OG_MEDIA_ID__"
+ },
+ "layout": [
+  {
+   "blockType": "sectionIntro",
+   "backgroundColor": "white",
+   "showTopDivider": false,
+   "headingStyle": "display",
+   "bodyWidth": "normal",
+   "tightTop": false,
+   "tightBottom": true,
+   "headline": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The Museum in the ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "Press",
+         "format": 2,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Since March 2024, when the Museum of Meenakari Heritage opened at Shekhawat Haveli, writers in India and abroad have turned their attention to its galleries and to the craft they honour. Gathered here is a selection of that coverage, newest first, each piece linked to the publication’s own page and carrying the date that publication gives it. If we have missed a piece, or a detail on this page needs correcting, please write to us at ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "ab921bb51b1c51f496adb663",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": ".",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "For the Press",
+   "heading": "For the Press",
+   "listWidth": "full",
+   "justifyLastLine": "left",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Press and image requests.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " For press, editorial or image requests, please write to ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "ab921bb51b1c51f496adb663",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " with the name of the publication and your deadline.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Visiting for a story.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " Entry to the Museum is by prior appointment only. To visit, please book through ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "4720aec0fc215223a007be4f",
+         "fields": {
+          "linkType": "custom",
+          "url": "/book-an-appointment",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "Book Your Appointment",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1,
+           "$": {
+            "color": "red"
+           }
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " or write to us.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "justify",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Images and works by others.",
+         "format": 1,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " We can supply only the images we have the right to share. Some photographs of our galleries show works that may belong to others, such as archival images, an antique map and paintings. Any rights in those works remain with their owners, and nothing on this website gives permission to reuse them.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Coverage",
+   "heading": "Coverage",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The line beneath each publication is our own short summary of the piece.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "pressGrid",
+   "blockName": "Coverage",
+   "order": "newest",
+   "linkLabel": "Read the full story",
+   "items": [
+    {
+     "image": "__MEDIA:momh-press-01.jpg__",
+     "date": "2026-01-14T12:00:00.000Z",
+     "publication": "Condé Nast Traveller India",
+     "summary": "A Jaipur shopping guide with an entry on the Museum and the flagship boutique of The House of Sunita Shekhawat, both at Shekhawat Haveli.",
+     "url": "https://www.cntraveller.in/story/best-places-to-shop-in-jaipur/"
+    },
+    {
+     "image": "__MEDIA:momh-press-02.jpg__",
+     "date": "2025-10-06T12:00:00.000Z",
+     "publication": "India Today Travel Plus",
+     "summary": "A round-up of new experiences in the city, with a paragraph of its own on what the Museum shows.",
+     "url": "https://www.indiatoday.in/magazine/travel-plus/story/20251006-whats-new-in-jaipur-2793084-2025-09-26"
+    },
+    {
+     "image": "__MEDIA:momh-press-03.jpg__",
+     "date": "2025-09-24T12:00:00.000Z",
+     "publication": "Solitaire International (GJEPC)",
+     "summary": "An interview with Sunita Shekhawat on founding and running the Museum, from its curation and reproductions to its plans.",
+     "url": "https://gjepc.org/solitaire/sunita-shekhawats-museum-of-meenakari-a-labour-of-love/"
+    },
+    {
+     "image": "__MEDIA:momh-press-04.jpg__",
+     "date": "2025-09-07T12:00:00.000Z",
+     "publication": "Architectural Digest India",
+     "summary": "On the Museum’s new line of enamelled objects for collectors, and the installations at the Museum that presented them.",
+     "url": "https://www.architecturaldigest.in/story/meenakari-like-youve-never-seen-it-before-in-jaipurs-new-collectible-design-gallery-sunita-shekhawat-museum-of-meenakari-heritage/"
+    },
+    {
+     "image": "__MEDIA:momh-press-05.jpg__",
+     "date": "2025-09-04T12:00:00.000Z",
+     "publication": "ELLE India",
+     "summary": "A visit to Jaipur at the launch of the Museum’s new collectible enamel pieces, with a headed section on the Museum as a keeper of the craft.",
+     "url": "https://elle.in/life-culture/in-jaipur-craft-is-a-family-inheritance-meenakari-and-the-making-of-collectibles-9780057"
+    },
+    {
+     "image": "__MEDIA:momh-press-06.jpg__",
+     "date": "2025-08-20T12:00:00.000Z",
+     "publication": "Whitewall",
+     "summary": "A feature on the Museum and its first collection of enamelled objects.",
+     "url": "https://whitewall.art/art/the-museum-of-meenakari-heritage/"
+    },
+    {
+     "image": "__MEDIA:momh-press-07.jpg__",
+     "date": "2025-08-16T12:00:00.000Z",
+     "publication": "India Herald",
+     "summary": "A report on the collectible enamel pieces launched at the Museum, with a look back at its first year.",
+     "url": "https://www.indiaherald.com/Breaking/Read/994842062/Sunita-Shekhawat-Redefines-Meenakari-As-Collectible-Art"
+    },
+    {
+     "image": "__MEDIA:momh-press-08.jpg__",
+     "date": "2025-02-15T12:00:00.000Z",
+     "publication": "Lonely Planet",
+     "summary": "A list of unusual museums across India, in which the Museum has a numbered entry of its own.",
+     "url": "https://www.lonelyplanet.com/articles/best-offbeat-museums-in-india"
+    },
+    {
+     "image": "__MEDIA:momh-press-09.jpg__",
+     "date": "2025-02-12T12:00:00.000Z",
+     "publication": "UNI Journals",
+     "summary": "An architecture essay on the building that houses the Museum, and on how it links craft to the story of the House.",
+     "url": "https://uni.xyz/journals/museum-of-meenakari-heritage-flagship-st"
+    },
+    {
+     "image": "__MEDIA:momh-press-10.jpg__",
+     "date": "2024-12-11T12:00:00.000Z",
+     "publication": "The Realty Today",
+     "summary": "A real estate news feature on the carved stone façade, with a passage on the meenakari gallery inside.",
+     "url": "https://therealtytoday.com/news/architecture/studio-lotus-redesigns-jewelry-stores-facade-in-jaipur-with-hand-carved-sandstone/"
+    },
+    {
+     "image": "__MEDIA:momh-press-11.jpg__",
+     "date": "2024-11-11T12:00:00.000Z",
+     "publication": "Designboom",
+     "summary": "An architecture feature on Studio Lotus’s design for the building, with headed sections on the Museum.",
+     "url": "https://www.designboom.com/architecture/hand-carved-red-sandstone-jewelry-store-facade-studio-lotus-jaipur-museum-meenakari-11-11-2024/"
+    },
+    {
+     "image": "__MEDIA:momh-press-12.jpg__",
+     "date": "2024-11-10T12:00:00.000Z",
+     "publication": "Condé Nast Traveller India",
+     "summary": "A round-up of new openings in Jaipur, with an entry on the Museum and the House’s flagship boutique that quotes the founder.",
+     "url": "https://www.cntraveller.in/story/whats-new-in-jaipur-hotels-bars-ateliers-experiences/"
+    },
+    {
+     "image": "__MEDIA:momh-press-13.jpg__",
+     "date": "2024-10-08T12:00:00.000Z",
+     "publication": "Solitaire International (GJEPC)",
+     "summary": "A profile of Niharika Shekhawat and Digvijay Shekhawat, with questions and answers on how the Museum came to be.",
+     "url": "https://gjepc.org/solitaire/legacy-of-leadership-niharika-shekhawat-digvijay-shekhawat/"
+    },
+    {
+     "image": "__MEDIA:momh-press-14.jpg__",
+     "date": "2024-06-27T12:00:00.000Z",
+     "publication": "Condé Nast Traveller Middle East",
+     "summary": "A travel story on how the Museum was curated, and on the images and reproductions it shows.",
+     "url": "https://www.cntravellerme.com/story/new-jaipur-museum-meenakari"
+    },
+    {
+     "image": "__MEDIA:momh-press-15.jpg__",
+     "date": "2024-06-09T12:00:00.000Z",
+     "publication": "ArchUp",
+     "summary": "An architecture listing that presents the Museum as a space for storytelling within the Studio Lotus building.",
+     "url": "https://archup.net/museum-of-meenakari-heritage/"
+    },
+    {
+     "image": "__MEDIA:momh-press-16.jpg__",
+     "date": "2024-06-09T12:00:00.000Z",
+     "publication": "Harper's Bazaar India",
+     "summary": "A feature on the Museum’s work to document enamelling in India, with the curator on the history of the craft.",
+     "url": "https://www.harpersbazaar.in/fashion/story/sunita-shekhawat-preserves-indias-enamelling-heritage-with-a-new-museum-in-jaipur-1021924-2024-06-09"
+    },
+    {
+     "image": "__MEDIA:momh-press-17.jpg__",
+     "date": "2024-05-07T12:00:00.000Z",
+     "publication": "Elle Decor India",
+     "summary": "On the Museum and its Studio Lotus building at Shekhawat Haveli, and on how the galleries present enamel craft.",
+     "url": "https://elledecor.in/museum-of-meenakari-heritage-designed-by-studio-lotus-opens-its-doors/"
+    },
+    {
+     "image": "__MEDIA:momh-press-18.jpg__",
+     "date": "2024-04-30T12:00:00.000Z",
+     "publication": "Grazia India",
+     "summary": "A piece on the Museum and the enamel craft it celebrates.",
+     "url": "https://www.grazia.co.in/fashion/jaipurs-museum-of-minakari-heritage-is-a-celebration-of-medieval-craft-12488.html"
+    },
+    {
+     "image": "__MEDIA:momh-press-19.jpg__",
+     "date": "2024-04-22T12:00:00.000Z",
+     "publication": "Condé Nast Traveller India",
+     "summary": "A guide to five new places in Jaipur, the Museum among them.",
+     "url": "https://www.cntraveller.in/story/5-new-places-to-check-out-on-your-next-trip-to-jaipur/"
+    },
+    {
+     "image": "__MEDIA:momh-press-20.jpg__",
+     "date": "2024-04-22T12:00:00.000Z",
+     "publication": "Platform",
+     "summary": "A design feature on the Museum and the flagship building, with a section on the gallery.",
+     "url": "https://www.platform-mag.com/design/museum-of-meenakari-heritage-and-flagship-store-for-sunita-shekhawat.html"
+    },
+    {
+     "image": "__MEDIA:momh-press-21.jpg__",
+     "date": "2024-04-16T12:00:00.000Z",
+     "publication": "Homegrown",
+     "summary": "An introduction to the Museum, its displays and what it sets out to do.",
+     "url": "https://homegrown.co.in/homegrown-explore/step-inside-indias-first-heritage-museum-dedicated-to-the-indian-craft-of-meenakari"
+    },
+    {
+     "image": "__MEDIA:momh-press-22.jpg__",
+     "date": "2024-04-16T12:00:00.000Z",
+     "publication": "Travel Peacock Magazine",
+     "summary": "A travel feature on visiting the Museum at Shekhawat Haveli and what it displays.",
+     "url": "https://www.travelpeacockmagazine.com/immerse-in-magic-of-meenakari-at-this-one-of-a-kind-jewellery-museum-in-jaipur/"
+    },
+    {
+     "image": "__MEDIA:momh-press-23.jpg__",
+     "date": "2024-04-15T12:00:00.000Z",
+     "publication": "Deccan Chronicle",
+     "summary": "A profile of the Museum: why it was founded, its reproductions and images, and its aim of preserving the craft.",
+     "url": "https://www.deccanchronicle.com/tabloid/hyderabad-chronicle/the-magic-of-meenakari-889556"
+    },
+    {
+     "image": "__MEDIA:momh-press-24.jpg__",
+     "date": "2024-04-06T12:00:00.000Z",
+     "publication": "Architectural Digest India",
+     "summary": "A design-led feature on the Museum and the haveli, from its architecture and interiors to its curation and the route through the galleries.",
+     "url": "https://www.architecturaldigest.in/story/sunita-shekhawats-meenakari-museum-palace-of-discoveries-an-ode-to-jaipur-and-the-art-of-enamelling-studio-lotus/"
+    },
+    {
+     "image": "__MEDIA:momh-press-25.jpg__",
+     "date": "2024-04-05T12:00:00.000Z",
+     "publication": "JaipurStuff",
+     "summary": "A city report on the opening, the gallery, its materials and the features planned for visitors.",
+     "url": "https://www.jaipurstuff.com/museum-of-meenakari-heritage-a-new-jewelry-museum-opens-in-jaipur/"
+    },
+    {
+     "image": "__MEDIA:momh-press-26.jpg__",
+     "date": "2024-04-05T12:00:00.000Z",
+     "publication": "The Established",
+     "summary": "A look at Jaipur’s craft heritage, with a dedicated section on the Museum and the work on show.",
+     "url": "https://www.theestablished.com/style/fashion/preserving-meenakari-in-jaipur-contributes-to-safeguarding-rajasthans-jewellery-heritage"
+    },
+    {
+     "image": "__MEDIA:momh-press-27.jpg__",
+     "date": "2024-04-02T12:00:00.000Z",
+     "publication": "Condé Nast Traveller India",
+     "summary": "The launch story, with the Museum’s curator and designers and the history of enamelling it traces.",
+     "url": "https://www.cntraveller.in/story/a-first-of-its-kind-meenakari-jewellery-museum-opens-in-jaipur/"
+    },
+    {
+     "image": "__MEDIA:momh-press-28.jpg__",
+     "date": "2024-04-01T12:00:00.000Z",
+     "publication": "The Voice of Fashion",
+     "summary": "An essay on the Museum’s opening and on the part a new craft museum can play in public life.",
+     "url": "https://www.thevoiceoffashion.com/fabric-of-india/features/speaking-in-meenakari-at-a-new-museum-in-jaipur--5881"
+    },
+    {
+     "image": "__MEDIA:momh-press-29.jpg__",
+     "date": "2024-03-28T12:00:00.000Z",
+     "publication": "The Week",
+     "summary": "A report on the opening, covering the curation, layout and displays, and the history of enamelling.",
+     "url": "https://www.theweek.in/leisure/society/2024/03/27/a-new-museum-in-jaipur-trains-the-spotlight-on-2000-year-old-art-of-minakari-enamelling.html"
+    },
+    {
+     "image": "__MEDIA:momh-press-30.jpg__",
+     "date": "2024-03-28T12:00:00.000Z",
+     "publication": "Indian Jeweller",
+     "summary": "A trade report on the opening, setting out key facts about the Museum, its founder and its curator.",
+     "url": "https://www.indianjeweller.in/Indian-Jewellery-News/14734/hey-jaipur-has-a-new-museum-and-its-all-about-meenakari"
+    },
+    {
+     "image": "__MEDIA:momh-press-31.jpg__",
+     "date": "2024-03-27T12:00:00.000Z",
+     "publication": "The Hindu",
+     "summary": "A story from the opening week on the Museum, its curation, the House’s work with enamel colour and the history of the craft.",
+     "url": "https://www.thehindu.com/life-and-style/luxury/museum-of-meenakari-heritage-jaipurs-newest-gem-sunita-shekhawat-momh/article67997618.ece"
+    },
+    {
+     "image": "__MEDIA:momh-press-32.jpg__",
+     "date": "2024-03-27T12:00:00.000Z",
+     "publication": "Dainik Bhaskar",
+     "summary": "A report in Hindi on the Museum’s opening in Jaipur and on the historian who curated it.",
+     "url": "https://www.bhaskar.com/local/rajasthan/jaipur/news/heritage-museum-will-showcase-the-rich-heritage-of-meenakari-132782731.html"
+    },
+    {
+     "image": "__MEDIA:momh-press-33.jpg__",
+     "date": "2024-03-27T12:00:00.000Z",
+     "publication": "All About Jaipur",
+     "summary": "A city report on the opening in C-Scheme, the House behind the Museum and what visitors will see.",
+     "url": "https://allaboutjaipur.com/the-countrys-first-ever-museum-of-meenakari-heritage-now-open-in-jaipur/8168/"
+    },
+    {
+     "image": "__MEDIA:momh-press-34.jpg__",
+     "date": "2024-03-15T12:00:00.000Z",
+     "publication": "Mint Lounge",
+     "summary": "A preview of the Museum ahead of its opening: its curation, its reproductions of jewels now held in collections abroad, and its haveli setting.",
+     "url": "https://www.livemint.com/mint-lounge/style/meenakari-museum-jaipur-sunita-shekhawat-jewellery-history-enamelling-mughal-111710417228358.html"
+    }
+   ]
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "The Museum at a Glance",
+   "heading": "The Museum at a Glance",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "list",
+       "listType": "bullet",
+       "start": 1,
+       "tag": "ul",
+       "direction": "ltr",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "listitem",
+         "value": 1,
+         "children": [
+          {
+           "type": "text",
+           "text": "Name :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "Museum of Meenakari Heritage (MOMH).",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 2,
+         "children": [
+          {
+           "type": "text",
+           "text": "Setting :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "The ground floor of Shekhawat Haveli in C-Scheme, Jaipur, a building that also houses the flagship boutique of The House of Sunita Shekhawat.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 3,
+         "children": [
+          {
+           "type": "text",
+           "text": "Opened :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "March 2024.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 4,
+         "children": [
+          {
+           "type": "text",
+           "text": "Founder :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "Sunita Shekhawat.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 5,
+         "children": [
+          {
+           "type": "text",
+           "text": "Curator :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "Dr. Usha R. Balakrishnan, jewellery historian.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 6,
+         "children": [
+          {
+           "type": "text",
+           "text": "Exhibition design :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "Siddhartha Das Studio.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 7,
+         "children": [
+          {
+           "type": "text",
+           "text": "Size :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "More than 3,000 sq ft, including a 2,200 sq ft gallery.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 8,
+         "children": [
+          {
+           "type": "text",
+           "text": "Architecture :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "A building carved by hand in Jodhpur red sandstone, reworked by Studio Lotus.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 9,
+         "children": [
+          {
+           "type": "text",
+           "text": "Collection :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "More than 300 archival images from over 30 museums, collections, galleries and auction houses worldwide, 120 faithful reproductions by the House, and 60 original creations by Sunita Shekhawat.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 10,
+         "children": [
+          {
+           "type": "text",
+           "text": "Labels :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "All exhibits carry bilingual labels in English and Hindi.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 11,
+         "children": [
+          {
+           "type": "text",
+           "text": "What it covers :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "The journey of enamelling from Renaissance Europe to the royal courts of Jaipur, the making of a jewel from raw gold sheet to finished piece, and the karigars whose hands have kept the craft alive.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 12,
+         "children": [
+          {
+           "type": "text",
+           "text": "Hours :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "Open daily, 10 am to 7:30 pm. Closed on select Indian public holidays.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 13,
+         "children": [
+          {
+           "type": "text",
+           "text": "Entry :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "By prior appointment only, through ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "link",
+           "version": 3,
+           "id": "4720aec0fc215223a007be4f",
+           "fields": {
+            "linkType": "custom",
+            "url": "/book-an-appointment",
+            "newTab": false
+           },
+           "children": [
+            {
+             "type": "text",
+             "text": "Book Your Appointment",
+             "format": 0,
+             "style": "",
+             "mode": "normal",
+             "detail": 0,
+             "version": 1
+            }
+           ],
+           "direction": "ltr",
+           "format": "",
+           "indent": 0
+          },
+          {
+           "type": "text",
+           "text": ". Our team confirms each slot within 24 hours. There is no admission fee, and no tickets are sold at the door.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 14,
+         "children": [
+          {
+           "type": "text",
+           "text": "Length of visit :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "Most visits take 60 to 90 minutes. Private guided walkthroughs can be requested at the time of booking.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 15,
+         "children": [
+          {
+           "type": "text",
+           "text": "Access :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "Fully wheelchair accessible, with ramps and elevator access throughout.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 16,
+         "children": [
+          {
+           "type": "text",
+           "text": "Photography :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": "Permitted in select zones. Flash and video are not permitted.",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        },
+        {
+         "type": "listitem",
+         "value": 17,
+         "children": [
+          {
+           "type": "text",
+           "text": "Instagram :",
+           "format": 1,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "text",
+           "text": " ",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          },
+          {
+           "type": "link",
+           "version": 3,
+           "id": "537b7732240f55928249e656",
+           "fields": {
+            "linkType": "custom",
+            "url": "https://www.instagram.com/momh_india/",
+            "newTab": true
+           },
+           "children": [
+            {
+             "type": "text",
+             "text": "@momh_india",
+             "format": 0,
+             "style": "",
+             "mode": "normal",
+             "detail": 0,
+             "version": 1
+            }
+           ],
+           "direction": "ltr",
+           "format": "",
+           "indent": 0
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0,
+         "version": 1
+        }
+       ]
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Thank you for your interest in the Museum and in the art of meenakari. If you have a question that this page does not answer, write to us at ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "ab921bb51b1c51f496adb663",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " and we will gladly help.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Contact",
+   "heading": "Contact",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Museum of Meenakari Heritage",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "(Operated by Midas Signature Jewellery Private Limited, which also operates sunitashekhawat.com)",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "Shekhawat Haveli, E141, Sardar Patel Marg, Durgadas Colony, C-Scheme, Ashok Nagar, Jaipur 302001, Rajasthan, India",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Email: ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "ab921bb51b1c51f496adb663",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "Phone: ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "d63e2efc3d01511a8fa85c5a",
+         "fields": {
+          "linkType": "custom",
+          "url": "tel:+916377490417",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "+91 6377 490 417",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  }
+ ]
+}

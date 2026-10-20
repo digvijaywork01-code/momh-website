@@ -29,6 +29,7 @@ import { QuestionPanelBlock } from '@/blocks/QuestionPanel/Component'
 import { AppointmentFormBlock } from '@/blocks/AppointmentForm/Component'
 import { TextSectionBlock } from '@/blocks/TextSection/Component'
 import { DividerBlock } from '@/blocks/Divider/Component'
+import { PressGridBlock } from '@/blocks/PressGrid/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -58,6 +59,7 @@ const blockComponents = {
   appointmentForm: AppointmentFormBlock,
   textSection: TextSectionBlock,
   divider: DividerBlock,
+  pressGrid: PressGridBlock,
 }
 
 export const RenderBlocks: React.FC<{
