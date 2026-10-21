@@ -30,6 +30,7 @@ import { AppointmentForm } from '../../blocks/AppointmentForm/config'
 import { Divider } from '../../blocks/Divider/config'
 import { TextSection } from '../../blocks/TextSection/config'
 import { PressGrid } from '../../blocks/PressGrid/config'
+import { SiteMap } from '../../blocks/SiteMap/config'
 import { ReviewCarousel } from '../../blocks/ReviewCarousel/config'
 import { hero } from '@/heros/config'
 import { slugField } from '@/fields/slug'
@@ -123,6 +124,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 TextSection,
                 Divider,
                 PressGrid,
+                SiteMap,
                 ReviewCarousel,
                 CallToAction,
                 Content,

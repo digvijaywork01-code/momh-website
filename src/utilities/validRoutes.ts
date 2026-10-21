@@ -26,6 +26,7 @@ export const VALID_ROUTES: ReadonlySet<string> = new Set([
   '/contact',
   '/craft-your-jewellery',
   '/faq',
+  '/sitemap',
   '/accessibility',
   '/museum-guidelines',
   '/personal-consultation',

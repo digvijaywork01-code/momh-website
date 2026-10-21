@@ -15,6 +15,15 @@
  * was edited in the admin since, it differs and stops the run: then add Press
  * alone with ONLY=press ALLOW_PARTIAL=1 (their routes are already live).
  *
+ * SITEMAP (feat/sitemap-page) brings a migration again: the Site Map block's
+ * new tables (MIGRATION below). Follow ORDER from step 1: migrate production,
+ * then the dry run (pages already live print "already there and identical,
+ * skip", sitemap prints "will add"), APPLY, and deploy straight after. Its
+ * Cookies Policy and Testimonials links are live from day one and show "page
+ * not found" until those pages are released; nothing needs doing on the
+ * Sitemap when they are. After the deploy: /sitemap returns 200 and the
+ * footer's Sitemap is a link.
+ *
  * ORDER, so no visitor ever sees "page not found":
  *   0. The release ships every page here at once (routes and footer links in
  *      one deploy), so every page's wording must be signed off first, the
@@ -128,8 +137,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 // The newest migration these pages need (Review Carousel; it comes after
-// 20261017_100728_press_grid_block and 20261016_104012_contact_page_fields,
-// so those are applied too).
+// 20261021_093343_site_map_block, the Press Grid and
+// 20261016_104012_contact_page_fields, so those are applied too).
 const MIGRATION = '20261021_115510_review_carousel_block'
 // Placeholders a page's JSON may use, and the media file each one stands for.
 const MEDIA: Record<string, string> = {

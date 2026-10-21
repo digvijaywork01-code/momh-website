@@ -77,10 +77,9 @@ const SUPPORT_LINKS: LinkColumn = {
     { label: 'Privacy Policy', href: '/privacy-policy' },
     { label: 'Cookies Policy', href: '/cookies-policy' },
     { label: 'Accessibility Statement', href: '/accessibility' },
-    // "Sitemap" → /sitemap returns HTTP 404 on prod (no route folder, no
-    // Page slug), so it stays disabled; the *real* sitemap lives at
-    // /sitemap.xml for crawlers, but that's not a human-facing route.
-    { label: 'Sitemap', href: '/sitemap', disabled: true },
+    // "Sitemap" is the page for people; /sitemap.xml, the list for crawlers,
+    // is a separate route.
+    { label: 'Sitemap', href: '/sitemap' },
   ],
 }
 
