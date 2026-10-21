@@ -15,6 +15,7 @@ import { IndentFeatureClient as IndentFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { OrderedListFeatureClient as OrderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { UnorderedListFeatureClient as UnorderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { RowLabel as RowLabel_465e6ddae87500be16ba745ecc7d0f77 } from '@/blocks/PressGrid/RowLabel'
+import { RowLabel as RowLabel_36cf8bfb72e8f6d1d56cd0af63022532 } from '@/blocks/ReviewCarousel/RowLabel'
 import { OverviewComponent as OverviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { MetaTitleComponent as MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { MetaImageComponent as MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
@@ -48,6 +49,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#OrderedListFeatureClient": OrderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#UnorderedListFeatureClient": UnorderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/blocks/PressGrid/RowLabel#RowLabel": RowLabel_465e6ddae87500be16ba745ecc7d0f77,
+  "@/blocks/ReviewCarousel/RowLabel#RowLabel": RowLabel_36cf8bfb72e8f6d1d56cd0af63022532,
   "@payloadcms/plugin-seo/client#OverviewComponent": OverviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#MetaTitleComponent": MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#MetaImageComponent": MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860,

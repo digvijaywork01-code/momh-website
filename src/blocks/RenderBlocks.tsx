@@ -30,6 +30,7 @@ import { AppointmentFormBlock } from '@/blocks/AppointmentForm/Component'
 import { TextSectionBlock } from '@/blocks/TextSection/Component'
 import { DividerBlock } from '@/blocks/Divider/Component'
 import { PressGridBlock } from '@/blocks/PressGrid/Component'
+import { ReviewCarouselBlock } from '@/blocks/ReviewCarousel/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -60,6 +61,7 @@ const blockComponents = {
   textSection: TextSectionBlock,
   divider: DividerBlock,
   pressGrid: PressGridBlock,
+  reviewCarousel: ReviewCarouselBlock,
 }
 
 export const RenderBlocks: React.FC<{

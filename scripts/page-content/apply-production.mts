@@ -1,6 +1,6 @@
 /**
  * PRODUCTION: adds the new MOMH pages (Contact Us, FAQ, Accessibility
- * Statement, Press) to the live database, from the same <slug>.json files the
+ * Statement, Press, and the later pages below) to the live database, from the same <slug>.json files the
  * local loader uses, so production gets exactly the pages reviewed on
  * localhost. Run by hand on a developer's machine, never on Vercel.
  *
@@ -22,8 +22,8 @@
  *      into its <slug>.json before step 2.
  *   1. From the reviewed branch, apply its migration to production first
  *      (`pnpm payload migrate` with production's DATABASE_URI). It only adds
- *      empty columns and the Press Grid's empty tables; the live site ignores
- *      them.
+ *      empty columns and empty tables (Press Grid, Review Carousel); the
+ *      live site ignores them.
  *   2. Run this script: a dry run, then APPLY (below), for EVERY page (no
  *      ONLY). The pages are added and published, but nobody can reach them
  *      yet: the live code has no /contact, /faq or /accessibility route.
@@ -77,6 +77,19 @@
  * report with the date. After it, check /cookies-policy returns 200, the
  * footer's Cookies Policy is a link, and a first visit shows the banner.
  *
+ * TESTIMONIALS (feat/testimonials-page) needs a migration, like Press: run
+ * step 1 (`pnpm payload migrate`, which adds the Review Carousel's empty
+ * tables) before this script, then the dry run, APPLY and the deploy straight
+ * after. testimonials.json links "Museum of Meenakari Heritage on Google"
+ * twice; until the Museum's Google address is known those two links are
+ * https://url-needed.invalid/ and this script stops. Put the address in both
+ * before the run. Also before it: the client confirms who wrote the sixth
+ * review (the design credits it to "Sandeep A." as well as the second), and
+ * holds each author's written agreement to the words and name shown, as the
+ * page says. ONLY=testimonials ALLOW_PARTIAL=1 if needed, as above. After the
+ * deploy, check /testimonials returns 200 and the footer's Testimonials is a
+ * link.
+ *
  * WHAT IT DOES
  *   - Dry run by default: prints what it would do and writes nothing.
  *   - Writes only with APPLY=1 and CONFIRM_DB=<the database name it prints>.
@@ -114,9 +127,10 @@ import { createRequire } from 'node:module'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
-// The newest migration these pages need (Press Grid; it comes after
-// 20261016_104012_contact_page_fields, so that one is applied too).
-const MIGRATION = '20261017_100728_press_grid_block'
+// The newest migration these pages need (Review Carousel; it comes after
+// 20261017_100728_press_grid_block and 20261016_104012_contact_page_fields,
+// so those are applied too).
+const MIGRATION = '20261021_115510_review_carousel_block'
 // Placeholders a page's JSON may use, and the media file each one stands for.
 const MEDIA: Record<string, string> = {
   __OG_MEDIA_ID__: 'og-momh.jpg', // the share image

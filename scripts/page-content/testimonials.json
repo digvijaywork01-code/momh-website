@@ -1,0 +1,666 @@
+{
+ "title": "The Museum in Visitors' Words",
+ "slug": "testimonials",
+ "slugLock": false,
+ "hero": {
+  "type": "none"
+ },
+ "meta": {
+  "description": "Reviews that visitors to the Museum of Meenakari Heritage at Shekhawat Haveli, Jaipur, have posted on Google, shown with their permission, and how to share your own.",
+  "image": "__OG_MEDIA_ID__"
+ },
+ "layout": [
+  {
+   "blockType": "sectionIntro",
+   "backgroundColor": "white",
+   "showTopDivider": false,
+   "headingStyle": "display",
+   "bodyWidth": "normal",
+   "tightTop": false,
+   "tightBottom": true,
+   "headline": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "Museum",
+         "format": 2,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": " in Visitors' Words",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Since March 2024, visitors have come to Shekhawat Haveli to follow the journey of enamelling from Renaissance Europe to the royal courts of Jaipur, and to see the art of meenakari up close. Gathered here, in their own words, are some of the reviews they have posted on Google after their visit, each shared with its author's permission.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "reviewCarousel",
+   "blockName": "Visitor Reviews",
+   "heading": "Visitor Reviews",
+   "reviews": [
+    {
+     "quote": "An absolutely breathtaking collection. One can't miss this museum on their visit to Jaipur. The Craft of Meenakari has been beautifully curated and explained. The tour was exceptional. Everything about the museum, including the Building screams Jaipur. […]",
+     "author": "Himashweta S.",
+     "details": "review on Google, 2 years ago"
+    },
+    {
+     "quote": "Amazing space, beautifully curated journey of Meenakari.",
+     "author": "Sandeep A.",
+     "details": "review on Google, a year ago"
+    },
+    {
+     "quote": "Great learning experience about the history of meenakari Enamelly.",
+     "author": "Pradeep K.",
+     "details": "review on Google, 2 years ago"
+    },
+    {
+     "quote": "I booked an appointment to visit the museum and learn about the art of enameling […]. The team walked me through the space, making the experience much better. Great place to learn and appreciate this unique art form!",
+     "author": "Abhilasha B.",
+     "details": "review on Google, 2 years ago"
+    },
+    {
+     "quote": "Really interesting museum, makes you appreciate indian cultural work. would 100% recommend to people interested in the arts. wonderful experience with very beautiful pieces",
+     "author": "Paulomi M.",
+     "details": "review on Google, 2 years ago"
+    },
+    {
+     "quote": "The place is beautiful and very peaceful and the collection is extraordinary. We have been lucky enough to benefit from a guided tour of the main pieces by a very knowledgeable and interesting member of the family owning the place. It really pays tribute to the finest Indian jewellery.",
+     "author": "Sandeep A.",
+     "details": "review on Google, a year ago"
+    }
+   ]
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "About These Reviews",
+   "heading": "About These Reviews",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "The reviews on this page are a selection of the favourable reviews that visitors have posted about the Museum on Google. We chose reviews that speak of the collection, the curation, the craft and the visit itself, and each appears only with its author's permission, in the words its author approved. Where we have shortened a review, with its author's agreement, […] marks the words left out. The age beside each review is the one Google showed on 8 October 2026. Not every review of the Museum is praise, and you can read all of them, including those that are critical, at ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "b83f165cc1bb420a17a4698e",
+         "fields": {
+          "linkType": "custom",
+          "url": "https://url-needed.invalid/",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "Museum of Meenakari Heritage on Google",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1,
+           "$": {
+            "color": "red"
+           }
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": ".",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Share Your Review",
+   "heading": "Share Your Review",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "If you have visited the Museum, we would value your review, whether it is praise, criticism or a suggestion. You can post it at ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "1f744367476212550dd57393",
+         "fields": {
+          "linkType": "custom",
+          "url": "https://url-needed.invalid/",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "Museum of Meenakari Heritage on Google",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1,
+           "$": {
+            "color": "red"
+           }
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": ", where reviews are published by Google, not by the Museum. We show a review on this website only when its author has agreed in writing to the exact words and to how their name appears. If you have agreed and later change your mind, write to us at ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "59b515cc07f710289ea0f56f",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " and we will promptly remove your words. How we handle your details is set out in our ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "a6b4a9ba8e5d90cb0ffe7e7d",
+         "fields": {
+          "linkType": "custom",
+          "url": "/privacy-policy",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "Privacy Policy",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1,
+           "$": {
+            "color": "red"
+           }
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": ".",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Visit the Museum",
+   "heading": "Visit the Museum",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Entry to the Museum is by prior appointment only, and there is no admission fee. To visit, please book through ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "45c61e0166230a9008fc339c",
+         "fields": {
+          "linkType": "custom",
+          "url": "/book-an-appointment",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "Book Your Appointment",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1,
+           "$": {
+            "color": "red"
+           }
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": ".",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      },
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Thank you for your interest in the Museum and in the art of meenakari. If you have a question that this page does not answer, write to us at ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "a2768db9b03e1479ab756d1d",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " and we will gladly help.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "heading": "Contact",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Museum of Meenakari Heritage",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "(Operated by Midas Signature Jewellery Private Limited, which also operates sunitashekhawat.com)",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": "Shekhawat Haveli, E141, Sardar Patel Marg, Durgadas Colony, C-Scheme, Ashok Nagar, Jaipur 302001, Rajasthan, India",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Email: ",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "id": "063516dcc36b7d4298a9825c",
+         "type": "link",
+         "fields": {
+          "url": "mailto:info@momhindia.org",
+          "newTab": false,
+          "linkType": "custom"
+         },
+         "format": "",
+         "indent": 0,
+         "version": 3,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "info@momhindia.org",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr"
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": "Phone: ",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "id": "fd6c630326eb538d9a18da07",
+         "type": "link",
+         "fields": {
+          "url": "tel:+916377490417",
+          "newTab": false,
+          "linkType": "custom"
+         },
+         "format": "",
+         "indent": 0,
+         "version": 3,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "+91 6377 490 417",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr"
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "blockName": "Contact",
+   "blockType": "textSection"
+  }
+ ]
+}

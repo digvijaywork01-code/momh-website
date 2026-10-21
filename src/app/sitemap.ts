@@ -33,6 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/terms',
     '/accessibility',
     '/press',
+    '/testimonials',
   ]
 
   return routes.map((route) => ({

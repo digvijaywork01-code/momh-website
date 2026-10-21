@@ -8,6 +8,7 @@ import * as migration_20260902_103528_flux_single_carousel from './20260902_1035
 import * as migration_20261007_121934_privacy_policy_blocks from './20261007_121934_privacy_policy_blocks';
 import * as migration_20261016_104012_contact_page_fields from './20261016_104012_contact_page_fields';
 import * as migration_20261017_100728_press_grid_block from './20261017_100728_press_grid_block';
+import * as migration_20261021_115510_review_carousel_block from './20261021_115510_review_carousel_block';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20261017_100728_press_grid_block.up,
     down: migration_20261017_100728_press_grid_block.down,
-    name: '20261017_100728_press_grid_block'
+    name: '20261017_100728_press_grid_block',
+  },
+  {
+    up: migration_20261021_115510_review_carousel_block.up,
+    down: migration_20261021_115510_review_carousel_block.down,
+    name: '20261021_115510_review_carousel_block'
   },
 ];
