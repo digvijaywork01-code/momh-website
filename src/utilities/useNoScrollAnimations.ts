@@ -30,6 +30,7 @@ const NO_ANIM_PATHS = [
   '/thank-you',
   '/privacy-policy',
   '/terms',
+  '/cookies-policy',
   '/contact',
   '/faq',
   '/accessibility',
