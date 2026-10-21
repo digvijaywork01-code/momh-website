@@ -1,0 +1,415 @@
+{
+ "title": "Sitemap",
+ "slug": "sitemap",
+ "slugLock": false,
+ "hero": {
+  "type": "none"
+ },
+ "meta": {
+  "description": "Every page on momhindia.org, the website of the Museum of Meenakari Heritage in Jaipur, in one list: the Museum, policies and help, and visiting.",
+  "image": "__OG_MEDIA_ID__"
+ },
+ "layout": [
+  {
+   "blockType": "sectionIntro",
+   "backgroundColor": "white",
+   "showTopDivider": false,
+   "headingStyle": "display",
+   "bodyWidth": "normal",
+   "tightTop": false,
+   "tightBottom": true,
+   "headline": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Site",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "text",
+         "text": "map",
+         "format": 2,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   },
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "This is a plain list of the pages on momhindia.org.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "siteMap",
+   "columns": [
+    {
+     "title": "About",
+     "icon": "info",
+     "links": [
+      {
+       "label": "Home",
+       "url": "/"
+      },
+      {
+       "label": "Our Story",
+       "url": "/about"
+      },
+      {
+       "label": "Founder's Vision",
+       "url": "/founders-vision"
+      },
+      {
+       "label": "The Art & Craftsmanship",
+       "url": "/art-and-craftsmanship"
+      },
+      {
+       "label": "The Architecture",
+       "url": "/architecture"
+      },
+      {
+       "label": "Press",
+       "url": "/press",
+       "caption": "The Museum in the Press"
+      },
+      {
+       "label": "Testimonials",
+       "url": "/testimonials",
+       "caption": "The Museum in Visitors' Words"
+      }
+     ]
+    },
+    {
+     "title": "Support",
+     "icon": "support",
+     "links": [
+      {
+       "label": "Contact Us",
+       "url": "/contact"
+      },
+      {
+       "label": "FAQ",
+       "url": "/faq"
+      },
+      {
+       "label": "Privacy Policy",
+       "url": "/privacy-policy"
+      },
+      {
+       "label": "Cookies Policy",
+       "url": "/cookies-policy"
+      },
+      {
+       "label": "Accessibility Statement",
+       "url": "/accessibility"
+      },
+      {
+       "label": "Terms of Use",
+       "url": "/terms"
+      }
+     ]
+    },
+    {
+     "title": "Visit",
+     "icon": "visit",
+     "links": [
+      {
+       "label": "Book Your Appointment",
+       "url": "/book-an-appointment"
+      },
+      {
+       "label": "Museum Guidelines",
+       "url": "/museum-guidelines"
+      },
+      {
+       "label": "Craft Your Jewellery",
+       "url": "/craft-your-jewellery"
+      },
+      {
+       "label": "Personal Consultation",
+       "url": "/personal-consultation"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Thank you",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "center",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "type": "text",
+         "text": "Thank you for your interest in the Museum and in the art of meenakari. If you cannot find what you are looking for, write to us at ",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        },
+        {
+         "type": "link",
+         "version": 3,
+         "id": "19d6f67cbbccbf258a72b7e5",
+         "fields": {
+          "linkType": "custom",
+          "url": "mailto:info@momhindia.org",
+          "newTab": false
+         },
+         "children": [
+          {
+           "type": "text",
+           "text": "info@momhindia.org",
+           "format": 0,
+           "style": "",
+           "mode": "normal",
+           "detail": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr",
+         "format": "",
+         "indent": 0
+        },
+        {
+         "type": "text",
+         "text": " and we will gladly help.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textFormat": 0,
+       "textStyle": ""
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
+  },
+  {
+   "blockType": "textSection",
+   "blockName": "Contact",
+   "heading": "Contact",
+   "listWidth": "full",
+   "justifyLastLine": "center",
+   "body": {
+    "root": {
+     "type": "root",
+     "format": "",
+     "indent": 0,
+     "version": 1,
+     "children": [
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Museum of Meenakari Heritage",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "(Operated by Midas Signature Jewellery Private Limited, which also operates sunitashekhawat.com)",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": "Shekhawat Haveli, E141, Sardar Patel Marg, Durgadas Colony, C-Scheme, Ashok Nagar, Jaipur 302001, Rajasthan, India",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      },
+      {
+       "type": "paragraph",
+       "format": "",
+       "indent": 0,
+       "version": 1,
+       "children": [
+        {
+         "mode": "normal",
+         "text": "Email: ",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "id": "88f94f9ed308453a7f233677",
+         "type": "link",
+         "fields": {
+          "url": "mailto:info@momhindia.org",
+          "newTab": false,
+          "linkType": "custom"
+         },
+         "format": "",
+         "indent": 0,
+         "version": 3,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "info@momhindia.org",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr"
+        },
+        {
+         "type": "linebreak",
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": "Phone: ",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "id": "42c8897f5c16f88b6020b74b",
+         "type": "link",
+         "fields": {
+          "url": "tel:+916377490417",
+          "newTab": false,
+          "linkType": "custom"
+         },
+         "format": "",
+         "indent": 0,
+         "version": 3,
+         "children": [
+          {
+           "mode": "normal",
+           "text": "+91 6377 490 417",
+           "type": "text",
+           "style": "",
+           "detail": 0,
+           "format": 0,
+           "version": 1
+          }
+         ],
+         "direction": "ltr"
+        }
+       ],
+       "direction": "ltr",
+       "textStyle": "",
+       "textFormat": 0
+      }
+     ],
+     "direction": "ltr"
+    }
+   }
+  }
+ ]
+}

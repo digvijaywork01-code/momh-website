@@ -27,6 +27,7 @@ const NO_ANIM_PATHS = [
   '/personal-consultation',
   '/museum-guidelines',
   '/book-an-appointment',
+  '/sitemap',
   '/thank-you',
   '/privacy-policy',
   '/terms',

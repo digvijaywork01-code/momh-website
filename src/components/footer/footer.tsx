@@ -73,13 +73,12 @@ const SUPPORT_LINKS: LinkColumn = {
     { label: 'Contact Us', href: '/contact' },
     { label: 'FAQ', href: '/faq' },
     { label: 'Privacy Policy', href: '/privacy-policy' },
-    // The disabled targets below return HTTP 404 on prod — no route
-    // folder, no Page slug. Disabled until the pages are built.
-    // ("Sitemap" → /sitemap is also 404; the *real* sitemap lives at
-    // /sitemap.xml for crawlers, but that's not a human-facing route.)
+    // Cookies Policy returns HTTP 404 on prod (no route folder, no Page
+    // slug), so it stays disabled until that page is built. "Sitemap" is
+    // the page for people; /sitemap.xml, the list for crawlers, is separate.
     { label: 'Cookies Policy', href: '/cookies-policy', disabled: true },
     { label: 'Accessibility Statement', href: '/accessibility' },
-    { label: 'Sitemap', href: '/sitemap', disabled: true },
+    { label: 'Sitemap', href: '/sitemap' },
   ],
 }
 

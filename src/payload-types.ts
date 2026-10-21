@@ -217,6 +217,7 @@ export interface Page {
     | TextSectionBlock
     | DividerBlock
     | PressGridBlock
+    | SiteMapBlock
     | CallToActionBlock
     | ContentBlock
     | MediaBlock
@@ -1975,6 +1976,41 @@ export interface PressGridBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SiteMapBlock".
+ */
+export interface SiteMapBlock {
+  /**
+   * One column per group of pages, left to right (up to 4).
+   */
+  columns: {
+    /**
+     * Not shown on the page; screen readers announce it before the links. e.g. "About".
+     */
+    title: string;
+    icon: 'info' | 'support' | 'visit';
+    links: {
+      /**
+       * e.g. Our Story
+       */
+      label: string;
+      /**
+       * e.g. /about. A page that is not built yet shows "page not found" until it goes live.
+       */
+      url: string;
+      /**
+       * Optional small grey line under the link, e.g. "The Museum in the Press". Leave empty for most links.
+       */
+      caption?: string | null;
+      id?: string | null;
+    }[];
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'siteMap';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
@@ -2471,6 +2507,7 @@ export interface PagesSelect<T extends boolean = true> {
         textSection?: T | TextSectionBlockSelect<T>;
         divider?: T | DividerBlockSelect<T>;
         pressGrid?: T | PressGridBlockSelect<T>;
+        siteMap?: T | SiteMapBlockSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
@@ -3010,6 +3047,29 @@ export interface PressGridBlockSelect<T extends boolean = true> {
         publication?: T;
         summary?: T;
         url?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SiteMapBlock_select".
+ */
+export interface SiteMapBlockSelect<T extends boolean = true> {
+  columns?:
+    | T
+    | {
+        title?: T;
+        icon?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              caption?: T;
+              id?: T;
+            };
         id?: T;
       };
   id?: T;
