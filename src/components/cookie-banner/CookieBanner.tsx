@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 
 import { COOKIES_POLICY_URL } from './consent'
 import { useCookieConsent } from './cookie-consent-context'
@@ -23,10 +23,13 @@ import { useCookieConsent } from './cookie-consent-context'
  * it. It renders nothing until the stored choice has been read, so static
  * pages never flash it at visitors who already chose.
  *
- * While it shows, the page is padded at the bottom by the space it covers,
- * from its top edge to the bottom of the window (scroll padding for keyboard
- * focus, real padding so the last footer links can scroll clear of it): it
- * must never hide what has focus (WCAG 2.4.11).
+ * It rises and fades into place a moment after the page shows, like the
+ * banner on the Musée Atelier Audemars Piguet site (the user's reference,
+ * 21 Oct); visitors who ask for reduced motion get it in place, unmoving.
+ *
+ * While it shows, the page is padded at the bottom by its height (scroll
+ * padding for keyboard focus, real padding so the last footer links can
+ * scroll clear of it): it must never hide what has focus (WCAG 2.4.11).
  * Below 1024 the page scrolls inside #scroll-container, from 1024 up on
  * <html>, so both get the scroll padding.
  */
@@ -57,14 +60,42 @@ export default function CookieBanner() {
         scroller.style.paddingBottom = px
       }
     }
-    const update = () => pad(`${Math.max(0, Math.ceil(window.innerHeight - bar.getBoundingClientRect().top))}px`)
-    const observer = new ResizeObserver(update)
+    // offsetHeight, not the bar's position: the entrance slide moves it.
+    const observer = new ResizeObserver(() => pad(`${bar.offsetHeight}px`))
     observer.observe(bar)
-    window.addEventListener('resize', update)
     return () => {
       observer.disconnect()
-      window.removeEventListener('resize', update)
       pad('')
+    }
+  }, [visible])
+
+  // Entrance, like the Musée Atelier's banner: it rises from just below the
+  // window (its shadow too) while fading in, decelerating smoothly over 0.9s.
+  // It starts 0.3s after the bar mounts, once the browser is idle (0.9s more
+  // at most), so the slide never competes with the page's own start-up work.
+  // A layout effect, and the animation is created paused at its first frame,
+  // so the bar is never painted at rest before it slides.
+  useLayoutEffect(() => {
+    const bar = barRef.current
+    if (!visible || !bar || typeof bar.animate !== 'function') return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const slide = bar.animate(
+      [
+        { transform: 'translateY(calc(100% + 12px))', opacity: 0 },
+        { transform: 'translateY(0)', opacity: 1 },
+      ],
+      { duration: 900, easing: 'cubic-bezier(0.25, 0.8, 0.25, 1)' },
+    )
+    slide.pause()
+    let idle = 0
+    const timer = window.setTimeout(() => {
+      if ('requestIdleCallback' in window) idle = window.requestIdleCallback(() => slide.play(), { timeout: 900 })
+      else slide.play()
+    }, 300)
+    return () => {
+      window.clearTimeout(timer)
+      if (idle) window.cancelIdleCallback(idle)
+      slide.cancel()
     }
   }, [visible])
 
