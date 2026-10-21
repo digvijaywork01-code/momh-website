@@ -63,6 +63,29 @@
  * no page behind it. After the deploy, check the live site itself, not only
  * the dry run: /terms returns 200 and the footer's Terms of Use is a link.
  *
+ * Cookies Policy (feat/cookies-policy) is added the same way: ONLY=cookies-policy
+ * ALLOW_PARTIAL=1 if needed. The same deploy switches on the cookie banner, after
+ * which Google Analytics runs only for visitors who accept it. Straight after
+ * the deploy is live (never before it), edit the live Privacy Policy in the
+ * admin, because these passages stop being true:
+ *   - Your choices: "does not currently show a cookie banner, so the Google
+ *     Analytics cookies are set when a page loads", and "We will update this
+ *     section if we introduce a cookie consent control";
+ *   - Lawful Basis, Google Analytics cookies: "legitimate interest" for India
+ *     and elsewhere, and "does not yet have a consent control": the basis is
+ *     now consent, for every visitor;
+ *   - the Google Analytics paragraph ("When a page loads, Google Analytics
+ *     receives ..."): now only if the visitor accepts;
+ *   - the cookie list: add the stored choice (momh-cookie-consent).
+ * Already out of date, worth fixing in the same edit: reCAPTCHA "under its own
+ * Privacy Policy" (Google is the site's processor since 2 Apr 2026) and "the
+ * Information Commissioner's Office" (the Information Commission since 30 Sep
+ * 2026). From the deploy, GA4 and the BigQuery export count only visitors who
+ * accept, and returning visitors get new client ids (their old _ga cookies are
+ * deleted until they accept): annotate GA property 545975114 and any BigQuery
+ * report with the date. After it, check /cookies-policy returns 200, the
+ * footer's Cookies Policy is a link, and a first visit shows the banner.
+ *
  * WHAT IT DOES
  *   - Dry run by default: prints what it would do and writes nothing.
  *   - Writes only with APPLY=1 and CONFIRM_DB=<the database name it prints>.
