@@ -7,7 +7,7 @@
  * (rendered by the separate FlowerPaintings component, also on black).
  * Below it: logo + social icons on the left, then a 4-column link grid
  * (Story / Support / Visit / Opening Hours). Bottom bar has copyright
- * + 3 legal links on the right.
+ * + 3 legal links and Cookie Settings on the right.
  *
  * Note on the logo: per the user's instruction, the current red
  * `momh-logo.jpg` is used as a placeholder until the white footer logo
@@ -18,6 +18,8 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+
+import CookieSettingsLink from '@/components/cookie-banner/CookieSettingsLink'
 
 const ChevronDownIcon = ({ className }: { className?: string }) => (
   <svg
@@ -73,12 +75,11 @@ const SUPPORT_LINKS: LinkColumn = {
     { label: 'Contact Us', href: '/contact' },
     { label: 'FAQ', href: '/faq' },
     { label: 'Privacy Policy', href: '/privacy-policy' },
-    // The disabled targets below return HTTP 404 on prod — no route
-    // folder, no Page slug. Disabled until the pages are built.
-    // ("Sitemap" → /sitemap is also 404; the *real* sitemap lives at
-    // /sitemap.xml for crawlers, but that's not a human-facing route.)
-    { label: 'Cookies Policy', href: '/cookies-policy', disabled: true },
+    { label: 'Cookies Policy', href: '/cookies-policy' },
     { label: 'Accessibility Statement', href: '/accessibility' },
+    // "Sitemap" → /sitemap returns HTTP 404 on prod (no route folder, no
+    // Page slug), so it stays disabled; the *real* sitemap lives at
+    // /sitemap.xml for crawlers, but that's not a human-facing route.
     { label: 'Sitemap', href: '/sitemap', disabled: true },
   ],
 }
@@ -112,6 +113,11 @@ const LEGAL_LINKS: LinkItem[] = [
   { label: 'Privacy Policy', href: '/privacy-policy' },
   { label: 'Terms of Use', href: '/terms' },
 ]
+
+// "Cookie Settings" follows the legal links in both bottom bars: a button
+// (it opens the cookie settings, it goes nowhere) dressed like its sibling
+// links, so withdrawing consent is always one click away.
+const COOKIE_SETTINGS_CLASS = 'cursor-pointer hover:text-offwhite transition-colors'
 
 const ADDRESS_LINES = [
   'Shekhawati Haveli E141,',
@@ -325,6 +331,7 @@ const Footer = () => {
                   </Link>
                 ),
               )}
+              <CookieSettingsLink className={COOKIE_SETTINGS_CLASS} />
             </div>
           </div>
         </div>
@@ -448,6 +455,7 @@ const Footer = () => {
                 </Link>
               ),
             )}
+            <CookieSettingsLink className={COOKIE_SETTINGS_CLASS} />
           </div>
         </div>
       </div>
