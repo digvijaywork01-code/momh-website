@@ -111,34 +111,34 @@
    "heading": "Visitor Reviews",
    "reviews": [
     {
-     "quote": "An absolutely breathtaking collection. One can't miss this museum on their visit to Jaipur. The Craft of Meenakari has been beautifully curated and explained. The tour was exceptional. Everything about the museum, including the Building screams Jaipur. […]",
-     "author": "Himashweta S.",
-     "details": "review on Google, 2 years ago"
-    },
-    {
      "quote": "Amazing space, beautifully curated journey of Meenakari.",
      "author": "Sandeep A.",
      "details": "review on Google, a year ago"
     },
     {
-     "quote": "Great learning experience about the history of meenakari Enamelly.",
-     "author": "Pradeep K.",
+     "quote": "The place is beautiful and very peaceful and the collection is extraordinary. We have been lucky enough to benefit from a guided tour of the main pieces by a very knowledgeable and interesting member of the family owning the place. It really pays tribute to the finest Indian jewellery.",
+     "author": "Marine D.",
      "details": "review on Google, 2 years ago"
     },
     {
-     "quote": "I booked an appointment to visit the museum and learn about the art of enameling […]. The team walked me through the space, making the experience much better. Great place to learn and appreciate this unique art form!",
+     "quote": "An absolutely breathtaking collection. One can't miss this museum on their visit to Jaipur. The Craft of Meenakari has been beautifully curated and explained. The tour was exceptional. Everything about the museum, including the Building screams Jaipur.",
+     "author": "Himashweta S.",
+     "details": "review on Google, 2 years ago"
+    },
+    {
+     "quote": "I booked an appointment to visit the museum and learn about the art of enameling. The team walked me through the space, making the experience much better. Great place to learn and appreciate this unique art form!",
      "author": "Abhilasha B.",
      "details": "review on Google, 2 years ago"
     },
     {
-     "quote": "Really interesting museum, makes you appreciate indian cultural work. would 100% recommend to people interested in the arts. wonderful experience with very beautiful pieces",
+     "quote": "really interesting museum, makes you appreciate indian cultural work. would 100% recommend to people interested in the arts. wonderful experience with very beautiful pieces",
      "author": "Paulomi M.",
      "details": "review on Google, 2 years ago"
     },
     {
-     "quote": "The place is beautiful and very peaceful and the collection is extraordinary. We have been lucky enough to benefit from a guided tour of the main pieces by a very knowledgeable and interesting member of the family owning the place. It really pays tribute to the finest Indian jewellery.",
-     "author": "Sandeep A.",
-     "details": "review on Google, a year ago"
+     "quote": "Great learning experience about the history of meenakari Enamelly.",
+     "author": "Pradeep K.",
+     "details": "review on Google, 2 years ago"
     }
    ]
   },
@@ -169,7 +169,7 @@
        "children": [
         {
          "type": "text",
-         "text": "The reviews on this page are a selection of the favourable reviews that visitors have posted about the Museum on Google. We chose reviews that speak of the collection, the curation, the craft and the visit itself, and each appears only with its author's permission, in the words its author approved. Where we have shortened a review, with its author's agreement, […] marks the words left out. The age beside each review is the one Google showed on 8 October 2026. Not every review of the Museum is praise, and you can read all of them, including those that are critical, at ",
+         "text": "The reviews on this page are a selection of the favourable reviews that visitors have posted about the Museum on Google. We chose reviews that speak of the collection, the curation, the craft and the visit itself, and each appears only with its author's permission, in the words its author approved. The age beside each review is the one Google showed on 8 October 2026. Not every review of the Museum is praise, and you can read all of them, including those that are critical, at ",
          "format": 0,
          "style": "",
          "mode": "normal",
@@ -179,10 +179,10 @@
         {
          "type": "link",
          "version": 3,
-         "id": "b83f165cc1bb420a17a4698e",
+         "id": "2fd0362d3485e202491c70e4",
          "fields": {
           "linkType": "custom",
-          "url": "https://url-needed.invalid/",
+          "url": "https://www.google.com/maps?cid=16227804231431008626",
           "newTab": false
          },
          "children": [
@@ -259,10 +259,10 @@
         {
          "type": "link",
          "version": 3,
-         "id": "1f744367476212550dd57393",
+         "id": "ce446647be45637ef2ea03e6",
          "fields": {
           "linkType": "custom",
-          "url": "https://url-needed.invalid/",
+          "url": "https://www.google.com/maps?cid=16227804231431008626",
           "newTab": false
          },
          "children": [
@@ -295,7 +295,7 @@
         {
          "type": "link",
          "version": 3,
-         "id": "59b515cc07f710289ea0f56f",
+         "id": "0d0876097f196abc4d92ca1c",
          "fields": {
           "linkType": "custom",
           "url": "mailto:info@momhindia.org",
@@ -328,7 +328,7 @@
         {
          "type": "link",
          "version": 3,
-         "id": "a6b4a9ba8e5d90cb0ffe7e7d",
+         "id": "94267d4f2a14194313d02626",
          "fields": {
           "linkType": "custom",
           "url": "/privacy-policy",
@@ -408,7 +408,7 @@
         {
          "type": "link",
          "version": 3,
-         "id": "45c61e0166230a9008fc339c",
+         "id": "beb69d424412cf59bd707bc2",
          "fields": {
           "linkType": "custom",
           "url": "/book-an-appointment",
@@ -464,7 +464,7 @@
         {
          "type": "link",
          "version": 3,
-         "id": "a2768db9b03e1479ab756d1d",
+         "id": "ad0c097c2d4c22d04fd1d1a2",
          "fields": {
           "linkType": "custom",
           "url": "mailto:info@momhindia.org",
@@ -588,7 +588,7 @@
          "version": 1
         },
         {
-         "id": "063516dcc36b7d4298a9825c",
+         "id": "b7000f60919bbd44b141927d",
          "type": "link",
          "fields": {
           "url": "mailto:info@momhindia.org",
@@ -625,7 +625,7 @@
          "version": 1
         },
         {
-         "id": "fd6c630326eb538d9a18da07",
+         "id": "215fc6ef123535975d9bf54b",
          "type": "link",
          "fields": {
           "url": "tel:+916377490417",

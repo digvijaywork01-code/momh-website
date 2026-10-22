@@ -89,15 +89,12 @@
  * TESTIMONIALS (feat/testimonials-page) needs a migration, like Press: run
  * step 1 (`pnpm payload migrate`, which adds the Review Carousel's empty
  * tables) before this script, then the dry run, APPLY and the deploy straight
- * after. testimonials.json links "Museum of Meenakari Heritage on Google"
- * twice; until the Museum's Google address is known those two links are
- * https://url-needed.invalid/ and this script stops. Put the address in both
- * before the run. Also before it: the client confirms who wrote the sixth
- * review (the design credits it to "Sandeep A." as well as the second), and
- * holds each author's written agreement to the words and name shown, as the
- * page says. ONLY=testimonials ALLOW_PARTIAL=1 if needed, as above. After the
- * deploy, check /testimonials returns 200 and the footer's Testimonials is a
- * link.
+ * after. The six reviews, their names and the Google link come from the
+ * client's copy document (MOMH-Testimonials-2026-10-09.pdf). Before the run,
+ * the client must hold each author's written agreement to the words and name
+ * shown, as the page says. ONLY=testimonials ALLOW_PARTIAL=1 if needed, as
+ * above. After the deploy, check /testimonials returns 200 and the footer's
+ * Testimonials is a link.
  *
  * WHAT IT DOES
  *   - Dry run by default: prints what it would do and writes nothing.
@@ -139,7 +136,7 @@ const here = path.dirname(fileURLToPath(import.meta.url))
 // The newest migration these pages need (Review Carousel; it comes after
 // 20261021_093343_site_map_block, the Press Grid and
 // 20261016_104012_contact_page_fields, so those are applied too).
-const MIGRATION = '20261021_115510_review_carousel_block'
+const MIGRATION = '20261021_131045_review_carousel_block'
 // Placeholders a page's JSON may use, and the media file each one stands for.
 const MEDIA: Record<string, string> = {
   __OG_MEDIA_ID__: 'og-momh.jpg', // the share image

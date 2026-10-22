@@ -16,8 +16,10 @@ const readingTime = (quote: string): number => {
   return Math.min(10000, Math.max(5000, 2500 + words * 180))
 }
 
-/** The site's red round arrow button (as on the Press carousel): 44px from
- *  768px up, 32px on phones (the user, 21 Oct: smaller there). */
+/** The site's red round arrow button (as on the Press carousel): a 44px
+ *  circle, shown from 768px up only (none on phones: the user, 21 Oct). The
+ *  arrow in it is 20px (the user, 21-22 Oct: a little larger than the Press
+ *  carousel's 16px, the circle unchanged; tablets the same as laptops). */
 const ArrowButton: React.FC<{
   label: string
   onClick: () => void
@@ -29,7 +31,7 @@ const ArrowButton: React.FC<{
     onClick={onClick}
     aria-label={label}
     className={[
-      'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full md:h-11 md:w-11',
+      'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full',
       'bg-brand-red text-white',
       'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2 focus-visible:ring-offset-offwhite',
       className,
@@ -45,7 +47,7 @@ const ArrowButton: React.FC<{
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      className={`h-3.5 w-3.5 md:h-4 md:w-4${flip ? ' rotate-180' : ''}`}
+      className={`h-5 w-5${flip ? ' rotate-180' : ''}`}
     >
       <line x1="5" y1="12" x2="19" y2="12" />
       <polyline points="12 5 19 12 12 19" />
@@ -108,13 +110,15 @@ const RISE = [
  * "reduce motion" set it never changes by itself, and the arrows and dots
  * change it at once, without the fade.
  *
- * Controls: the site's red round arrows (as on the Press carousel), at the
- * band's sides from 768px up and either side of the dots on phones. The dots
- * are buttons (the current one a longer red bar, the others faint red): 8px
- * dots 16px apart, each a 24px target, from 768px up; on phones (the user,
- * 21 Oct) 6px dots 8px apart and 32px arrows. A phone dot's target is 14px,
- * under WCAG 2.5.8's 24px, which allows it because the arrows beside it (32px)
- * reach every review too.
+ * Controls: the site's red round arrows (as on the Press carousel) at the
+ * band's sides from 768px up; on phones no arrows (the user, 21 Oct): the dots
+ * and a swipe move it. The dots are buttons (the current one a longer red bar,
+ * the others a lighter red, brand red at 70%: 3.3:1 on the band, above WCAG
+ * 1.4.11's 3:1 for controls). Every dot's target is at least 24px across
+ * (WCAG 2.5.8): from 768px up 8px dots with 8px padding (16px apart); on
+ * phones 6px dots (the user, 21 Oct: smaller) with 9px padding, so they sit
+ * 18px apart (the user, 22 Oct, chose the 24px targets over the tighter
+ * 8px-apart row).
  *
  * Screen readers: a region named after the heading, each review a group
  * "n of total", the hidden ones inert; "Review n of total" is read out only
@@ -309,8 +313,7 @@ export const ReviewSlides: React.FC<{ reviews: Review[]; label: string }> = ({ r
       </div>
 
       {controls && (
-        <div className="mt-6 flex items-center justify-center gap-3 md:mt-8 md:gap-4 print:hidden">
-          <ArrowButton flip label="Previous review" onClick={() => go('prev')} className="md:hidden" />
+        <div className="mt-6 flex items-center justify-center md:mt-8 print:hidden">
           <div className="flex items-center">
             {reviews.map((review, i) => (
               <button
@@ -319,19 +322,18 @@ export const ReviewSlides: React.FC<{ reviews: Review[]; label: string }> = ({ r
                 onClick={() => go(i)}
                 aria-label={`Show review ${i + 1}`}
                 aria-current={i === index ? 'true' : undefined}
-                className="rounded-full p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red md:p-2"
+                className="rounded-full p-[9px] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red md:p-2"
               >
                 <span
                   aria-hidden="true"
                   className={[
                     'block h-1.5 rounded-full transition-all duration-300 motion-reduce:transition-none md:h-2',
-                    i === index ? 'w-4 bg-brand-red md:w-6' : 'w-1.5 bg-brand-red/40 md:w-2',
+                    i === index ? 'w-4 bg-brand-red md:w-6' : 'w-1.5 bg-brand-red/70 md:w-2',
                   ].join(' ')}
                 />
               </button>
             ))}
           </div>
-          <ArrowButton label="Next review" onClick={() => go('next')} className="md:hidden" />
         </div>
       )}
       {controls && (
