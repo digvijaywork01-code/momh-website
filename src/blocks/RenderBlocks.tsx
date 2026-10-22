@@ -81,8 +81,31 @@ export const RenderBlocks: React.FC<{
    *  'faq-page' = the /faq page (FAQ PDF): one block per question group,
    *  all-red group heading, answers open (closed on phones). */
   faqVariant?: 'faq-page'
+  /** Page-level render variant forwarded to every sectionIntro block.
+   *  'appointment-page' = the Book An Appointment PDF intro: red Cormorant
+   *  Light eyebrow, vw-scaled heading and body (lg+ only). */
+  sectionIntroVariant?: 'appointment-page'
+  /** Page-level render variant forwarded to every contactPanel block.
+   *  'appointment-page' = the Book An Appointment PDF contact band:
+   *  brand-red-dark panel, white icon discs, vw-scaled type (lg+ only). */
+  contactPanelVariant?: 'appointment-page'
 }> = (props) => {
-  const { blocks, editorialSplitVariant, infoHeroVariant, faqVariant } = props
+  const {
+    blocks,
+    editorialSplitVariant,
+    infoHeroVariant,
+    faqVariant,
+    sectionIntroVariant,
+    contactPanelVariant,
+  } = props
+
+  const variantByBlockType: Partial<Record<string, string>> = {
+    editorialSplit: editorialSplitVariant,
+    infoHero: infoHeroVariant,
+    faq: faqVariant,
+    sectionIntro: sectionIntroVariant,
+    contactPanel: contactPanelVariant,
+  }
 
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
@@ -96,19 +119,13 @@ export const RenderBlocks: React.FC<{
             const Block = blockComponents[blockType]
 
             if (Block) {
-              // Page-level render variants (editorialSplit, infoHero, faq).
+              // Page-level render variants (see the props above).
               // Kept OUT of the JSX below so the single @ts-expect-error
               // there still covers the whole element (a multi-line element
               // would push the real mismatch past the directive's one-line
               // reach and break the build).
-              const variantProps =
-                blockType === 'editorialSplit' && editorialSplitVariant
-                  ? { variant: editorialSplitVariant }
-                  : blockType === 'infoHero' && infoHeroVariant
-                    ? { variant: infoHeroVariant }
-                    : blockType === 'faq' && faqVariant
-                      ? { variant: faqVariant }
-                      : {}
+              const variant = variantByBlockType[blockType]
+              const variantProps = variant ? { variant } : {}
 
               // No wrapper margin — editorial blocks render edge-to-edge.
               // The default Payload template had `my-16` here, which produced

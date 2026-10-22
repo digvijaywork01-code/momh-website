@@ -69,7 +69,8 @@ type FieldLabelProps = {
 const FieldLabel: React.FC<FieldLabelProps> = ({ htmlFor, label, required }) => (
   <label
     htmlFor={htmlFor}
-    className="block font-body text-sm md:text-base text-ink mb-2"
+    // lg+: the PDF's 17px #212121 label at 1920, never below the 16px used today.
+    className="block font-body text-sm md:text-base text-ink mb-2 lg:mb-[0.6vw] lg:text-[length:max(1rem,0.885vw)] lg:text-[#212121]"
     style={{ fontWeight: 500 }}
   >
     {label}
@@ -78,15 +79,23 @@ const FieldLabel: React.FC<FieldLabelProps> = ({ htmlFor, label, required }) => 
 )
 
 /** Shared input styling — thin grey box, no rounded corners, focus
- *  shifts the border to brand-red. Same look as `ConsultationForm`. */
+ *  shifts the border to brand-red. Same look as `ConsultationForm`.
+ *  lg+: the Book An Appointment PDF's lighter #D4D4D4 border. */
 const inputClass =
   'w-full px-4 py-3 bg-white border border-warm-gray/40 rounded-none font-body text-base text-ink ' +
-  'focus:outline-none focus:border-brand-red focus:ring-0 transition-colors duration-150'
+  'focus:outline-none focus:border-brand-red focus:ring-0 transition-colors duration-150 ' +
+  'lg:border-[#D4D4D4]'
+
+/** lg+ box heights from the PDF (1920 artboard): inputs 62px, both
+ *  textareas 173px, with floors so 1024-1440 never shrink too far. The
+ *  textareas turn block so no inline descender gap sits under them. */
+const textInputClass = cn(inputClass, 'lg:h-[max(2.75rem,3.229vw)]')
+const textareaClass = cn(inputClass, 'lg:block lg:h-[max(7.5rem,9.01vw)]')
 
 const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
   <h3
-    className="font-body text-lg md:text-xl text-ink mb-6"
-    style={{ fontWeight: 600 }}
+    // lg+: the PDF's Gill Sans Regular 28px (1920) with 0.05em tracking.
+    className="font-body font-semibold text-lg md:text-xl text-ink mb-6 lg:font-normal lg:text-[length:max(1.25rem,1.458vw)] lg:leading-[1.2] lg:tracking-[0.05em] lg:mb-[3.385vw]"
   >
     {title}
   </h3>
@@ -186,7 +195,8 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
   return (
     <section
       className={cn(
-        'w-full py-12 lg:py-16 px-6 md:px-12 lg:px-20',
+        // lg+ top / bottom space from the PDF (1920 artboard).
+        'w-full py-12 lg:pt-[5vw] lg:pb-[4.74vw] px-6 md:px-12 lg:px-20',
         bgClass[bg],
       )}
       data-theme="light"
@@ -194,41 +204,42 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
     >
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-4xl mx-auto"
+        // lg+: the PDF's 1124px column (of 1920), never narrower than 768px.
+        className="w-full max-w-4xl mx-auto lg:max-w-[max(48rem,58.54vw)]"
         noValidate
       >
         <SectionHeader title="Personal Details" />
 
         {/* Rows of paired fields — mobile stacks, md+ uses 2 cols.
             Same grid pattern as ConsultationForm. */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 lg:gap-x-[1.25vw] lg:gap-y-[1.17vw]">
           <div>
             <FieldLabel htmlFor="firstName" label="First Name" required />
-            <input id="firstName" name="firstName" type="text" required className={inputClass} />
+            <input id="firstName" name="firstName" type="text" required className={textInputClass} />
           </div>
           <div>
             <FieldLabel htmlFor="lastName" label="Last Name" required />
-            <input id="lastName" name="lastName" type="text" required className={inputClass} />
+            <input id="lastName" name="lastName" type="text" required className={textInputClass} />
           </div>
           <div>
             <FieldLabel htmlFor="email" label="Email Address" required />
-            <input id="email" name="email" type="email" required className={inputClass} />
+            <input id="email" name="email" type="email" required className={textInputClass} />
           </div>
           <div>
             <FieldLabel htmlFor="phone" label="Phone Number" required />
-            <input id="phone" name="phone" type="tel" required className={inputClass} />
+            <input id="phone" name="phone" type="tel" required className={textInputClass} />
           </div>
           <div>
             <FieldLabel htmlFor="city" label="City" required />
-            <input id="city" name="city" type="text" required className={inputClass} />
+            <input id="city" name="city" type="text" required className={textInputClass} />
           </div>
           <div>
             <FieldLabel htmlFor="country" label="Country" required />
-            <input id="country" name="country" type="text" required className={inputClass} />
+            <input id="country" name="country" type="text" required className={textInputClass} />
           </div>
           <div>
             <FieldLabel htmlFor="occupation" label="Occupation" required />
-            <input id="occupation" name="occupation" type="text" required className={inputClass} />
+            <input id="occupation" name="occupation" type="text" required className={textInputClass} />
           </div>
           <div>
             <FieldLabel htmlFor="groupSize" label="Group Size" required />
@@ -238,7 +249,7 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
               type="number"
               min={1}
               required
-              className={inputClass}
+              className={textInputClass}
             />
           </div>
         </div>
@@ -246,7 +257,7 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
         {/* Two long-form textareas — stack full-width below the field
             grid (PDF shows them spanning the form's full content
             width, not the 2-col grid). */}
-        <div className="mt-6 flex flex-col gap-6">
+        <div className="mt-6 flex flex-col gap-6 lg:mt-[1.17vw] lg:gap-[1.17vw]">
           <div>
             <FieldLabel
               htmlFor="hearAboutUs"
@@ -258,7 +269,7 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
               name="hearAboutUs"
               rows={4}
               required
-              className={inputClass}
+              className={textareaClass}
             />
           </div>
           <div>
@@ -272,13 +283,13 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
               name="queriesComments"
               rows={5}
               required
-              className={inputClass}
+              className={textareaClass}
             />
           </div>
         </div>
 
         {/* reCAPTCHA — sits below the textareas, left-aligned. */}
-        <div className="mt-8">
+        <div className="mt-8 lg:mt-[1.4vw]">
           <ReCAPTCHA
             sitekey={RECAPTCHA_SITE_KEY}
             onChange={(token) => setRecaptchaToken(token)}
@@ -287,12 +298,15 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
         </div>
 
         {/* Submit + status — left-aligned per PDF (NOT centred). */}
-        <div className="mt-8 flex flex-col items-start gap-3">
+        <div className="mt-8 lg:mt-[1.3vw] flex flex-col items-start gap-3 lg:gap-[0.625vw]">
           <button
             type="submit"
             disabled={status === 'submitting'}
             className={cn(
               'inline-flex items-center justify-center px-8 py-3 font-body',
+              // lg+: the PDF's 240x40 button, growing with the page above
+              // 1920 and with a longer CMS label.
+              'lg:min-w-[max(15rem,12.5vw)] lg:h-[max(2.5rem,2.083vw)] lg:px-[1.5vw] lg:py-0 lg:text-[length:max(1rem,0.833vw)]',
               'bg-brand-red text-white border border-brand-red',
               'text-sm md:text-base',
               'hover:bg-brand-red/90 transition-colors duration-200',
@@ -310,17 +324,19 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
           )}
 
           {/* FAQ link line — italic + underlined "Frequently Asked
-              Questions" link, plain Gill Sans surrounding it. */}
-          <p className="mt-4 font-body text-sm md:text-base text-ink/90">
+              Questions" link, plain Gill Sans surrounding it.
+              lg+ (PDF): the link is #DD092B Cormorant italic (4.5:1-safe,
+              unlike brand-red) and the full stop sits inside it. */}
+          <p className="mt-4 lg:mt-[0.71vw] font-body text-sm md:text-base text-ink/90 lg:text-[length:max(1rem,0.885vw)] lg:text-[#212121]">
             Have a specific query in mind? Find answers in our{' '}
             <Link
               href={faqHref}
               {...(faqNewTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-              className="italic underline underline-offset-4 hover:text-brand-red transition-colors"
+              className="italic underline underline-offset-4 hover:text-brand-red transition-colors lg:font-script lg:text-[1.2em] lg:text-[#DD092B] lg:hover:text-brand-red-dark"
             >
-              Frequently Asked Questions
+              Frequently Asked Questions<span className="hidden lg:inline">.</span>
             </Link>
-            .
+            <span className="lg:hidden">.</span>
           </p>
         </div>
       </form>
