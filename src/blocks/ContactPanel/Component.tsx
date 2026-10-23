@@ -18,6 +18,7 @@ import type { ContactPanelBlock as ContactPanelBlockProps } from '@/payload-type
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { accentLastWord } from '@/utilities/accentLastWord'
 import { cn } from '@/utilities/ui'
 
 type BgKey = NonNullable<ContactPanelBlockProps['panelBackgroundColor']>
@@ -239,13 +240,15 @@ export const ContactPanelBlock: React.FC<
           <div
             className={cn(
               'editorial-display text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] leading-tight mb-4',
+              // Only the last word is italic (accentLastWord), in brand red.
+              '[&_em]:text-brand-red [&_i]:text-brand-red',
               // PDF: Gill Sans Light 48.66px, "Meenakari" Cormorant 50.69px,
               // flush left with the left-aligned blurb below it.
               appointmentPage &&
                 'lg:self-stretch lg:text-left lg:text-[length:max(1.75rem,2.534vw)] lg:leading-[1.2] lg:mb-[1.84vw] lg:[&_em]:text-[1.042em] lg:[&_i]:text-[1.042em]',
             )}
           >
-            <RichText data={headline} enableGutter={false} enableProse={false} />
+            <RichText data={accentLastWord(headline)} enableGutter={false} enableProse={false} />
           </div>
 
           {body && (

@@ -28,6 +28,7 @@ import RichText from '@/components/RichText'
 import { EditorialCta } from '@/components/EditorialCta'
 import { ExpandableText } from '@/components/ExpandableText'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { accentLastWord } from '@/utilities/accentLastWord'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { isCtaTargetLive } from '@/utilities/validRoutes'
 import { cn } from '@/utilities/ui'
@@ -492,8 +493,8 @@ export const EditorialSplitBlock: React.FC<
                   as usual (rendering here too duplicated it). */}
               {headingOverImage && headline && (
                 <div className={cn('mb-6', imageFirst ? '' : 'sbs:text-right')}>
-                  <div className="section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4">
-                    <RichText data={headline} enableGutter={false} enableProse={false} />
+                  <div className="section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4 [&_em]:text-brand-red [&_i]:text-brand-red">
+                    <RichText data={accentLastWord(headline)} enableGutter={false} enableProse={false} />
                   </div>
                   <div
                     className={cn(
@@ -628,14 +629,16 @@ export const EditorialSplitBlock: React.FC<
                 className={cn(
                   band
                     ? // PDF: 40px on a 1921 artboard = 2.08vw, Cormorant
-                      // capitals. An italicised heading ("Why Museum") keeps
-                      // its own case via the .section-caps em rule.
+                      // capitals, typed in the case the design wants.
                       'section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4'
                     : 'editorial-display text-display mb-6',
+                  // Only the last word is italic (accentLastWord), in red on
+                  // every band colour.
+                  '[&_em]:text-brand-red [&_i]:text-brand-red',
                 )}
               >
                 <RichText
-                  data={headline}
+                  data={accentLastWord(headline)}
                   enableGutter={false}
                   enableProse={false}
                 />

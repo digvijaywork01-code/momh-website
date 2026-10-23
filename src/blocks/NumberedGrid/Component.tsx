@@ -25,6 +25,7 @@ import type { NumberedGridBlock as NumberedGridBlockProps } from '@/payload-type
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { accentLastWord } from '@/utilities/accentLastWord'
 import { cn } from '@/utilities/ui'
 
 type ColumnsKey = NonNullable<NumberedGridBlockProps['columns']>
@@ -522,8 +523,8 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
           <div className={cn('sbs:flex-[55] sbs:min-w-0', textPos === 'left' ? '' : 'sbs:text-right')}>
             {headline && (
               <>
-                <div className="section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4">
-                  <RichText data={headline} enableGutter={false} enableProse={false} />
+                <div className="section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4 [&_em]:text-brand-red [&_i]:text-brand-red">
+                  <RichText data={accentLastWord(headline)} enableGutter={false} enableProse={false} />
                 </div>
                 <div
                   className={cn(

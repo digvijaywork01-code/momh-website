@@ -24,6 +24,7 @@ import RichText from '@/components/RichText'
 import { EditorialCta } from '@/components/EditorialCta'
 import { useFadeUp } from '@/components/motion/hooks/useFadeUp'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { accentLastWord } from '@/utilities/accentLastWord'
 import { cn } from '@/utilities/ui'
 
 type BgKey = NonNullable<CardGridBlockProps['backgroundColor']>
@@ -257,8 +258,8 @@ export const CardGridBlock: React.FC<CardGridBlockProps> = ({
             {eyebrow}
           </p>
         )}
-        <div className="editorial-display text-display">
-          <RichText data={headline} enableGutter={false} enableProse={false} />
+        <div className="editorial-display text-display [&_em]:text-brand-red [&_i]:text-brand-red">
+          <RichText data={accentLastWord(headline)} enableGutter={false} enableProse={false} />
         </div>
       </div>
 

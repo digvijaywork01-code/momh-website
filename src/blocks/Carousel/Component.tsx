@@ -20,6 +20,7 @@ import RichText from '@/components/RichText'
 import { EditorialCta } from '@/components/EditorialCta'
 import { EditorialCarousel } from '@/components/EditorialCarousel'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { accentLastWord } from '@/utilities/accentLastWord'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
 
@@ -198,9 +199,9 @@ export const CarouselBlock: React.FC<CarouselBlockProps> = ({
 
           <div
             ref={headlineRef}
-            className="editorial-display text-[2.25rem] md:text-[3rem] lg:text-[3.75rem] leading-tight mb-6"
+            className="editorial-display text-[2.25rem] md:text-[3rem] lg:text-[3.75rem] leading-tight mb-6 [&_em]:text-brand-red [&_i]:text-brand-red"
           >
-            <RichText data={headline} enableGutter={false} enableProse={false} />
+            <RichText data={accentLastWord(headline)} enableGutter={false} enableProse={false} />
           </div>
 
           <div ref={bodyRef} className="font-body text-body opacity-95 mb-6 max-w-xl">

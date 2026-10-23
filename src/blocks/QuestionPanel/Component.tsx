@@ -31,6 +31,7 @@ import type { QuestionPanelBlock as QuestionPanelBlockProps } from '@/payload-ty
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { accentLastWord } from '@/utilities/accentLastWord'
 import { cn } from '@/utilities/ui'
 
 type BgKey = NonNullable<QuestionPanelBlockProps['panelBackgroundColor']>
@@ -202,7 +203,7 @@ export const QuestionPanelBlock: React.FC<QuestionPanelBlockProps> = ({
               '[&_em]:text-brand-red [&_i]:text-brand-red',
             )}
           >
-            <RichText data={headline} enableGutter={false} enableProse={false} />
+            <RichText data={accentLastWord(headline)} enableGutter={false} enableProse={false} />
           </div>
 
           {body && (

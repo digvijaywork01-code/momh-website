@@ -21,6 +21,7 @@ import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { NewsletterWidget } from '@/components/NewsletterWidget'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { accentLastWord } from '@/utilities/accentLastWord'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
 
@@ -172,12 +173,13 @@ export const NewsletterFeatureBlock: React.FC<NewsletterFeatureBlockProps> = ({
           <div
             className={cn(
               'editorial-display text-[2rem] md:text-[2.5rem] lg:text-[3rem] leading-tight mb-4',
-              // Italic emphasis stays in the inherited light/cream tone
-              // (PDF shows "Newsletter" in the same offwhite as the
-              // surrounding "Our", just italic).
+              // Only the last word is italic (accentLastWord), in brand red
+              // like every heading's. The PDF had "Newsletter" in the
+              // surrounding offwhite; the site-wide red accent replaced that.
+              '[&_em]:text-brand-red [&_i]:text-brand-red',
             )}
           >
-            <RichText data={headline} enableGutter={false} enableProse={false} />
+            <RichText data={accentLastWord(headline)} enableGutter={false} enableProse={false} />
           </div>
 
           {body && (

@@ -19,23 +19,24 @@ import { useHeaderTheme } from '@/providers/HeaderTheme'
 import { cn } from '@/utilities/ui'
 
 /**
- * Render `*word*` spans in a plain-text headline as italic <em> accents —
- * the site's editorial signature (About *Us*, A *Homage* to Jaipur). The
- * headline field is plain text (not richText), so this is the lightweight
- * equivalent of the Lexical italic runs other blocks get. Text without
- * asterisks passes through untouched.
+ * Render the last word of a plain-text headline as the italic <em> accent,
+ * in brand red: the site's heading rule (A Homage to *Jaipur*, The Art &
+ * *Craftsmanship*). The headline field is plain text (not richText), so this
+ * is the lightweight equivalent of accentLastWord for the Lexical headings.
+ * `*word*` markers an editor typed elsewhere are dropped; only the last word
+ * is accented.
  */
 const renderEmphasis = (text: string): React.ReactNode => {
-  const parts = text.split(/\*([^*]+)\*/g)
-  if (parts.length === 1) return text
-  return parts.map((part, i) =>
-    i % 2 === 1 ? (
-      <em key={i} className="italic">
-        {part}
-      </em>
-    ) : (
-      part
-    ),
+  const plain = text.replace(/\*/g, '')
+  const match = plain.match(/^([\s\S]*?)(\S+)(\s*)$/)
+  if (!match) return plain
+  const [, before, word, after] = match
+  return (
+    <>
+      {before}
+      <em className="italic">{word}</em>
+      {after}
+    </>
   )
 }
 
@@ -163,10 +164,10 @@ export const InfoHeroBlock: React.FC<
             {headline && (
               <h1
                 className={cn(
-                  'text-offwhite drop-shadow-lg',
+                  'text-offwhite drop-shadow-lg [&_em]:text-brand-red [&_i]:text-brand-red',
                   // PDF spec for the statement band: ~80px at 1920 (text-hero
-                  // clamp), plain words Gill Sans Light, *accent* in Playfair
-                  // Display Italic (.statement-display). Cards variant keeps
+                  // clamp), plain words Gill Sans Light, *accent* in Cormorant
+                  // Regular Italic (.statement-display). Cards variant keeps
                   // its original display styling.
                   hasCards
                     ? 'font-display text-display'
@@ -248,7 +249,7 @@ export const InfoHeroBlock: React.FC<
         >
           <h1
             className={cn(
-              'text-offwhite drop-shadow-lg',
+              'text-offwhite drop-shadow-lg [&_em]:text-brand-red [&_i]:text-brand-red',
               hasCards
                 ? 'font-display text-display font-normal'
                 : bannerTitle

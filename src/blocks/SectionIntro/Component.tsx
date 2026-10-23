@@ -23,6 +23,7 @@ import type {
 import RichText from '@/components/RichText'
 import { EditorialCta } from '@/components/EditorialCta'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { accentLastWord } from '@/utilities/accentLastWord'
 import { richTextHasText } from '@/utilities/richTextHasText'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
@@ -247,6 +248,7 @@ export const SectionIntroBlock: React.FC<
           //  - 'section-caps': the Founder's Vision closing statement —
           //    Cormorant Light capitals at the PDF's 40px/1921 = 2.08vw,
           //    with a short maroon rule underneath (rendered below).
+          // In both, only the last word is italic (accentLastWord), in red.
           // NOTE: `leading-tight` must sit AFTER the text-size utilities in
           // each branch. cn() runs tailwind-merge, which treats font-size as
           // conflicting with line-height — hoisting `leading-tight` to a
@@ -254,7 +256,7 @@ export const SectionIntroBlock: React.FC<
           // silently changed the headline leading on every existing page.
           className={cn(
             sectionCaps
-              ? 'section-caps text-[1.4rem] md:text-[1.7rem] lg:text-[2.08vw] leading-tight mb-5'
+              ? 'section-caps text-[1.4rem] md:text-[1.7rem] lg:text-[2.08vw] leading-tight mb-5 [&_em]:text-brand-red [&_i]:text-brand-red'
               : 'editorial-display text-[2.5rem] md:text-[3.5rem] lg:text-[4rem] leading-tight mb-6 [&_em]:text-brand-red [&_i]:text-brand-red',
             // PDF: Gill Sans Light 79.8px with the italic accent word in
             // Cormorant at 85px (1.065x), both with a 0.5px same-colour
@@ -263,7 +265,7 @@ export const SectionIntroBlock: React.FC<
               'lg:text-[length:max(3rem,4.156vw)] lg:leading-[1.2] lg:mb-[1.19vw] lg:[&_em]:text-[1.065em] lg:[&_i]:text-[1.065em] lg:[-webkit-text-stroke:0.026vw_currentColor]',
           )}
         >
-          <RichText data={headline} enableGutter={false} enableProse={false} />
+          <RichText data={accentLastWord(headline)} enableGutter={false} enableProse={false} />
         </div>
         )}
 
