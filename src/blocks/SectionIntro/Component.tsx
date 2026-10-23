@@ -59,7 +59,17 @@ const bgClass: Record<BgKey, string> = {
 const isDarkBg = (bg: BgKey): boolean =>
   bg === 'black' || bg === 'emerald' || bg === 'maroon'
 
-export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
+export const SectionIntroBlock: React.FC<
+  SectionIntroBlockProps & {
+    /** Render variant forwarded by RenderBlocks (NOT a CMS field).
+     *  'appointment-page' = the Book An Appointment PDF intro, lg+ only:
+     *  red Cormorant Light eyebrow, and heading / body scaled from the
+     *  1920 artboard. Default (undefined) keeps every other intro
+     *  untouched. */
+    variant?: 'appointment-page'
+  }
+> = ({
+  variant,
   eyebrow,
   headline,
   body,
@@ -89,6 +99,9 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
   const dark = isDarkBg(bg)
   const sectionCaps = headingStyle === 'section-caps'
   const showHeadline = richTextHasText(headline)
+  // Book An Appointment PDF (1920 artboard). Every value below is that
+  // artboard's px / 1920 as vw, from lg up; phones keep the default.
+  const appointmentPage = variant === 'appointment-page'
 
   useEffect(() => {
     const el = sectionRef.current
@@ -155,6 +168,9 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
         tightTop ? 'min-h-0 pt-8 md:pt-12' : 'min-h-[40vh] pt-20 md:pt-28',
         tightBottom ? 'pb-8 md:pb-12' : 'pb-20 md:pb-28',
         bgClass[bg],
+        // The bottom padding scales with the PDF (48px at 1920, as
+        // tightBottom gives today) so the gap to the form does too.
+        appointmentPage && 'lg:pb-[2.5vw]',
       )}
       data-theme={dark ? 'dark' : 'light'}
       {...(noScrollAnim ? {} : { 'data-snap-section': true })}
@@ -195,13 +211,21 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
               ? 'max-w-2xl sbs:max-w-[52.5vw]'
               : 'max-w-2xl sbs:max-w-[42.5vw]'
             : 'max-w-2xl',
+          // The vw-scaled heading (679px of 1920) outgrows max-w-2xl.
+          appointmentPage && 'lg:max-w-[max(36rem,45vw)]',
         )}
       >
 
         {eyebrow && (
           <p
             ref={eyebrowRef}
-            className="font-script italic text-eyebrow opacity-90 mb-3"
+            className={cn(
+              'font-script italic text-eyebrow opacity-90 mb-3',
+              // PDF: Cormorant Light Italic 24px in its own #DD092B, which
+              // (unlike brand-red, 4.41:1) clears 4.5:1 on white at small sizes.
+              appointmentPage &&
+                'lg:font-light lg:text-[length:max(1rem,1.25vw)] lg:text-[#DD092B] lg:opacity-100 lg:mb-[1.18vw]',
+            )}
           >
             {eyebrow}
           </p>
@@ -232,6 +256,11 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
             sectionCaps
               ? 'section-caps text-[1.4rem] md:text-[1.7rem] lg:text-[2.08vw] leading-tight mb-5'
               : 'editorial-display text-[2.5rem] md:text-[3.5rem] lg:text-[4rem] leading-tight mb-6 [&_em]:text-brand-red [&_i]:text-brand-red',
+            // PDF: Gill Sans Light 79.8px with the italic accent word in
+            // Cormorant at 85px (1.065x), both with a 0.5px same-colour
+            // stroke.
+            appointmentPage &&
+              'lg:text-[length:max(3rem,4.156vw)] lg:leading-[1.2] lg:mb-[1.19vw] lg:[&_em]:text-[1.065em] lg:[&_i]:text-[1.065em] lg:[-webkit-text-stroke:0.026vw_currentColor]',
           )}
         >
           <RichText data={headline} enableGutter={false} enableProse={false} />
@@ -258,6 +287,9 @@ export const SectionIntroBlock: React.FC<SectionIntroBlockProps> = ({
               sectionCaps
                 ? 'text-hero-body text-justify [text-align-last:center]'
                 : 'text-body',
+              // PDF: Gill Sans Light 24/28.8, pure black, 755px measure.
+              appointmentPage &&
+                'lg:text-[length:max(1.125rem,1.25vw)] lg:leading-[1.2] lg:opacity-100 lg:mx-auto lg:max-w-[max(30rem,39.3vw)]',
             )}
           >
             <RichText data={body} enableGutter={false} enableProse={false} />

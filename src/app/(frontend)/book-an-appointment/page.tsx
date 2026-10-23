@@ -33,6 +33,23 @@ export async function generateMetadata(): Promise<Metadata> {
  * is now an `AppointmentForm` block inside the Pages doc, and the
  * page picks up the global Header / FlowerPaintings / Footer chrome.
  */
+
+/**
+ * Styles for this page only, on its wrapper. They apply only while the page
+ * opens with its title block (.editorial-display) instead of a hero photo,
+ * the same rules as /contact and /terms; with a banner first they match
+ * nothing.
+ *  - The phone menu icon is white for dark hero photos; on the white title
+ *    section it turns ink.
+ *  - Phones (under 768px): the title clears the 108px phone header with the
+ *    115px top space /contact uses, and the 40vh minimum height is released.
+ */
+const PAGE_CLASSES = [
+  '[html:has(&>section:first-of-type_.editorial-display)_header_button>svg.text-white]:text-ink',
+  '[@media(max-width:767.98px)]:[&>section:first-of-type:has(.editorial-display)]:min-h-0',
+  '[@media(max-width:767.98px)]:[&>section:first-of-type:has(.editorial-display)]:pt-[115px]',
+].join(' ')
+
 export default async function BookAnAppointmentPage() {
   let page: PageType | undefined
   try {
@@ -50,7 +67,17 @@ export default async function BookAnAppointmentPage() {
     notFound()
   }
 
-  return <RenderBlocks blocks={layout} />
+  // Page-only variants for the Book An Appointment PDF (lg+ only; the
+  // shared blocks render unchanged on every other page).
+  return (
+    <div className={PAGE_CLASSES}>
+      <RenderBlocks
+        blocks={layout}
+        sectionIntroVariant="appointment-page"
+        contactPanelVariant="appointment-page"
+      />
+    </div>
+  )
 }
 
 export const dynamic = 'force-static'
