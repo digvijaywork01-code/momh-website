@@ -247,7 +247,7 @@ export const SectionIntroBlock: React.FC<
           //    1920-wide artboard. Italic words render in brand red.
           //  - 'section-caps': the Founder's Vision closing statement —
           //    Cormorant Light capitals at the PDF's 40px/1921 = 2.08vw,
-          //    with a short maroon rule underneath (rendered below).
+          //    with a maroon rule under its last word (the em's border).
           // In both, only the last word is italic (accentLastWord), in red.
           // NOTE: `leading-tight` must sit AFTER the text-size utilities in
           // each branch. cn() runs tailwind-merge, which treats font-size as
@@ -256,7 +256,7 @@ export const SectionIntroBlock: React.FC<
           // silently changed the headline leading on every existing page.
           className={cn(
             sectionCaps
-              ? 'section-caps text-[1.4rem] md:text-[1.7rem] lg:text-[2.08vw] leading-tight mb-5 [&_em]:text-brand-red [&_i]:text-brand-red'
+              ? 'section-caps text-[1.4rem] md:text-[1.7rem] lg:text-[2.08vw] leading-tight mb-5 [&_em]:text-brand-red [&_i]:text-brand-red [&_em]:border-b [&_em]:border-[#8e1e24] [&_em]:pb-[calc(1.25rem+0.03em)]'
               : 'editorial-display text-[2.5rem] md:text-[3.5rem] lg:text-[4rem] leading-tight mb-6 [&_em]:text-brand-red [&_i]:text-brand-red',
             // PDF: Gill Sans Light 79.8px with the italic accent word in
             // Cormorant at 85px (1.065x), both with a 0.5px same-colour
@@ -269,15 +269,11 @@ export const SectionIntroBlock: React.FC<
         </div>
         )}
 
-        {/* Short centred rule under a section-caps heading. The PDF draws
-            it at 124px on a 1921 artboard (6.45vw) in the same maroon as
-            the heading rules on the editorial bands. */}
-        {sectionCaps && showHeadline && (
-          <div
-            className="mx-auto w-[6.45vw] min-w-[80px] h-px bg-[#8e1e24] mb-5"
-            aria-hidden="true"
-          />
-        )}
+        {/* Spacer where the short centred maroon rule under a section-caps
+            heading used to be (the PDF drew it at 6.45vw). The line now
+            underlines the heading's last word instead (the em's bottom
+            border, padded down to the same spot); this keeps the spacing. */}
+        {sectionCaps && showHeadline && <div className="h-px mb-5" aria-hidden="true" />}
 
         {body && (
           <div

@@ -493,16 +493,12 @@ export const EditorialSplitBlock: React.FC<
                   as usual (rendering here too duplicated it). */}
               {headingOverImage && headline && (
                 <div className={cn('mb-6', imageFirst ? '' : 'sbs:text-right')}>
-                  <div className="section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4 [&_em]:text-brand-red [&_i]:text-brand-red">
+                  <div className="section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4 [&_em]:text-brand-red [&_i]:text-brand-red [&_em]:border-b [&_em]:border-[#8e1e24] [&_em]:pb-[calc(1rem+0.03em)]">
                     <RichText data={accentLastWord(headline)} enableGutter={false} enableProse={false} />
                   </div>
-                  <div
-                    className={cn(
-                      'w-[8.6vw] min-w-[100px] h-px bg-[#8e1e24]',
-                      imageFirst ? '' : 'sbs:ml-auto',
-                    )}
-                    aria-hidden="true"
-                  />
+                  {/* Spacer where the maroon rule was; the rule is now drawn
+                      under the last word (the em's bottom border above). */}
+                  <div className="h-px" aria-hidden="true" />
                 </div>
               )}
               {insetImage ? (
@@ -629,8 +625,10 @@ export const EditorialSplitBlock: React.FC<
                 className={cn(
                   band
                     ? // PDF: 40px on a 1921 artboard = 2.08vw, Cormorant
-                      // capitals, typed in the case the design wants.
-                      'section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4'
+                      // capitals, typed in the case the design wants. The
+                      // maroon rule underlines the last word: the em's bottom
+                      // border, padded down to where the rule used to sit.
+                      'section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4 [&_em]:border-b [&_em]:border-[#8e1e24] [&_em]:pb-[calc(1rem+0.03em)]'
                     : 'editorial-display text-display mb-6',
                   // Only the last word is italic (accentLastWord), in red on
                   // every band colour.
@@ -645,17 +643,12 @@ export const EditorialSplitBlock: React.FC<
               </div>
             )}
 
-            {/* Maroon hairline under each band heading — the PDF draws it at
-                165px on a 1921 artboard (8.6vw), tucked to the same edge the
-                text is aligned to. */}
+            {/* Spacer where the maroon hairline under each band heading used
+                to be (the PDF drew it at 8.6vw, tucked to the text edge). The
+                line now underlines the heading's last word instead (the em's
+                bottom border); this keeps the spacing below unchanged. */}
             {band && headline && !headingOverImage && (
-              <div
-                className={cn(
-                  'w-[8.6vw] min-w-[100px] h-px bg-[#8e1e24] mb-6',
-                  imageFirst ? 'sbs:ml-auto' : '',
-                )}
-                aria-hidden="true"
-              />
+              <div className="h-px mb-6" aria-hidden="true" />
             )}
 
             {/* Body + optional featured line wrapped together inside
