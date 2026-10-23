@@ -218,6 +218,7 @@ export interface Page {
     | DividerBlock
     | PressGridBlock
     | SiteMapBlock
+    | ReviewCarouselBlock
     | CallToActionBlock
     | ContentBlock
     | MediaBlock
@@ -2011,6 +2012,37 @@ export interface SiteMapBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ReviewCarouselBlock".
+ */
+export interface ReviewCarouselBlock {
+  /**
+   * Shown above the reviews in the red heading style, e.g. "Visitor Reviews". Leave empty for none.
+   */
+  heading?: string | null;
+  /**
+   * Shown one at a time, in this order. Show a review only with its author’s written agreement to the exact words and name.
+   */
+  reviews: {
+    /**
+     * The review in the words its author approved. Do not type quote marks: they are added. Type […] where words are left out.
+     */
+    quote: string;
+    /**
+     * As the author agreed, e.g. "Sandeep A."
+     */
+    author: string;
+    /**
+     * e.g. "review on Google, a year ago"
+     */
+    details?: string | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'reviewCarousel';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
@@ -2508,6 +2540,7 @@ export interface PagesSelect<T extends boolean = true> {
         divider?: T | DividerBlockSelect<T>;
         pressGrid?: T | PressGridBlockSelect<T>;
         siteMap?: T | SiteMapBlockSelect<T>;
+        reviewCarousel?: T | ReviewCarouselBlockSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
@@ -3070,6 +3103,23 @@ export interface SiteMapBlockSelect<T extends boolean = true> {
               caption?: T;
               id?: T;
             };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ReviewCarouselBlock_select".
+ */
+export interface ReviewCarouselBlockSelect<T extends boolean = true> {
+  heading?: T;
+  reviews?:
+    | T
+    | {
+        quote?: T;
+        author?: T;
+        details?: T;
         id?: T;
       };
   id?: T;

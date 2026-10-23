@@ -17,6 +17,7 @@ import { UnorderedListFeatureClient as UnorderedListFeatureClient_e70f5e05f09f93
 import { RowLabel as RowLabel_465e6ddae87500be16ba745ecc7d0f77 } from '@/blocks/PressGrid/RowLabel'
 import { LinkRowLabel as LinkRowLabel_6d259e15c05631762459ef8386b88b08 } from '@/blocks/SiteMap/RowLabel'
 import { ColumnRowLabel as ColumnRowLabel_6d259e15c05631762459ef8386b88b08 } from '@/blocks/SiteMap/RowLabel'
+import { RowLabel as RowLabel_36cf8bfb72e8f6d1d56cd0af63022532 } from '@/blocks/ReviewCarousel/RowLabel'
 import { OverviewComponent as OverviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { MetaTitleComponent as MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { MetaImageComponent as MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
@@ -52,6 +53,7 @@ export const importMap = {
   "@/blocks/PressGrid/RowLabel#RowLabel": RowLabel_465e6ddae87500be16ba745ecc7d0f77,
   "@/blocks/SiteMap/RowLabel#LinkRowLabel": LinkRowLabel_6d259e15c05631762459ef8386b88b08,
   "@/blocks/SiteMap/RowLabel#ColumnRowLabel": ColumnRowLabel_6d259e15c05631762459ef8386b88b08,
+  "@/blocks/ReviewCarousel/RowLabel#RowLabel": RowLabel_36cf8bfb72e8f6d1d56cd0af63022532,
   "@payloadcms/plugin-seo/client#OverviewComponent": OverviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#MetaTitleComponent": MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#MetaImageComponent": MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860,

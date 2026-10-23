@@ -31,6 +31,7 @@ import { TextSectionBlock } from '@/blocks/TextSection/Component'
 import { DividerBlock } from '@/blocks/Divider/Component'
 import { PressGridBlock } from '@/blocks/PressGrid/Component'
 import { SiteMapBlock } from '@/blocks/SiteMap/Component'
+import { ReviewCarouselBlock } from '@/blocks/ReviewCarousel/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -62,6 +63,7 @@ const blockComponents = {
   divider: DividerBlock,
   pressGrid: PressGridBlock,
   siteMap: SiteMapBlock,
+  reviewCarousel: ReviewCarouselBlock,
 }
 
 export const RenderBlocks: React.FC<{
