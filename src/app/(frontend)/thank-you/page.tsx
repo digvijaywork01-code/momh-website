@@ -49,7 +49,10 @@ export default async function ThankYouPage() {
     notFound()
   }
 
-  return <RenderBlocks blocks={layout} />
+  // As on /about: on phones too the title and its first sentence sit on the
+  // haveli photo (centred at its bottom), and on laptops and desktops the
+  // photo fills exactly the first screen.
+  return <RenderBlocks blocks={layout} introOnBannerPhone bannerFillsScreen />
 }
 
 export const dynamic = 'force-static'

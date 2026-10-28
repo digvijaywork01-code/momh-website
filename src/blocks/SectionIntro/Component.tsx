@@ -68,9 +68,24 @@ export const SectionIntroBlock: React.FC<
      *  1920 artboard. Default (undefined) keeps every other intro
      *  untouched. */
     variant?: 'appointment-page'
+    /** Set by RenderBlocks' introOnBanner (NOT a CMS field): this title
+     *  block's eyebrow, title and first sentence are shown over the opening
+     *  banner on screens at least 768px wide and 481px tall. On those this
+     *  block shows only `bodyBelowBanner`, the rest of its text, and its
+     *  buttons, or nothing when neither is there; on the others (phones,
+     *  upright or sideways, and print) it renders whole, as before. */
+    phoneOnly?: boolean
+    bodyBelowBanner?: SectionIntroBlockProps['body'] | null
+    /** The page puts the title on the banner on phones too (RenderBlocks'
+     *  introOnBannerPhone): the parts above then hide on every screen, not
+     *  only on the larger ones. Print still renders this block whole. */
+    onPhoneBanner?: boolean
   }
 > = ({
   variant,
+  phoneOnly = false,
+  bodyBelowBanner = null,
+  onPhoneBanner = false,
   eyebrow,
   headline,
   body,
@@ -94,6 +109,7 @@ export const SectionIntroBlock: React.FC<
   const eyebrowRef = useRef<HTMLParagraphElement | null>(null)
   const headlineRef = useRef<HTMLDivElement | null>(null)
   const bodyRef = useRef<HTMLDivElement | null>(null)
+  const restRef = useRef<HTMLDivElement | null>(null)
   const ctaRef = useRef<HTMLDivElement | null>(null)
 
   const bg = (backgroundColor || 'cream') as BgKey
@@ -103,6 +119,26 @@ export const SectionIntroBlock: React.FC<
   // Book An Appointment PDF (1920 artboard). Every value below is that
   // artboard's px / 1920 as vw, from lg up; phones keep the default.
   const appointmentPage = variant === 'appointment-page'
+  // Under a banner that carries the title, the parts shown there are hidden
+  // here on the same windows (the query matches ImageBanner's overlay).
+  const restBelow = phoneOnly && richTextHasText(bodyBelowBanner)
+  const keepBelow = restBelow || !!ctaLabel || !!cta2Label
+  // On phones (the windows where ImageBanner's phone overlay shows) a page
+  // with introOnBannerPhone keeps here only the rest of the text, a
+  // continuation of the sentence on the photo: no top rule (it sat above the
+  // title) and no title-sized 40vh minimum height.
+  const continuationOnPhone = phoneOnly && onPhoneBanner && keepBelow
+  const onBanner =
+    phoneOnly && (onPhoneBanner ? '[@media_screen]:hidden' : '[@media_screen_and_(min-width:768px)_and_(min-height:481px)]:hidden')
+  const bodyClass = cn(
+    'font-body opacity-95',
+    // The PDF sets the closing paragraph at 30px (= text-hero-body)
+    // and justifies it, with the last line centred.
+    sectionCaps ? 'text-hero-body text-justify [text-align-last:center]' : 'text-body',
+    // PDF: Gill Sans Light 24/28.8, pure black, 755px measure.
+    appointmentPage &&
+      'lg:text-[length:max(1.125rem,1.25vw)] lg:leading-[1.2] lg:opacity-100 lg:mx-auto lg:max-w-[max(30rem,39.3vw)]',
+  )
 
   useEffect(() => {
     const el = sectionRef.current
@@ -132,6 +168,7 @@ export const SectionIntroBlock: React.FC<
         eyebrowRef.current,
         headlineRef.current,
         bodyRef.current,
+        restRef.current,
         ctaRef.current,
       ] as (HTMLElement | null)[]
     ).filter((el): el is NonNullable<typeof el> => el !== null)
@@ -163,10 +200,12 @@ export const SectionIntroBlock: React.FC<
         // gap before a form / info block whose own top padding
         // already provides the breathing room.
         'w-full px-6 md:px-12 flex flex-col items-center justify-center',
+        phoneOnly && !keepBelow && onBanner,
         // `tightTop` also releases the 40vh minimum height — with the
         // min-height held, the padding cut would be swallowed by the
         // centring and the visual gap would barely move.
         tightTop ? 'min-h-0 pt-8 md:pt-12' : 'min-h-[40vh] pt-20 md:pt-28',
+        continuationOnPhone && '[@media_screen_and_(max-width:767.98px)]:min-h-0 [@media_screen_and_(max-height:480px)]:min-h-0',
         tightBottom ? 'pb-8 md:pb-12' : 'pb-20 md:pb-28',
         bgClass[bg],
         // The bottom padding scales with the PDF (48px at 1920, as
@@ -196,6 +235,7 @@ export const SectionIntroBlock: React.FC<
           className={cn(
             'w-full max-w-6xl h-px mb-16 lg:mb-20 lg:hidden',
             dark ? 'bg-offwhite/40' : 'bg-warm-gray/40',
+            continuationOnPhone && '[@media_screen_and_(max-width:767.98px)]:hidden [@media_screen_and_(max-height:480px)]:hidden',
           )}
           aria-hidden="true"
         />
@@ -222,6 +262,7 @@ export const SectionIntroBlock: React.FC<
             ref={eyebrowRef}
             className={cn(
               'font-script italic text-eyebrow opacity-90 mb-3',
+              onBanner,
               // PDF: Cormorant Light Italic 24px in its own #DD092B, which
               // (unlike brand-red, 4.41:1) clears 4.5:1 on white at small sizes.
               appointmentPage &&
@@ -255,6 +296,7 @@ export const SectionIntroBlock: React.FC<
           // shared prefix made the later text-[...] classes strip it, which
           // silently changed the headline leading on every existing page.
           className={cn(
+            onBanner,
             sectionCaps
               ? 'section-caps text-[1.4rem] md:text-[1.7rem] lg:text-[2.08vw] leading-tight mb-5 [&_em]:text-brand-red [&_i]:text-brand-red [&_em]:border-b [&_em]:border-[#8e1e24] [&_em]:pb-[calc(1.25rem+0.03em)]'
               : 'editorial-display text-[2.5rem] md:text-[3.5rem] lg:text-[4rem] leading-tight mb-6 [&_em]:text-brand-red [&_i]:text-brand-red',
@@ -276,21 +318,23 @@ export const SectionIntroBlock: React.FC<
         {sectionCaps && showHeadline && <div className="h-px mb-5" aria-hidden="true" />}
 
         {body && (
+          <div ref={bodyRef} className={cn(bodyClass, onBanner)}>
+            <RichText data={body} enableGutter={false} enableProse={false} />
+          </div>
+        )}
+
+        {/* The rest of the text, after the first sentence that the banner
+            above carries; shown on the windows where the banner does. */}
+        {restBelow && bodyBelowBanner && (
           <div
-            ref={bodyRef}
+            ref={restRef}
             className={cn(
-              'font-body opacity-95',
-              // The PDF sets the closing paragraph at 30px (= text-hero-body)
-              // and justifies it, with the last line centred.
-              sectionCaps
-                ? 'text-hero-body text-justify [text-align-last:center]'
-                : 'text-body',
-              // PDF: Gill Sans Light 24/28.8, pure black, 755px measure.
-              appointmentPage &&
-                'lg:text-[length:max(1.125rem,1.25vw)] lg:leading-[1.2] lg:opacity-100 lg:mx-auto lg:max-w-[max(30rem,39.3vw)]',
+              bodyClass,
+              'hidden',
+              onPhoneBanner ? '[@media_screen]:block' : '[@media_screen_and_(min-width:768px)_and_(min-height:481px)]:block',
             )}
           >
-            <RichText data={body} enableGutter={false} enableProse={false} />
+            <RichText data={bodyBelowBanner} enableGutter={false} enableProse={false} />
           </div>
         )}
 

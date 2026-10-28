@@ -11,11 +11,17 @@
 import React, { useEffect, useRef } from 'react'
 import Link from 'next/link'
 
-import type { InfoHeroBlock as InfoHeroBlockProps, Media as MediaType } from '@/payload-types'
+import type {
+  InfoHeroBlock as InfoHeroBlockProps,
+  Media as MediaType,
+  SectionIntroBlock,
+} from '@/payload-types'
 
 import { Media } from '@/components/Media'
+import RichText from '@/components/RichText'
 import { Card } from '@/components/ui/card'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { richTextHasText } from '@/utilities/richTextHasText'
 import { cn } from '@/utilities/ui'
 
 /**
@@ -57,6 +63,25 @@ export const InfoHeroBlock: React.FC<
      *  italic serif with the accent word in brand red. Default (undefined)
      *  keeps the home cards hero and the About statement band untouched. */
     variant?: 'banner-title'
+    /** Set by RenderBlocks' infoHeroTextAtBottom (NOT a CMS field), for a
+     *  hero without cards: the title and its line sit at the bottom instead
+     *  of the centre, at the bottom-left from 768px (lined up with the
+     *  header logo, as on the banner pages) and at the bottom centre on
+     *  phones. */
+    textAtBottom?: boolean
+    /** Set by RenderBlocks' infoHeroWholePhotoOnPhone (NOT a CMS field), for
+     *  a photo hero without cards: on phones the hero takes the photo's own
+     *  shape instead of the full screen, so the photo is neither cropped nor
+     *  zoomed, and its title and line use the smaller phone sizes of the
+     *  banner pages' title (28px / 14px) to fit it; 22px / 13px under 360px,
+     *  where the photo is too short for those to clear the header's logo. */
+    wholePhotoOnPhone?: boolean
+    /** Set by RenderBlocks' introOnHero (NOT a CMS field): the next title
+     *  block's heading as a small line above the title (`eyebrow`) and its
+     *  first sentence under it (`body`), styled as on the banner pages (in
+     *  the phone sizes of wholePhotoOnPhone when that is on). Screens only:
+     *  print shows that title block whole instead. */
+    intro?: { eyebrow?: string | null; body?: SectionIntroBlock['body'] | null }
   }
 > = ({
   backgroundMedia,
@@ -65,6 +90,9 @@ export const InfoHeroBlock: React.FC<
   subline,
   infoCards,
   variant,
+  textAtBottom = false,
+  wholePhotoOnPhone = false,
+  intro,
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
   const sectionRef = useRef<HTMLElement | null>(null)
@@ -109,6 +137,13 @@ export const InfoHeroBlock: React.FC<
   //    so a "scroll down" cue mid-page reads as clutter).
   const hasCards = Array.isArray(infoCards) && infoCards.length > 0
   const bannerTitle = variant === 'banner-title'
+  const atBottom = textAtBottom && !hasCards
+  const photo =
+    backgroundMedia && typeof backgroundMedia === 'object' && !isVideo ? backgroundMedia : null
+  const photoRatio =
+    wholePhotoOnPhone && !hasCards && photo?.width && photo?.height
+      ? `${photo.width} / ${photo.height}`
+      : undefined
 
   return (
     <section
@@ -119,9 +154,21 @@ export const InfoHeroBlock: React.FC<
          share a viewport with Hero, but mandatory scroll-snap requires
          every block to be its own full-screen snap target — half-
          viewport blocks get skipped over by hard flicks. The haveli
-         background image crops a few pixels top/bottom via object-cover. */
+         background image crops a few pixels top/bottom via object-cover.
+         Touch screens from 768px keep the header expanded and white over the
+         page, so a hero that opens the page starts below that bar (14vh,
+         never under its 80px logo, plus its 1px rule; header.tsx) and is
+         that much shorter, still exactly one screen. Its scroll margin is
+         the bar too, so the home page's section snapping stops it below
+         the bar rather than under it. */
       ref={sectionRef}
-      className="relative w-full h-svh overflow-hidden text-offwhite"
+      className={cn(
+        'relative w-full h-svh overflow-hidden text-offwhite [@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&:first-of-type]:mt-[calc(max(14vh,80px)_+_1px)] [@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&:first-of-type]:h-[calc(100svh_-_max(14vh,80px)_-_1px)] [@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&:first-of-type]:scroll-mt-[calc(max(14vh,80px)_+_1px)]',
+        // Phones, wholePhotoOnPhone: the photo's own shape, full width, so it
+        // is neither cropped nor zoomed (the ratio comes in --hero-ratio).
+        photoRatio && '[@media_screen_and_(max-width:767.98px)]:!h-auto [@media_screen_and_(max-width:767.98px)]:aspect-[var(--hero-ratio)]',
+      )}
+      style={photoRatio ? ({ '--hero-ratio': photoRatio } as React.CSSProperties) : undefined}
       data-theme="dark"
       data-snap-section
       aria-label="Information hero"
@@ -151,16 +198,25 @@ export const InfoHeroBlock: React.FC<
       <div
         className={cn(
           'hidden md:flex absolute inset-0 z-20 flex-col',
-          hasCards ? 'justify-end pb-24' : 'items-center justify-center',
+          hasCards
+            ? 'justify-end pb-24'
+            : atBottom
+              ? 'justify-end items-start px-10 pb-10 lg:pl-[max(70px,calc(50%_-_890px))] lg:pr-[70px] lg:pb-16'
+              : 'items-center justify-center',
         )}
       >
         {(headline || subline) && (
           <div
             className={cn(
               'max-w-3xl',
-              hasCards ? 'px-[110px] mb-12' : 'px-8 text-center',
+              hasCards ? 'px-[110px] mb-12' : atBottom ? 'text-left' : 'px-8 text-center',
             )}
           >
+            {intro?.eyebrow && (
+              <p className="font-script italic text-eyebrow text-offwhite opacity-90 mb-2 drop-shadow-md print:hidden">
+                {intro.eyebrow}
+              </p>
+            )}
             {headline && (
               <h1
                 className={cn(
@@ -192,6 +248,11 @@ export const InfoHeroBlock: React.FC<
               >
                 {subline}
               </p>
+            )}
+            {intro?.body && richTextHasText(intro.body) && (
+              <div className="font-body text-body text-offwhite max-w-xl opacity-95 mt-3 drop-shadow-md print:hidden [&_a]:underline [&_a]:underline-offset-4">
+                <RichText data={intro.body} enableGutter={false} enableProse={false} />
+              </div>
             )}
           </div>
         )}
@@ -240,31 +301,53 @@ export const InfoHeroBlock: React.FC<
           text like the desktop treatment; the cards variant keeps its
           original left-aligned stack with the `mt-8` clearance under
           the fixed header. */}
-      <div className="md:hidden absolute inset-0 z-20 flex flex-col p-4">
+      <div
+        className={cn(
+          'md:hidden absolute inset-0 z-20 flex flex-col',
+          photoRatio ? 'px-4 pb-3 [@media(max-width:359.98px)]:pb-2' : 'p-4',
+        )}
+      >
         <div
           className={cn(
-            'flex-grow flex flex-col justify-center',
+            'flex-grow flex flex-col',
+            atBottom ? (photoRatio ? 'justify-end' : 'justify-end pb-6') : 'justify-center',
             hasCards ? 'mt-8' : 'items-center text-center px-2',
           )}
         >
+          {intro?.eyebrow && (
+            <p
+              className={`font-script italic text-offwhite opacity-90 drop-shadow-md print:hidden ${photoRatio ? 'text-[0.875rem] leading-none mb-0.5' : 'text-eyebrow mb-1'}`}
+            >
+              {intro.eyebrow}
+            </p>
+          )}
           <h1
             className={cn(
               'text-offwhite drop-shadow-lg [&_em]:text-brand-red [&_i]:text-brand-red',
               hasCards
                 ? 'font-display text-display font-normal'
-                : bannerTitle
-                  ? 'banner-display text-hero'
-                  : 'statement-display text-hero',
+                : photoRatio
+                  ? `${bannerTitle ? 'banner-display' : 'statement-display'} text-[1.75rem] leading-[1.1] [@media(max-width:359.98px)]:text-[1.375rem]`
+                  : bannerTitle
+                    ? 'banner-display text-hero'
+                    : 'statement-display text-hero',
             )}
           >
             {headline ? renderEmphasis(headline) : headline}
           </h1>
           {subline && (
             <p
-              className={`font-body ${bannerTitle ? 'text-hero-body' : 'text-body'} mt-1 text-offwhite drop-shadow-md`}
+              className={`font-body ${photoRatio ? 'text-[0.875rem] leading-snug max-w-[22rem] mt-0.5 [@media(max-width:359.98px)]:text-[0.8125rem]' : `${bannerTitle ? 'text-hero-body' : 'text-body'} mt-1`} text-offwhite drop-shadow-md`}
             >
               {subline}
             </p>
+          )}
+          {intro?.body && richTextHasText(intro.body) && (
+            <div
+              className={`font-body text-offwhite max-w-[22rem] opacity-95 drop-shadow-md print:hidden [&_a]:underline [&_a]:underline-offset-4 ${photoRatio ? 'text-[0.875rem] leading-snug mt-0.5 [@media(max-width:359.98px)]:text-[0.8125rem]' : 'text-body mt-2'}`}
+            >
+              <RichText data={intro.body} enableGutter={false} enableProse={false} />
+            </div>
           )}
         </div>
         {Array.isArray(infoCards) && infoCards.length > 0 && (

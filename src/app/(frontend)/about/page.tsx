@@ -46,7 +46,18 @@ export default async function AboutPage() {
   // `fifty-justified` opts every editorialSplit on THIS page into the
   // About-PDF layout (flush 50/50 columns, justified body, centred stack)
   // without touching how the shared block renders anywhere else.
-  return <RenderBlocks blocks={layout} editorialSplitVariant="fifty-justified" />
+  // `introOnBannerPhone`: on phones too, the "About Us" title and its line
+  // sit on the haveli photo (centred at its bottom) instead of below it.
+  // `bannerFillsScreen`: on laptops and desktops the photo fills exactly the
+  // first screen.
+  return (
+    <RenderBlocks
+      blocks={layout}
+      editorialSplitVariant="fifty-justified"
+      introOnBannerPhone
+      bannerFillsScreen
+    />
+  )
 }
 
 export const dynamic = 'force-static'

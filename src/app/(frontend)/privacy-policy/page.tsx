@@ -80,7 +80,12 @@ export default async function PrivacyPolicyPage() {
   return (
     <div className={PAGE_CLASSES}>
       <h1 className="sr-only">Privacy Policy</h1>
-      <RenderBlocks blocks={layout} />
+      {/* As on /about: on phones too the title and its first sentence sit on
+          the photo (centred at its bottom), and on laptops and desktops the
+          photo fills exactly the first screen. The trim to fill a screen
+          comes off the photo's left only, so the gold piece at its right
+          edge stays whole. */}
+      <RenderBlocks blocks={layout} introOnBannerPhone bannerFillsScreen="keep-right" />
     </div>
   )
 }
