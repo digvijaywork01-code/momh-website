@@ -110,8 +110,9 @@ export const RenderBlocks: React.FC<{
   introOnBannerPhone?: boolean
   /** On laptops and desktops, an opening natural banner fills exactly one
    *  screen (ImageBanner's fillScreen; 'keep-top' takes the trim from the
-   *  photo's bottom only, 'keep-right' from its left only). Off by default;
-   *  a page route opts in (About). */
+   *  photo's bottom only, 'keep-right' from its left only). Skipped for a
+   *  thin strip, like introOnBanner: blown up to a screen it would lose most
+   *  of itself. Off by default; a page route opts in (About). */
   bannerFillsScreen?: boolean | 'keep-top' | 'keep-right'
   /** When the page opens with an Info Hero (no cards), its title and line
    *  sit at the bottom: bottom-left from 768px, bottom centre on phones
@@ -211,7 +212,7 @@ export const RenderBlocks: React.FC<{
                       bodyBelowBanner: heroIntroText?.rest ?? null,
                     }
                   : {}),
-                ...(bannerFillsScreen && index === 0 && blockType === 'imageBanner'
+                ...(bannerFillsScreen && index === 0 && roomyBanner
                   ? { fillScreen: bannerFillsScreen }
                   : {}),
                 ...(intro && index === 0
