@@ -116,14 +116,6 @@ export const ImageBannerBlock: React.FC<
       ref={sectionRef}
       // `image-banner` is a hook, not a style: a page's own rules find its
       // title block as the first section that is not a banner.
-      // Touch screens from 768px keep the header expanded and white over the
-      // page, so a banner that opens the page starts below that bar and the
-      // whole photo shows. The bar is 14vh tall but never under its 80px
-      // logo, plus its 1px rule (header.tsx). The space is a see-through top
-      // border INSIDE the banner, not a margin: a margin would collapse
-      // through the page's wrapper, and on a client-side navigation Next
-      // scrolls that wrapper into view and would land one bar-height down.
-      // content-box keeps the photo's shape on the box below the border.
       // A "natural" banner always spans the full width and shows the whole
       // photo. On a window wider than the photo's shape its last strip runs
       // just below the window edge and shows on scroll: no side bands, no crop.
@@ -143,7 +135,6 @@ export const ImageBannerBlock: React.FC<
         fillScreen &&
           h === 'natural' &&
           '[@media_screen_and_(min-width:1024px)_and_(hover:hover)_and_(pointer:fine)_and_(min-aspect-ratio:3/2)_and_(max-aspect-ratio:13/5)]:!aspect-auto [@media_screen_and_(min-width:1024px)_and_(hover:hover)_and_(pointer:fine)_and_(min-aspect-ratio:3/2)_and_(max-aspect-ratio:13/5)]:!h-svh',
-        '[@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&:first-of-type]:box-content [@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&:first-of-type]:border-t-[length:calc(max(14vh,80px)_+_1px)] [@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&:first-of-type]:border-transparent [@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&:first-of-type]:bg-clip-padding',
         heightClass[h],
       )}
       style={naturalStyle}
@@ -188,9 +179,8 @@ export const ImageBannerBlock: React.FC<
         // own: brand red tops out at 4.8:1 even on black, and on the haveli's
         // stone the shared glow alone left it just under 3:1.
         // The shade covers the whole photo, but the text box stops at the
-        // window's bottom edge (below the touch bar on touch tablets), so on
-        // a wide window, where the photo runs past that edge, the title still
-        // sits on the first screen.
+        // window's bottom edge, so on a wide window, where the photo runs
+        // past that edge, the title still sits on the first screen.
         // The left edge lines up with the header logo (header.tsx: 40px,
         // 70px from 1024px, inside a centred 1920px row). The text here is
         // the intro's first sentence only (RenderBlocks splits it; the rest
@@ -202,7 +192,7 @@ export const ImageBannerBlock: React.FC<
             aria-hidden
             className="hidden [@media_screen_and_(min-width:768px)_and_(min-height:481px)]:block absolute inset-0 bg-gradient-to-tr from-black/75 via-black/30 to-transparent"
           />
-          <div className="hidden [@media_screen_and_(min-width:768px)_and_(min-height:481px)]:flex absolute inset-x-0 top-0 h-[min(100%,100svh)] [@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:h-[min(100%,calc(100svh_-_max(14vh,80px)_-_1px))] flex-col justify-end items-start text-left text-offwhite px-10 pb-10 lg:pl-[max(70px,calc(50%_-_890px))] lg:pr-[70px] lg:pb-16 [text-shadow:0_0_18px_rgba(0,0,0,0.65),0_1px_3px_rgba(0,0,0,0.6)]">
+          <div className="hidden [@media_screen_and_(min-width:768px)_and_(min-height:481px)]:flex absolute inset-x-0 top-0 h-[min(100%,100svh)] flex-col justify-end items-start text-left text-offwhite px-10 pb-10 lg:pl-[max(70px,calc(50%_-_890px))] lg:pr-[70px] lg:pb-16 [text-shadow:0_0_18px_rgba(0,0,0,0.65),0_1px_3px_rgba(0,0,0,0.6)]">
             {overlay.eyebrow && (
               <p className="font-script italic text-eyebrow opacity-90 mb-2">{overlay.eyebrow}</p>
             )}
@@ -239,7 +229,7 @@ export const ImageBannerBlock: React.FC<
             aria-hidden
             className="hidden [@media_screen_and_(max-width:767.98px)]:block [@media_screen_and_(max-height:480px)]:block absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent"
           />
-          <div className="hidden [@media_screen_and_(max-width:767.98px)]:flex [@media_screen_and_(max-height:480px)]:flex absolute inset-x-0 top-0 h-[min(100%,100svh)] [@media_screen_and_(max-width:767.98px)_and_(min-height:481px)]:relative [@media_screen_and_(max-width:767.98px)_and_(min-height:481px)]:h-auto [@media_screen_and_(max-width:767.98px)_and_(min-height:481px)]:pt-[91px] [@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:h-[min(100%,calc(100svh_-_max(14vh,80px)_-_1px))] flex-col justify-end items-center text-center text-offwhite px-4 pb-3 [text-shadow:0_0_14px_rgba(0,0,0,0.65),0_1px_3px_rgba(0,0,0,0.6)]">
+          <div className="hidden [@media_screen_and_(max-width:767.98px)]:flex [@media_screen_and_(max-height:480px)]:flex absolute inset-x-0 top-0 h-[min(100%,100svh)] [@media_screen_and_(max-width:767.98px)_and_(min-height:481px)]:relative [@media_screen_and_(max-width:767.98px)_and_(min-height:481px)]:h-auto [@media_screen_and_(max-width:767.98px)_and_(min-height:481px)]:pt-[91px] flex-col justify-end items-center text-center text-offwhite px-4 pb-3 [text-shadow:0_0_14px_rgba(0,0,0,0.65),0_1px_3px_rgba(0,0,0,0.6)]">
             {overlay.eyebrow && (
               <p className="font-script italic text-[0.875rem] leading-none opacity-90">
                 {overlay.eyebrow}

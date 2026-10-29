@@ -54,10 +54,6 @@ export async function generateMetadata(): Promise<Metadata> {
  *    Terms. From lg up the intro column is Terms' (~885px at 1920) and the
  *    title -> intro gap is the PDF's 77.70pt baseline to baseline at 1920
  *    (4.047vw), by the same formula as Terms'.
- *  - Touch screens from 768px (no mouse hover): the header never shrinks there;
- *    it stays expanded and white, at 14vh (header.tsx: isExpanded when the
- *    pointer cannot hover). So the title starts 51px below that header, and
- *    in-page jumps stop 2rem below it, as on Terms.
  *  - The thank-you note (the Text Section straight after the Site Map): the
  *    PDF sets it centred in two lines, 841.5pt wide on 24pt type (35.06em).
  *    The site's type is larger (26px at 1920), so the measure is set in em
@@ -92,8 +88,8 @@ const PAGE_CLASSES = [
   'pb-8 lg:pb-[max(0px,calc(5.026*var(--pp-vw)_-_3rem_-_0.4202*var(--fs-body)))]',
   // Title block: the first section that is not an Image Banner (the haveli
   // photo above the title), and only while it IS the title block (it holds
-  // .editorial-display). The 115px phone top padding (and the touch-screen
-  // one below) clear the header, so they apply only when the title opens the
+  // .editorial-display). The 115px phone top padding clears the header, so it
+  // applies only when the title opens the
   // page (first-of-type, and never the banner, which carries a copy of
   // the title); under the banner the block keeps its own padding.
   // No quoted attribute selector here: Tailwind silently drops a breakpoint
@@ -102,9 +98,6 @@ const PAGE_CLASSES = [
   '[@media(max-width:767px)]:[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)]:px-9 [@media(max-width:767px)]:[&>section:first-of-type:not(.image-banner):has(.editorial-display)]:pt-[115px]',
   'lg:[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)>div]:max-w-[min(max(720px,46.1vw),885px)]',
   'lg:[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)_.editorial-display]:mb-[calc(min(4.047vw,77.70px)_-_17.6px_-_1.17*var(--fs-body))]',
-  // Touch screens from 768px: clear the always-expanded 14vh header.
-  '[@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&>section:first-of-type:not(.image-banner):has(.editorial-display)]:pt-[calc(14vh_+_52px)]',
-  '[@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&_.text-section-heading]:scroll-mt-[calc(14vh_+_2rem)]',
   // The thank-you note: the PDF's two centred lines.
   'md:[&_.site-map+.text-section_.text-section-body]:max-w-[35.6em] md:[&_.site-map+.text-section_.text-section-body]:mx-auto',
   // Phones: justified paragraphs left-aligned (beats Lexical's inline style).

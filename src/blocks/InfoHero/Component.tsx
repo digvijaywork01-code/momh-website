@@ -154,16 +154,10 @@ export const InfoHeroBlock: React.FC<
          share a viewport with Hero, but mandatory scroll-snap requires
          every block to be its own full-screen snap target — half-
          viewport blocks get skipped over by hard flicks. The haveli
-         background image crops a few pixels top/bottom via object-cover.
-         Touch screens from 768px keep the header expanded and white over the
-         page, so a hero that opens the page starts below that bar (14vh,
-         never under its 80px logo, plus its 1px rule; header.tsx) and is
-         that much shorter, still exactly one screen. Its scroll margin is
-         the bar too, so the home page's section snapping stops it below
-         the bar rather than under it. */
+         background image crops a few pixels top/bottom via object-cover. */
       ref={sectionRef}
       className={cn(
-        'relative w-full h-svh overflow-hidden text-offwhite [@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&:first-of-type]:mt-[calc(max(14vh,80px)_+_1px)] [@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&:first-of-type]:h-[calc(100svh_-_max(14vh,80px)_-_1px)] [@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&:first-of-type]:scroll-mt-[calc(max(14vh,80px)_+_1px)]',
+        'relative w-full h-svh overflow-hidden text-offwhite',
         // Phones, wholePhotoOnPhone: the photo's own shape, full width, so it
         // is neither cropped nor zoomed (the ratio comes in --hero-ratio).
         photoRatio && '[@media_screen_and_(max-width:767.98px)]:!h-auto [@media_screen_and_(max-width:767.98px)]:aspect-[var(--hero-ratio)]',

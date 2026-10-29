@@ -5,6 +5,15 @@ import { usePathname } from 'next/navigation'
 
 const LOGO_SRC = '/momh-logo.jpg'
 
+/** Where the desktop bar shows: a window 768px or wider whose main pointer
+ *  is a mouse or trackpad. Everywhere else (phones, and every iPad or other
+ *  touch tablet, upright or sideways) gets the phone header: the logo and
+ *  menu button floating over the page, and the slide-in menu. The class
+ *  names below spell the same query out as an arbitrary variant
+ *  ([@media(min-width:768px)_and_(hover:hover)_and_(pointer:fine)]), since
+ *  Tailwind only reads whole literal class names. */
+const DESKTOP_BAR_QUERY = '(min-width: 768px) and (hover: hover) and (pointer: fine)'
+
 /** `image` is the Media upload's 500x500 `square` size, so every panel
  *  tile is the same square photo. A long name can stack onto two `lines`
  *  in the panel when its tile is too narrow for it on one line;
@@ -136,15 +145,10 @@ const focusFirstPanelLink = (label: string) =>
     .find(isShownLink)
     ?.focus({ preventScroll: true })
 
-const openingHours = [
-  { day: 'Monday', time: '10am – 7:30pm' },
-  { day: 'Tuesday', time: '10am – 7:30pm' },
-  { day: 'Wednesday', time: '10am – 7:30pm' },
-  { day: 'Thursday', time: '10am – 7:30pm' },
-  { day: 'Friday', time: '10am – 7:30pm' },
-  { day: 'Saturday', time: '10am – 7:30pm' },
-  { day: 'Sunday', time: '10am – 7:30pm' },
-]
+/** The same every day, so one line, worded as the Getting Here block's
+ *  (Contact page) hours and note. */
+const openingHours = [{ day: 'Monday – Sunday', time: '10:00 AM to 7:30 PM' }]
+const HOURS_NOTE = 'Closed on select Indian public holidays. Please confirm before your visit.'
 
 const CloseIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -387,12 +391,14 @@ const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
 
   return (
     <div
-      className={`fixed top-0 left-0 h-screen w-full bg-white z-[100] transform transition-transform duration-300 ease-in-out md:hidden ${
+      className={`fixed top-0 left-0 h-screen w-full bg-white z-[100] transform transition-transform duration-300 ease-in-out [@media(min-width:768px)_and_(hover:hover)_and_(pointer:fine)]:hidden ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}
       style={{ fontFamily: 'HelveticaNeueCyr, Helvetica, Arial, sans-serif' }}
     >
-      <div className="flex flex-col p-6 pt-12 h-full overflow-y-auto">
+      {/* overscroll-contain: a swipe that reaches the end of the list stops
+          there instead of carrying on to the page behind the menu. */}
+      <div className="flex flex-col p-6 pt-12 h-full overflow-y-auto overscroll-contain">
         <div className="flex justify-between items-start mb-10">
           <div className="flex items-center">
             <img src={LOGO_SRC} alt="Logo" className="h-[80px] w-[80px] object-contain mr-4" />
@@ -462,16 +468,21 @@ const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
         </nav>
 
         <div className="mt-8 pr-8">
-          <h3 className="font-bold text-lg mb-4">Opening Hours</h3>
-          <div className="space-y-2 text-sm pr-8">
+          {/* From 768px (tablets) the hours are larger: the heading 24px,
+              the line the menu links' 20px, the note 16px. */}
+          <h3 className="font-bold text-lg md:text-2xl mb-4">Opening Hours</h3>
+          {/* Days and time read as one line ("Monday – Sunday: 10:00 AM
+              to 7:30 PM"), the days in medium weight. Each half stays whole,
+              so on the narrowest phones the time wraps under the days. */}
+          <div className="space-y-2 text-sm md:text-xl">
             {openingHours.map((item) => (
-              <div key={item.day} className="flex justify-between">
-                <span>{item.day}</span>
-                <span>{item.time}</span>
-              </div>
+              <p key={item.day}>
+                <span className="whitespace-nowrap font-medium">{item.day}:</span>{' '}
+                <span className="whitespace-nowrap">{item.time}</span>
+              </p>
             ))}
           </div>
-          <p className="mt-4 text-xs">*Except Public Holidays</p>
+          <p className="mt-4 text-xs md:text-base italic">{HOURS_NOTE}</p>
         </div>
       </div>
     </div>
@@ -493,18 +504,13 @@ export const Header = () => {
   // Baymard/NN/g: a 250ms delay stops the panel flickering open as the
   // cursor crosses the bar, and a 250ms close delay tolerates the move
   // from trigger down to panel. A click never closes it; it only opens
-  // it, for touch screens (no hover) and the keyboard. It also closes on
-  // Escape or a click outside.
+  // it, for the keyboard. It also closes on Escape or a click outside.
   const [openMenu, setOpenMenu] = useState<string | null>(null)
   // Keyboard focus inside the header holds the nav expanded, so a
   // keyboard user can see the minimized links they tab onto.
   // `:focus-visible` only, so a mouse click on the trigger never pins
   // the bar open after the cursor leaves.
   const [navFocusVisible, setNavFocusVisible] = useState(false)
-  // Devices without a hovering pointer (touch tablets) can't reveal the
-  // minimized desktop nav by moving a cursor to the top, so on those the
-  // bar stays expanded and one tap on a trigger opens its panel.
-  const [canHover, setCanHover] = useState(true)
   // True while the panel collapses (until its max-height transition ends).
   // The bar stays expanded meanwhile, so the panel never sits over the
   // page on a fading bar, and a quick re-hover finds the trigger where it
@@ -526,7 +532,8 @@ export const Header = () => {
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const headerRef = useRef<HTMLElement | null>(null)
   const menuButtonRef = useRef<HTMLButtonElement | null>(null)
-  // Phones: whether the burger currently sits over a light part of the page.
+  // Phones and touch tablets: whether the burger currently sits over a
+  // light part of the page.
   const [menuIconOnLight, setMenuIconOnLight] = useState(false)
   const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({})
   // Set when the panel is opened from the keyboard, so focus moves into
@@ -605,17 +612,14 @@ export const Header = () => {
     },
     [],
   )
-  // Click (or Enter/Space) opens at once. With a mouse it never closes,
-  // so a click on an already hover-opened panel leaves it open. On a
-  // touch screen (no hover, see canHover) a tap on the open trigger
-  // closes it: there the trigger is the only toggle besides tapping
-  // elsewhere.
+  // Click (or Enter/Space) opens at once. It never closes, so a click on
+  // an already hover-opened panel leaves it open. (The bar only shows
+  // with a mouse or trackpad; touch screens get the slide-in menu.)
   const openMenuNow = (label: string, fromKeyboard: boolean) => {
     clearMenuTimers()
     setSheetMediaMounted(true)
     if (openMenu === label) {
       if (fromKeyboard) focusFirstPanelLink(label)
-      else if (!canHover) setOpenMenu(null)
       return
     }
     focusPanelOnOpen.current = fromKeyboard
@@ -711,7 +715,12 @@ export const Header = () => {
   // is locked too, whenever it is the scroller (on desktop it is a plain
   // div and is left alone), with its own scrollbar's width kept as
   // padding so the page doesn't shift.
-  const navLocked = openMenu !== null || menuClosing
+  // The slide-in menu holds the same lock while it is open. Its own lock
+  // (MobileNav, body overflow) is not enough from 1024px: there the page
+  // scrolls on <html>, and html's overflow-x: clip (globals.css) stops
+  // body's overflow from reaching the window, so a swipe on the open menu
+  // of a sideways iPad scrolled the page behind it.
+  const navLocked = openMenu !== null || menuClosing || isMobileNavOpen
   const navLockRelease = useRef<(() => void) | null>(null)
   const navUnlockFrame = useRef(0)
   useLayoutEffect(() => {
@@ -810,9 +819,10 @@ export const Header = () => {
     setOpenMenu(null)
   }, [pathname])
 
-  // Narrowing the window to phone width hides the desktop bar and its
-  // panel (the drawer takes over), so close the panel there rather than
-  // leave its scroll lock on a page that can no longer show it.
+  // Narrowing the window to phone width (or a pointer change to touch)
+  // hides the desktop bar and its panel (the drawer takes over), so close
+  // the panel there rather than leave its scroll lock on a page that can
+  // no longer show it.
   useEffect(() => {
     if (isMobile) setOpenMenu(null)
   }, [isMobile])
@@ -835,24 +845,14 @@ export const Header = () => {
     return () => observers.forEach((o) => o?.disconnect())
   }, [])
 
-  // Whether the primary pointer can hover (see canHover).
+  // Phone header (phones and touch tablets) or desktop bar: the same query
+  // the class names use (DESKTOP_BAR_QUERY), so the two never disagree.
   useEffect(() => {
-    const mq = window.matchMedia('(hover: hover) and (pointer: fine)')
-    const update = () => setCanHover(mq.matches)
+    const mq = window.matchMedia(DESKTOP_BAR_QUERY)
+    const update = () => setIsMobile(!mq.matches)
     update()
     mq.addEventListener('change', update)
     return () => mq.removeEventListener('change', update)
-  }, [])
-
-  // Check if we're on mobile
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768) // md breakpoint
-    }
-
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
   useEffect(() => {
@@ -875,12 +875,12 @@ export const Header = () => {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Phones: the burger is white over the page's opening photo (a dark banner
-  // or hero), and elsewhere takes whichever of white or ink reads better on
-  // what is actually painted behind it: a photo's own pixels, else the
-  // background colour, else the block's data-theme. So it never vanishes
-  // once the photo has scrolled away, not even over a dark photo inside a
-  // light section.
+  // Phones and touch tablets: the burger is white over the page's opening
+  // photo (a dark banner or hero), and elsewhere takes whichever of white or
+  // ink reads better on what is actually painted behind it: a photo's own
+  // pixels, else the background colour, else the block's data-theme. So it
+  // never vanishes once the photo has scrolled away, not even over a dark
+  // photo inside a light section.
   useEffect(() => {
     if (!isMobile) {
       setMenuIconOnLight(false)
@@ -985,11 +985,11 @@ export const Header = () => {
   // An open dropdown panel extends well below the 120px hover zone, so
   // it must also hold the header expanded — otherwise moving the cursor
   // down into the panel would collapse the whole bar. Keyboard focus in
-  // the header holds it expanded too, as do touch devices (no hover to
-  // reveal it) and the panel's 300ms collapse (menuClosing).
+  // the header holds it expanded too, as does the panel's 300ms collapse
+  // (menuClosing).
   const isExpanded = isMobile
     ? !isScrolled
-    : !canHover || isNavZoneHovered || openMenu !== null || navFocusVisible || menuClosing
+    : isNavZoneHovered || openMenu !== null || navFocusVisible || menuClosing
 
   // Desktop logo sizes — small in minimized state, larger when
   // expanded. The square brand mark stays visually unambiguous at
@@ -1060,14 +1060,15 @@ export const Header = () => {
           if (e.relatedTarget) setOpenMenu(null)
         }}
       >
-        {/* Desktop Header. Tablet portrait (768-1023) gets a tighter bar
+        {/* Desktop Header, with a mouse or trackpad only (DESKTOP_BAR_QUERY).
+            A window 768-1023 wide gets a tighter bar
             (40px sides, 24px gaps, 14px links that never wrap, a logo that
             never shrinks): at the desktop sizes the four links wrapped to
             two lines and squeezed the logo. The [@media(max-width:...)]
             variants are arbitrary because this config's object screens
             (wide, sbs) switch off Tailwind's max-[...]. */}
         <div
-          className={`max-w-[calc(1920px+var(--sb,0px))] w-full hidden md:flex flex-row items-center justify-between pl-[70px] pr-[calc(70px+var(--sb,0px))] [@media(max-width:1023.98px)]:pl-10 [@media(max-width:1023.98px)]:pr-[calc(40px+var(--sb,0px))] ${headerHeight} transition-[min-height] duration-300`}
+          className={`max-w-[calc(1920px+var(--sb,0px))] w-full hidden [@media(min-width:768px)_and_(hover:hover)_and_(pointer:fine)]:flex flex-row items-center justify-between pl-[70px] pr-[calc(70px+var(--sb,0px))] [@media(max-width:1023.98px)]:pl-10 [@media(max-width:1023.98px)]:pr-[calc(40px+var(--sb,0px))] ${headerHeight} transition-[min-height] duration-300`}
         >
           {/* Logo */}
           <Link href="/" className="flex items-center min-w-0 flex-shrink [@media(max-width:1023.98px)]:shrink-0">
@@ -1094,7 +1095,7 @@ export const Header = () => {
                 // Panel trigger — hover opens the white panel rendered
                 // after the bar (250ms intent); leaving the trigger or the
                 // panel closes it after 250ms. The button's click only
-                // opens, for touch screens and the keyboard. The hub page
+                // opens, for the keyboard. The hub page
                 // (/about) is the panel's "View all" link and "Our Story"
                 // tile.
                 <div
@@ -1154,9 +1155,13 @@ export const Header = () => {
           </nav>
         </div>
 
-        {/* Mobile Header */}
+        {/* Mobile Header: phones, and every touch tablet (iPads upright or
+            sideways), which have no mouse to reveal the desktop bar. From
+            768px its sides are the desktop bar's (40px, 70px from 1024px),
+            so the logo stays where the bar's logo was and lines up with the
+            page titles on the banner photos (ImageBanner overlay). */}
         <div
-          className={`w-full flex md:hidden flex-row items-center justify-between p-6 ${mobileHeaderHeight} transition-all duration-300`}
+          className={`w-full flex [@media(min-width:768px)_and_(hover:hover)_and_(pointer:fine)]:hidden flex-row items-center justify-between p-6 md:px-10 lg:px-[70px] ${mobileHeaderHeight} transition-all duration-300`}
         >
           {/* Logo */}
           <Link href="/" className="flex items-center">
@@ -1186,7 +1191,7 @@ export const Header = () => {
             white), one step darker than the #E6E6E6 tab line below it, so
             it reads as the bar casting a hairline shadow. The border itself
             is transparent; the shadow lands on the row just under it. */}
-        <div className="hidden md:flex justify-center w-full">
+        <div className="hidden [@media(min-width:768px)_and_(hover:hover)_and_(pointer:fine)]:flex justify-center w-full">
           <hr
             className={`border-t w-full transition-opacity duration-500 ${
               isExpanded ? 'opacity-100' : 'opacity-0'
@@ -1251,7 +1256,7 @@ export const Header = () => {
               // 1px line) and scrolling past that once settled (see
               // panelSettled), so short screens and landscape phones can
               // still reach every tile.
-              className={`hidden md:block w-full transition-[max-height] duration-300 ease-in ${
+              className={`hidden [@media(min-width:768px)_and_(hover:hover)_and_(pointer:fine)]:block w-full transition-[max-height] duration-300 ease-in ${
                 open
                   ? 'max-h-[min(var(--panel-h,640px),calc(100svh_-_max(14vh,80px)_-_1px))]'
                   : 'max-h-0'
