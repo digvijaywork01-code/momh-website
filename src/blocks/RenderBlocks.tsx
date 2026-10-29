@@ -1,6 +1,8 @@
 import React, { Fragment } from 'react'
 
 import type { Page } from '@/payload-types'
+import { richTextToPlain } from '@/utilities/richTextToPlain'
+import { splitFirstSentence } from '@/utilities/splitFirstSentence'
 
 import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
@@ -91,6 +93,44 @@ export const RenderBlocks: React.FC<{
    *  'appointment-page' = the Book An Appointment PDF contact band:
    *  brand-red-dark panel, white icon discs, vw-scaled type (lg+ only). */
   contactPanelVariant?: 'appointment-page'
+  /** Page-level layout option, on by default: when the page opens with an
+   *  Image Banner followed by a Section Intro, the intro's eyebrow, title and
+   *  first sentence are shown over the banner's bottom-left on screens at
+   *  least 768px wide and 481px tall; there the intro block keeps only the
+   *  rest of its text and its buttons (or is hidden when nothing is left),
+   *  and elsewhere (phones, upright or sideways, and print) it renders
+   *  whole. Skipped when the
+   *  banner is a
+   *  thin strip (a natural-height photo more than 3x wider than tall), which
+   *  has no room for the text. Not a CMS field — a route can pass false. */
+  introOnBanner?: boolean
+  /** With introOnBanner: also put the title on the banner on phones (upright
+   *  or sideways), centred at the photo's bottom. Off by default; a page
+   *  route opts in (About). */
+  introOnBannerPhone?: boolean
+  /** On laptops and desktops, an opening natural banner fills exactly one
+   *  screen (ImageBanner's fillScreen; 'keep-top' takes the trim from the
+   *  photo's bottom only, 'keep-right' from its left only). Skipped for a
+   *  thin strip, like introOnBanner: blown up to a screen it would lose most
+   *  of itself. Off by default; a page route opts in (About). */
+  bannerFillsScreen?: boolean | 'keep-top' | 'keep-right'
+  /** When the page opens with an Info Hero (no cards), its title and line
+   *  sit at the bottom: bottom-left from 768px, bottom centre on phones
+   *  (InfoHero's textAtBottom). Off by default; a route opts in
+   *  (Architecture). */
+  infoHeroTextAtBottom?: boolean
+  /** When the page opens with a photo Info Hero (no cards): on phones the
+   *  hero takes the photo's own shape, neither cropped nor zoomed
+   *  (InfoHero's wholePhotoOnPhone). Off by default; a route opts in
+   *  (Architecture). */
+  infoHeroWholePhotoOnPhone?: boolean
+  /** When the page opens with an Info Hero followed by a Section Intro: the
+   *  intro's heading becomes the small line above the hero's title, its
+   *  first sentence sits under the title, and the hero's text sits at its
+   *  bottom (as infoHeroTextAtBottom). The intro block then keeps only the
+   *  rest of its text on screens (print keeps it whole). Off by default; a
+   *  route opts in (Art & Craftsmanship). */
+  introOnHero?: boolean
 }> = (props) => {
   const {
     blocks,
@@ -99,6 +139,12 @@ export const RenderBlocks: React.FC<{
     faqVariant,
     sectionIntroVariant,
     contactPanelVariant,
+    introOnBanner = true,
+    introOnBannerPhone = false,
+    bannerFillsScreen = false,
+    infoHeroTextAtBottom = false,
+    infoHeroWholePhotoOnPhone = false,
+    introOnHero = false,
   } = props
 
   const variantByBlockType: Partial<Record<string, string>> = {
@@ -110,6 +156,22 @@ export const RenderBlocks: React.FC<{
   }
 
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
+  const first = hasBlocks ? blocks[0] : undefined
+  const photo =
+    first?.blockType === 'imageBanner' && typeof first.image === 'object' ? first.image : null
+  const roomyBanner =
+    first?.blockType === 'imageBanner' &&
+    (first.height !== 'natural' ||
+      (!!photo?.width && !!photo?.height && photo.width / photo.height <= 3))
+  const openingPhoto = first?.blockType === 'imageBanner' || first?.blockType === 'infoHero'
+  const second = hasBlocks ? blocks[1] : undefined
+  const intro = introOnBanner && roomyBanner && second?.blockType === 'sectionIntro' ? second : null
+  const introText = intro?.body ? splitFirstSentence(intro.body) : null
+  const heroIntro =
+    introOnHero && first?.blockType === 'infoHero' && second?.blockType === 'sectionIntro'
+      ? second
+      : null
+  const heroIntroText = heroIntro?.body ? splitFirstSentence(heroIntro.body) : null
 
   if (hasBlocks) {
     return (
@@ -127,7 +189,54 @@ export const RenderBlocks: React.FC<{
               // would push the real mismatch past the directive's one-line
               // reach and break the build).
               const variant = variantByBlockType[blockType]
-              const variantProps = variant ? { variant } : {}
+              const variantProps = {
+                ...(variant ? { variant } : {}),
+                ...(infoHeroTextAtBottom && index === 0 && blockType === 'infoHero'
+                  ? { textAtBottom: true }
+                  : {}),
+                ...(infoHeroWholePhotoOnPhone && index === 0 && blockType === 'infoHero'
+                  ? { wholePhotoOnPhone: true }
+                  : {}),
+                ...(heroIntro && index === 0
+                  ? {
+                      textAtBottom: true,
+                      intro: {
+                        eyebrow: richTextToPlain(heroIntro.headline),
+                        body: heroIntroText?.lead ?? heroIntro.body,
+                      },
+                    }
+                  : {}),
+                ...(heroIntro && index === 1
+                  ? {
+                      phoneOnly: true,
+                      onPhoneBanner: true,
+                      bodyBelowBanner: heroIntroText?.rest ?? null,
+                    }
+                  : {}),
+                ...(openingPhoto && index === 1 && blockType === 'sectionIntro'
+                  ? { afterOpeningPhoto: true }
+                  : {}),
+                ...(bannerFillsScreen && index === 0 && roomyBanner
+                  ? { fillScreen: bannerFillsScreen }
+                  : {}),
+                ...(intro && index === 0
+                  ? {
+                      overlay: {
+                        eyebrow: intro.eyebrow,
+                        headline: intro.headline,
+                        body: introText?.lead ?? intro.body,
+                      },
+                      overlayOnPhone: introOnBannerPhone,
+                    }
+                  : {}),
+                ...(intro && index === 1
+                  ? {
+                      phoneOnly: true,
+                      bodyBelowBanner: introText?.rest ?? null,
+                      onPhoneBanner: introOnBannerPhone,
+                    }
+                  : {}),
+              }
 
               // No wrapper margin — editorial blocks render edge-to-edge.
               // The default Payload template had `my-16` here, which produced

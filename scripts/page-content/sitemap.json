@@ -11,6 +11,12 @@
  },
  "layout": [
   {
+   "blockType": "imageBanner",
+   "image": "__MEDIA:artboard-15.jpg__",
+   "headerTheme": "dark",
+   "height": "natural"
+  },
+  {
    "blockType": "sectionIntro",
    "backgroundColor": "white",
    "showTopDivider": false,
@@ -79,6 +85,15 @@
          "mode": "normal",
          "detail": 0,
          "version": 1
+        },
+        {
+         "type": "text",
+         "text": " The pages fall into three groups: the Museum, its story and its craft; contact, common questions and our policies; and appointments, guidelines and commissions. Each entry in the list links to its page.",
+         "format": 0,
+         "style": "",
+         "mode": "normal",
+         "detail": 0,
+         "version": 1
         }
        ],
        "direction": "ltr",
@@ -89,6 +104,12 @@
      "direction": "ltr"
     }
    }
+  },
+  {
+   "blockType": "divider",
+   "showOn": "all",
+   "desktopSpacing": "large",
+   "mobileSpacing": "large"
   },
   {
    "blockType": "siteMap",

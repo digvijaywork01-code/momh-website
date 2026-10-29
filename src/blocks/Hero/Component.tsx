@@ -36,6 +36,7 @@ import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { ExpandableText } from '@/components/ExpandableText'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { accentLastWord } from '@/utilities/accentLastWord'
 
 export const HeroBlock: React.FC<HeroBlockProps> = ({
   backgroundImage,
@@ -267,7 +268,8 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
           // body copy below into less than half the section height.
           // md+: full `text-hero` clamp (48px → 80px) for the wide
           // editorial entrance.
-          className="font-display text-[2.5rem] leading-tight md:text-hero md:leading-[unset] mb-6"
+          // Only the last word is italic (accentLastWord), in brand red.
+          className="font-display text-[2.5rem] leading-tight md:text-hero md:leading-[unset] mb-6 [&_em]:text-brand-red [&_i]:text-brand-red"
           /* The headline font scales with the viewport
              (`--fs-hero: clamp(48px, 4.167vw, 80px)` — hits 80px at
              1920px wide), so the max-width has to scale too. A FIXED
@@ -284,7 +286,7 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
         >
           {headline && (
             <RichText
-              data={headline}
+              data={accentLastWord(headline)}
               enableGutter={false}
               enableProse={false}
               className="text-offwhite"

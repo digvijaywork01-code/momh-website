@@ -11,6 +11,12 @@
  },
  "layout": [
   {
+   "blockType": "imageBanner",
+   "image": "__MEDIA:artboard-15.jpg__",
+   "headerTheme": "dark",
+   "height": "natural"
+  },
+  {
    "blockType": "sectionIntro",
    "backgroundColor": "white",
    "showTopDivider": false,
@@ -73,6 +79,15 @@
         {
          "mode": "normal",
          "text": "Whether you are planning a visit, researching the collection, or considering a commission, our team is glad to help.",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": " Below, you will see how to get in touch, where we are, and a short note on each kind of enquiry, from press and image requests to group, school and research visits.",
          "type": "text",
          "style": "",
          "detail": 0,

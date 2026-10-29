@@ -46,7 +46,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * the icon is white again. Only the phone header has this icon.
  */
 const MENU_ICON_ON_LIGHT_TOP =
-  '[html:has(&>section:first-of-type_.editorial-display)_header_button>svg.text-white]:text-ink'
+  '[html:has(&>section:first-of-type:not(.image-banner)_.editorial-display)_header_button>svg.text-white]:text-ink'
 
 /**
  * Styles for this page only, on its wrapper (FAQ PDF). The FAQ blocks' own
@@ -79,13 +79,16 @@ const MENU_ICON_ON_LIGHT_TOP =
  */
 const PAGE_CLASSES = [
   'faq-page',
-  '[&>section:first-of-type]:min-h-0 [&>section:first-of-type]:pb-0',
+  // The title block is the first section that is not an Image Banner (the
+  // haveli photo above it); its 115px phone top padding clears the header,
+  // so it applies only when the title opens the page.
+  '[&>section:nth-child(1_of_section:not(.image-banner))]:min-h-0 [&>section:nth-child(1_of_section:not(.image-banner))]:pb-0',
   '[&>section:last-of-type]:min-h-0 [&>section:last-of-type]:pt-[40px] [&>section:last-of-type]:pb-[80px]',
   '[@media(max-width:767.98px)]:[&>section]:px-[32px]',
-  '[@media(max-width:767.98px)]:[&>section:first-of-type]:pt-[115px]',
+  '[@media(max-width:767.98px)]:[&>section:first-of-type:not(.image-banner):has(.editorial-display)]:pt-[115px]',
   '[@media(max-width:767.98px)]:[&>section:last-of-type]:pt-[calc(64px_-_32px)]',
-  'lg:[&>section:first-of-type>div]:max-w-[min(max(720px,46.1vw),885px)]',
-  'lg:[&>section:first-of-type_.editorial-display]:mb-[calc(min(4.735vw,90.91px)_-_17.6px_-_1.17*var(--fs-body))]',
+  'lg:[&>section:nth-child(1_of_section:not(.image-banner))>div]:max-w-[min(max(720px,46.1vw),885px)]',
+  'lg:[&>section:nth-child(1_of_section:not(.image-banner))_.editorial-display]:mb-[calc(min(4.735vw,90.91px)_-_17.6px_-_1.17*var(--fs-body))]',
   'lg:[&>section:last-of-type]:pt-[calc(80px_-_32px)] lg:[&>section:last-of-type]:pb-[96px]',
   'lg:[&>section:last-of-type_div:has(>a.uppercase)]:gap-x-[min(2.89vw,55.5px)]',
   '[&_a:not([class]):hover]:underline [&_a:not([class]):hover]:underline-offset-[4px]',
@@ -121,7 +124,10 @@ export default async function FaqPage() {
   return (
     <div className={PAGE_CLASSES}>
       <h1 className="sr-only">Frequently Asked Questions</h1>
-      <RenderBlocks blocks={layout} faqVariant="faq-page" />
+      {/* As on /about: on phones too the title and its first sentence sit on
+          the haveli photo (centred at its bottom), and on laptops and
+          desktops the photo fills exactly the first screen. */}
+      <RenderBlocks blocks={layout} faqVariant="faq-page" introOnBannerPhone bannerFillsScreen />
       <script dangerouslySetInnerHTML={{ __html: CLOSE_ON_PHONES }} />
     </div>
   )

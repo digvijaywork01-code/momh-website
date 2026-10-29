@@ -202,6 +202,149 @@ const ChevronDownIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 )
 
+// Whether the page behind `el` is light: the nearest block's data-theme
+// (every block sets one; <html> carries the site theme, not a block's, so it
+// is skipped), else the first painted background up the tree (the footer is
+// black), else the page's own light ground.
+const isLightBehind = (el: Element | undefined): boolean => {
+  const themed = el?.closest('[data-theme]:not(html)')
+  if (themed) return themed.getAttribute('data-theme') !== 'dark'
+  for (let node = el; node; node = node.parentElement ?? undefined) {
+    const m = getComputedStyle(node).backgroundColor.match(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?/)
+    if (m && (m[4] === undefined || Number(m[4]) > 0.5)) {
+      return 0.2126 * Number(m[1]) + 0.7152 * Number(m[2]) + 0.0722 * Number(m[3]) > 140
+    }
+  }
+  return true
+}
+
+// WCAG relative luminance of an sRGB colour (0-255 channels), 0-1.
+const relLuminance = (r: number, g: number, b: number): number => {
+  const lin = (c: number) => (c / 255 <= 0.03928 ? c / 255 / 12.92 : ((c / 255 + 0.055) / 1.055) ** 2.4)
+  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
+}
+
+// Above this luminance a dark icon reads better than a white one (the point
+// where both have the same contrast).
+const LIGHT_ABOVE = 0.179
+
+let sampleCanvas: HTMLCanvasElement | null = null
+
+// The mean colour of an image or video under `rect`, from its own pixels:
+// the picture is drawn into a 4x4 canvas standing for `rect`, placed exactly
+// as it shows on screen (object-fit and object-position), so the canvas
+// holds what is under the icon whatever size of file was served. Null when
+// `rect` misses the picture (a contained photo's side band) or its pixels
+// cannot be read.
+const sampleMedia = (el: HTMLImageElement | HTMLVideoElement, rect: DOMRect): [number, number, number] | null => {
+  const nw = el instanceof HTMLVideoElement ? el.videoWidth : el.naturalWidth
+  const nh = el instanceof HTMLVideoElement ? el.videoHeight : el.naturalHeight
+  if (!nw || !nh) return null
+  const box = el.getBoundingClientRect()
+  const cs = getComputedStyle(el)
+  const fit = cs.objectFit
+  let sx = box.width / nw
+  let sy = box.height / nh
+  if (fit === 'cover') sx = sy = Math.max(sx, sy)
+  else if (fit === 'contain' || fit === 'scale-down') sx = sy = Math.min(sx, sy)
+  const [px, py] = cs.objectPosition.split(' ').map((v) => (v.endsWith('%') ? parseFloat(v) / 100 : 0.5))
+  const left = box.left + (box.width - nw * sx) * (px ?? 0.5)
+  const top = box.top + (box.height - nh * sy) * (py ?? 0.5)
+  // where the picture actually shows: its drawn area, clipped to its box
+  const showLeft = Math.max(left, box.left)
+  const showTop = Math.max(top, box.top)
+  const showRight = Math.min(left + nw * sx, box.right)
+  const showBottom = Math.min(top + nh * sy, box.bottom)
+  if (Math.min(rect.right, showRight) - Math.max(rect.left, showLeft) < 1) return null
+  if (Math.min(rect.bottom, showBottom) - Math.max(rect.top, showTop) < 1) return null
+  try {
+    sampleCanvas ??= document.createElement('canvas')
+    sampleCanvas.width = sampleCanvas.height = 4
+    const ctx = sampleCanvas.getContext('2d', { willReadFrequently: true })
+    if (!ctx) return null
+    const kx = 4 / rect.width
+    const ky = 4 / rect.height
+    ctx.clearRect(0, 0, 4, 4)
+    ctx.save()
+    ctx.beginPath()
+    ctx.rect((showLeft - rect.left) * kx, (showTop - rect.top) * ky, (showRight - showLeft) * kx, (showBottom - showTop) * ky)
+    ctx.clip()
+    ctx.drawImage(el, (left - rect.left) * kx, (top - rect.top) * ky, nw * sx * kx, nh * sy * ky)
+    ctx.restore()
+    const d = ctx.getImageData(0, 0, 4, 4).data
+    let r = 0
+    let g = 0
+    let b = 0
+    let n = 0
+    for (let i = 0; i < d.length; i += 4) {
+      if (d[i + 3] < 128) continue // outside the picture
+      r += d[i]
+      g += d[i + 1]
+      b += d[i + 2]
+      n++
+    }
+    return n ? [r / n, g / n, b / n] : null
+  } catch {
+    return null // cross-origin media taints the canvas
+  }
+}
+
+// Luminance of what is painted behind `rect`: the mean of five points across
+// it (centre and four inner corners), so an icon straddling an edge between
+// a photo and a plain band reads the mix it actually sits on.
+const luminanceBehind = (rect: DOMRect): number | null => {
+  const values: number[] = []
+  for (const [fx, fy] of [[0.5, 0.5], [0.25, 0.25], [0.75, 0.25], [0.25, 0.75], [0.75, 0.75]]) {
+    const w = rect.width / 2
+    const h = rect.height / 2
+    const cell = new DOMRect(rect.left + rect.width * fx - w / 2, rect.top + rect.height * fy - h / 2, w, h)
+    const v = luminanceAt(cell)
+    if (v !== null) values.push(v)
+  }
+  return values.length ? values.reduce((a, b) => a + b, 0) / values.length : null
+}
+
+// Luminance of what is painted behind the centre of `rect`, top layer first:
+// translucent layers (a hero's dark overlay) are blended over the first
+// opaque layer, which is either a picture, sampled from its pixels under
+// `rect`, or a background colour. Null when nothing readable is found.
+const luminanceAt = (rect: DOMRect): number | null => {
+  const stack = document
+    .elementsFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
+    .filter((el) => !el.closest('header'))
+  const layers: { rgb: [number, number, number]; alpha: number }[] = []
+  let base: [number, number, number] | null = null
+  for (const el of stack) {
+    if (el instanceof HTMLImageElement || el instanceof HTMLVideoElement) {
+      const rgb = sampleMedia(el, rect)
+      if (rgb) {
+        base = rgb
+        break
+      }
+      continue
+    }
+    const cs = getComputedStyle(el)
+    const m = cs.backgroundColor.match(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?/)
+    if (!m) continue
+    const alpha = (m[4] === undefined ? 1 : Number(m[4])) * Number(cs.opacity)
+    if (alpha < 0.02) continue
+    const rgb: [number, number, number] = [Number(m[1]), Number(m[2]), Number(m[3])]
+    if (alpha >= 0.98) {
+      base = rgb
+      break
+    }
+    layers.push({ rgb, alpha })
+  }
+  if (!base) return null
+  let [r, g, b] = base
+  for (const { rgb, alpha } of layers.reverse()) {
+    r = rgb[0] * alpha + r * (1 - alpha)
+    g = rgb[1] * alpha + g * (1 - alpha)
+    b = rgb[2] * alpha + b * (1 - alpha)
+  }
+  return relLuminance(r, g, b)
+}
+
 const MenuIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     {...props}
@@ -382,6 +525,9 @@ export const Header = () => {
   const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const headerRef = useRef<HTMLElement | null>(null)
+  const menuButtonRef = useRef<HTMLButtonElement | null>(null)
+  // Phones: whether the burger currently sits over a light part of the page.
+  const [menuIconOnLight, setMenuIconOnLight] = useState(false)
   const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({})
   // Set when the panel is opened from the keyboard, so focus moves into
   // it (the panel sits after the whole bar in DOM order).
@@ -729,6 +875,67 @@ export const Header = () => {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // Phones: the burger is white over the page's opening photo (a dark banner
+  // or hero), and elsewhere takes whichever of white or ink reads better on
+  // what is actually painted behind it: a photo's own pixels, else the
+  // background colour, else the block's data-theme. So it never vanishes
+  // once the photo has scrolled away, not even over a dark photo inside a
+  // light section.
+  useEffect(() => {
+    if (!isMobile) {
+      setMenuIconOnLight(false)
+      return
+    }
+    // The open menu sheet covers the burger, and its own list scrolls: what
+    // is behind the burger then is the sheet, not the page. Sample nothing
+    // while it is open; closing it re-runs this effect, which samples the page.
+    if (isMobileNavOpen) return
+    let frame = 0
+    const update = () => {
+      frame = 0
+      const button = menuButtonRef.current
+      if (!button) return
+      const r = button.getBoundingClientRect()
+      const under = document
+        .elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2)
+        .find((el) => !el.closest('header'))
+      const opening = Array.from(document.querySelectorAll('section')).find((el) => !el.closest('header'))
+      if (under && opening?.getAttribute('data-theme') === 'dark' && opening.contains(under)) {
+        setMenuIconOnLight(false)
+        return
+      }
+      const lum = luminanceBehind(r)
+      setMenuIconOnLight(lum === null ? isLightBehind(under) : lum > LIGHT_ABOVE)
+    }
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+    // Phones scroll inside #scroll-container; a capturing listener hears
+    // that scroll as well as the window's.
+    document.addEventListener('scroll', schedule, { capture: true, passive: true })
+    // A picture that finishes loading under the icon changes what is behind it.
+    document.addEventListener('load', schedule, { capture: true, passive: true })
+    window.addEventListener('resize', schedule)
+    schedule()
+    // After a client-side navigation the new page's blocks arrive a moment
+    // after the path changes.
+    const late = window.setTimeout(schedule, 500)
+    // Content can change behind the burger with no scroll: carousels that
+    // autoplay (by transform), a cookie banner that goes away. A check once a
+    // second while the page is visible catches those (about 2ms each).
+    const idle = window.setInterval(() => {
+      if (document.visibilityState === 'visible') schedule()
+    }, 1000)
+    return () => {
+      document.removeEventListener('scroll', schedule, { capture: true })
+      document.removeEventListener('load', schedule, { capture: true })
+      window.removeEventListener('resize', schedule)
+      window.clearTimeout(late)
+      window.clearInterval(idle)
+      if (frame) cancelAnimationFrame(frame)
+    }
+  }, [isMobile, pathname, isMobileNavOpen])
+
   // Mouse-near-top detection. The "hover zone" is generous enough
   // (top 120px of viewport) that the user doesn't have to flick to
   // the very top edge to reveal the nav — any deliberate upward
@@ -960,14 +1167,15 @@ export const Header = () => {
               style={{ mixBlendMode: 'multiply' }}
             />
           </Link>
-          {/* Burger Menu — always white on mobile because the nav bar
-              is fully transparent on every route and floats over the
-              top image banner (haveli at twilight on inner pages, the
-              hero photo/video on home). White reads cleanly against
-              the dark imagery; mix-blend on the icon would muddy the
-              line weight. */}
-          <button onClick={() => setIsMobileNavOpen(true)}>
-            <MenuIcon className="text-white" />
+          {/* Burger Menu — white on mobile because the nav bar is fully
+              transparent on every route and floats over the top image
+              banner (haveli at twilight on inner pages, the hero
+              photo/video on home). White reads cleanly against the dark
+              imagery; mix-blend on the icon would muddy the line weight.
+              It turns ink over light sections once the photo has
+              scrolled away (see menuIconOnLight). */}
+          <button ref={menuButtonRef} onClick={() => setIsMobileNavOpen(true)}>
+            <MenuIcon className={menuIconOnLight ? 'text-ink' : 'text-white'} />
           </button>
         </div>
 

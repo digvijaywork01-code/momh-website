@@ -35,19 +35,19 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 
 /**
- * Styles for this page only, on its wrapper. They apply only while the page
- * opens with its title block (.editorial-display) instead of a hero photo,
- * the same rules as /contact and /terms; with a banner first they match
- * nothing.
- *  - The phone menu icon is white for dark hero photos; on the white title
- *    section it turns ink.
- *  - Phones (under 768px): the title clears the 108px phone header with the
- *    115px top space /contact uses, and the 40vh minimum height is released.
+ * Styles for this page only, on its wrapper, the same rules as /contact and
+ * /terms. The title block is the first section that is not an Image Banner
+ * (the haveli photo above it).
+ *  - The phone menu icon is white for dark hero photos; while the white title
+ *    section opens the page it turns ink.
+ *  - Phones (under 768px): the 40vh minimum height is released; when the
+ *    title opens the page it also clears the 108px phone header with the
+ *    115px top space /contact uses.
  */
 const PAGE_CLASSES = [
-  '[html:has(&>section:first-of-type_.editorial-display)_header_button>svg.text-white]:text-ink',
-  '[@media(max-width:767.98px)]:[&>section:first-of-type:has(.editorial-display)]:min-h-0',
-  '[@media(max-width:767.98px)]:[&>section:first-of-type:has(.editorial-display)]:pt-[115px]',
+  '[html:has(&>section:first-of-type:not(.image-banner)_.editorial-display)_header_button>svg.text-white]:text-ink',
+  '[@media(max-width:767.98px)]:[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)]:min-h-0',
+  '[@media(max-width:767.98px)]:[&>section:first-of-type:not(.image-banner):has(.editorial-display)]:pt-[115px]',
 ].join(' ')
 
 export default async function BookAnAppointmentPage() {
@@ -68,13 +68,18 @@ export default async function BookAnAppointmentPage() {
   }
 
   // Page-only variants for the Book An Appointment PDF (lg+ only; the
-  // shared blocks render unchanged on every other page).
+  // shared blocks render unchanged on every other page). As on /about: on
+  // phones too the title and its first sentence sit on the haveli photo
+  // (centred at its bottom), and on laptops and desktops the photo fills
+  // exactly the first screen.
   return (
     <div className={PAGE_CLASSES}>
       <RenderBlocks
         blocks={layout}
         sectionIntroVariant="appointment-page"
         contactPanelVariant="appointment-page"
+        introOnBannerPhone
+        bannerFillsScreen
       />
     </div>
   )

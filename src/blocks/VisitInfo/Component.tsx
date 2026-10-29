@@ -18,6 +18,7 @@ import Link from 'next/link'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { accentLastWord } from '@/utilities/accentLastWord'
 import { richTextHasText as hasText } from '@/utilities/richTextHasText'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
@@ -176,7 +177,7 @@ export const VisitInfoBlock: React.FC<VisitInfoBlockProps> = ({
         >
           {showIntroHeadline && introHeadline && (
             <div className="editorial-display text-[2.25rem] md:text-[3rem] lg:text-[3.5rem] leading-tight [&_em]:text-brand-red [&_i]:text-brand-red">
-              <RichText data={introHeadline} enableGutter={false} enableProse={false} />
+              <RichText data={accentLastWord(introHeadline)} enableGutter={false} enableProse={false} />
             </div>
           )}
           {showIntroBody && introBody && (
@@ -232,7 +233,7 @@ export const VisitInfoBlock: React.FC<VisitInfoBlockProps> = ({
             // "*Here*" emphasis treatment.
             className="editorial-display text-[2.25rem] md:text-[3rem] lg:text-[3.5rem] leading-tight [&_em]:text-brand-red [&_i]:text-brand-red"
           >
-            <RichText data={headline} enableGutter={false} enableProse={false} />
+            <RichText data={accentLastWord(headline)} enableGutter={false} enableProse={false} />
           </div>
 
           <div ref={addressRef} className="font-body text-body opacity-95 leading-relaxed">

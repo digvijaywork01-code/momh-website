@@ -26,6 +26,7 @@ import { EditorialCta } from '@/components/EditorialCta'
 import { NewsletterWidget } from '@/components/NewsletterWidget'
 import { FormBlock } from '@/blocks/Form/Component'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { accentLastWord } from '@/utilities/accentLastWord'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
 
@@ -147,8 +148,8 @@ const Column: React.FC<{ column: Column; dark: boolean }> = ({ column, dark }) =
       )}
 
       {column.headline && (
-        <div ref={headlineRef} className="editorial-display text-display mb-4">
-          <RichText data={column.headline} enableGutter={false} enableProse={false} />
+        <div ref={headlineRef} className="editorial-display text-display mb-4 [&_em]:text-brand-red [&_i]:text-brand-red">
+          <RichText data={accentLastWord(column.headline)} enableGutter={false} enableProse={false} />
         </div>
       )}
 

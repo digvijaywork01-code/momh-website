@@ -42,7 +42,11 @@ export default async function MuseumGuidelinesPage() {
     notFound()
   }
 
-  return <RenderBlocks blocks={layout} />
+  // As on /about: on phones too the title and its first sentence sit on the
+  // haveli photo (centred at its bottom), and on laptops and desktops that
+  // opening photo fills exactly the first screen (the flower wall further
+  // down keeps its own size).
+  return <RenderBlocks blocks={layout} introOnBannerPhone bannerFillsScreen />
 }
 
 export const dynamic = 'force-static'

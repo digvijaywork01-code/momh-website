@@ -47,7 +47,18 @@ export default async function FoundersVisionPage() {
   // Founder's-Vision-PDF layout (short 50/50 bands separated by white,
   // Cormorant capitals over a maroon rule, justified 30px body) without
   // touching how the shared block renders anywhere else.
-  return <RenderBlocks blocks={layout} editorialSplitVariant="editorial-band" />
+  // As on /about: on phones too the title and its first sentence sit on the
+  // photo (centred at its bottom), and on laptops and desktops the photo
+  // fills exactly the first screen; on a window wider than the photo the
+  // trim comes off its bottom only, so the founder's head is never cut.
+  return (
+    <RenderBlocks
+      blocks={layout}
+      editorialSplitVariant="editorial-band"
+      introOnBannerPhone
+      bannerFillsScreen="keep-top"
+    />
+  )
 }
 
 export const dynamic = 'force-static'

@@ -46,11 +46,17 @@ export default async function ArchitecturePage() {
   // Same short-band editorial layout as the Founder's Vision page, plus the
   // italic-serif banner title this PDF uses. Both are route-level opt-ins, so
   // the shared blocks render unchanged on every other page.
+  // `infoHeroTextAtBottom`: the hero's title and line sit at its bottom-left
+  // (bottom centre on phones), as on the banner pages.
+  // `infoHeroWholePhotoOnPhone`: on phones the hero shows the whole photo at
+  // its own shape, neither cropped nor zoomed.
   return (
     <RenderBlocks
       blocks={layout}
       editorialSplitVariant="editorial-band"
       infoHeroVariant="banner-title"
+      infoHeroTextAtBottom
+      infoHeroWholePhotoOnPhone
     />
   )
 }

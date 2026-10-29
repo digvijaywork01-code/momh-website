@@ -23,6 +23,7 @@ import type {
 import RichText from '@/components/RichText'
 import { EditorialCta } from '@/components/EditorialCta'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { accentLastWord } from '@/utilities/accentLastWord'
 import { richTextHasText } from '@/utilities/richTextHasText'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
@@ -56,6 +57,19 @@ const bgClass: Record<BgKey, string> = {
   maroon: 'bg-maroon text-offwhite',
 }
 
+// For text under the opening photo: the next block's top padding, when that
+// block has the same background (it would read as part of this block's gap).
+// A band of another colour keeps its padding: the gap ends at its edge. That
+// includes ivory (#FFFEFA) after white: faint, but its edge shows.
+const sameBgNextClass: Record<BgKey, string> = {
+  cream: '[@media_screen]:[&+.bg-cream]:!pt-0',
+  ivory: '[@media_screen]:[&+.bg-ivory]:!pt-0',
+  white: '[@media_screen]:[&+.bg-white]:!pt-0',
+  black: '[@media_screen]:[&+.bg-black]:!pt-0',
+  emerald: '[@media_screen]:[&+.bg-emerald]:!pt-0',
+  maroon: '[@media_screen]:[&+.bg-maroon]:!pt-0',
+}
+
 const isDarkBg = (bg: BgKey): boolean =>
   bg === 'black' || bg === 'emerald' || bg === 'maroon'
 
@@ -67,9 +81,31 @@ export const SectionIntroBlock: React.FC<
      *  1920 artboard. Default (undefined) keeps every other intro
      *  untouched. */
     variant?: 'appointment-page'
+    /** Set by RenderBlocks' introOnBanner (NOT a CMS field): this title
+     *  block's eyebrow, title and first sentence are shown over the opening
+     *  banner on screens at least 768px wide and 481px tall. On those this
+     *  block shows only `bodyBelowBanner`, the rest of its text, and its
+     *  buttons, or nothing when neither is there; on the others (phones,
+     *  upright or sideways, and print) it renders whole, as before. */
+    phoneOnly?: boolean
+    bodyBelowBanner?: SectionIntroBlockProps['body'] | null
+    /** The page puts the title on the banner on phones too (RenderBlocks'
+     *  introOnBannerPhone): the parts above then hide on every screen, not
+     *  only on the larger ones. Print still renders this block whole. */
+    onPhoneBanner?: boolean
+    /** Set by RenderBlocks (NOT a CMS field): this block comes right after
+     *  the page's opening photo (an Image Banner or Info Hero). When all it
+     *  shows there is running text (the rest of a title that sits on the
+     *  photo, or a block with no eyebrow or heading), that text gets the same
+     *  space above and below it on screens (see `underPhoto`). */
+    afterOpeningPhoto?: boolean
   }
 > = ({
   variant,
+  phoneOnly = false,
+  bodyBelowBanner = null,
+  onPhoneBanner = false,
+  afterOpeningPhoto = false,
   eyebrow,
   headline,
   body,
@@ -93,6 +129,7 @@ export const SectionIntroBlock: React.FC<
   const eyebrowRef = useRef<HTMLParagraphElement | null>(null)
   const headlineRef = useRef<HTMLDivElement | null>(null)
   const bodyRef = useRef<HTMLDivElement | null>(null)
+  const restRef = useRef<HTMLDivElement | null>(null)
   const ctaRef = useRef<HTMLDivElement | null>(null)
 
   const bg = (backgroundColor || 'cream') as BgKey
@@ -102,6 +139,30 @@ export const SectionIntroBlock: React.FC<
   // Book An Appointment PDF (1920 artboard). Every value below is that
   // artboard's px / 1920 as vw, from lg up; phones keep the default.
   const appointmentPage = variant === 'appointment-page'
+  // Under a banner that carries the title, the parts shown there are hidden
+  // here on the same windows (the query matches ImageBanner's overlay).
+  const restBelow = phoneOnly && richTextHasText(bodyBelowBanner)
+  const keepBelow = restBelow || !!ctaLabel || !!cta2Label
+  // Running text right under the opening photo: the rest of a title that
+  // sits on the photo on every screen (introOnBannerPhone, introOnHero), or a
+  // block with no eyebrow or heading. On screens it gets the same space above
+  // and below: 80px on phones, 112px from 768px (this block's usual top
+  // padding), from the photo's edge to the first line and from the last line
+  // to whatever follows. No top rule (it sat above the title) and no
+  // title-sized 40vh minimum height. Print keeps the whole block as it was.
+  const underPhoto =
+    afterOpeningPhoto && (phoneOnly ? onPhoneBanner && keepBelow : !showHeadline && !eyebrow)
+  const onBanner =
+    phoneOnly && (onPhoneBanner ? '[@media_screen]:hidden' : '[@media_screen_and_(min-width:768px)_and_(min-height:481px)]:hidden')
+  const bodyClass = cn(
+    'font-body opacity-95',
+    // The PDF sets the closing paragraph at 30px (= text-hero-body)
+    // and justifies it, with the last line centred.
+    sectionCaps ? 'text-hero-body text-justify [text-align-last:center]' : 'text-body',
+    // PDF: Gill Sans Light 24/28.8, pure black, 755px measure.
+    appointmentPage &&
+      'lg:text-[length:max(1.125rem,1.25vw)] lg:leading-[1.2] lg:opacity-100 lg:mx-auto lg:max-w-[max(30rem,39.3vw)]',
+  )
 
   useEffect(() => {
     const el = sectionRef.current
@@ -131,6 +192,7 @@ export const SectionIntroBlock: React.FC<
         eyebrowRef.current,
         headlineRef.current,
         bodyRef.current,
+        restRef.current,
         ctaRef.current,
       ] as (HTMLElement | null)[]
     ).filter((el): el is NonNullable<typeof el> => el !== null)
@@ -162,11 +224,22 @@ export const SectionIntroBlock: React.FC<
         // gap before a form / info block whose own top padding
         // already provides the breathing room.
         'w-full px-6 md:px-12 flex flex-col items-center justify-center',
+        phoneOnly && !keepBelow && onBanner,
         // `tightTop` also releases the 40vh minimum height — with the
         // min-height held, the padding cut would be swallowed by the
         // centring and the visual gap would barely move.
         tightTop ? 'min-h-0 pt-8 md:pt-12' : 'min-h-[40vh] pt-20 md:pt-28',
         tightBottom ? 'pb-8 md:pb-12' : 'pb-20 md:pb-28',
+        // Under the photo (see `underPhoto`). Important, so that it also wins
+        // over the routes' own rules for their first text block, and over the
+        // tight / appointment-page paddings. The next block's top margin goes
+        // (a flower divider's gap, a band's offset): the bottom padding is
+        // the whole gap. When the next block has this block's background
+        // (sameBgNextClass), or none of its own (the process carousel), its
+        // own top padding goes too, or it would add to the gap unseen.
+        underPhoto &&
+          "[@media_screen]:!min-h-0 [@media_screen]:!pt-20 [@media_screen]:!pb-20 [@media_screen]:md:!pt-28 [@media_screen]:md:!pb-28 [@media_screen]:[&+*]:!mt-0 [@media_screen]:[&+section:not([class*='bg-'])]:!pt-0",
+        underPhoto && sameBgNextClass[bg],
         bgClass[bg],
         // The bottom padding scales with the PDF (48px at 1920, as
         // tightBottom gives today) so the gap to the form does too.
@@ -195,6 +268,7 @@ export const SectionIntroBlock: React.FC<
           className={cn(
             'w-full max-w-6xl h-px mb-16 lg:mb-20 lg:hidden',
             dark ? 'bg-offwhite/40' : 'bg-warm-gray/40',
+            underPhoto && '[@media_screen]:hidden',
           )}
           aria-hidden="true"
         />
@@ -221,6 +295,7 @@ export const SectionIntroBlock: React.FC<
             ref={eyebrowRef}
             className={cn(
               'font-script italic text-eyebrow opacity-90 mb-3',
+              onBanner,
               // PDF: Cormorant Light Italic 24px in its own #DD092B, which
               // (unlike brand-red, 4.41:1) clears 4.5:1 on white at small sizes.
               appointmentPage &&
@@ -246,15 +321,17 @@ export const SectionIntroBlock: React.FC<
           //    1920-wide artboard. Italic words render in brand red.
           //  - 'section-caps': the Founder's Vision closing statement —
           //    Cormorant Light capitals at the PDF's 40px/1921 = 2.08vw,
-          //    with a short maroon rule underneath (rendered below).
+          //    with a maroon rule under its last word (the em's border).
+          // In both, only the last word is italic (accentLastWord), in red.
           // NOTE: `leading-tight` must sit AFTER the text-size utilities in
           // each branch. cn() runs tailwind-merge, which treats font-size as
           // conflicting with line-height — hoisting `leading-tight` to a
           // shared prefix made the later text-[...] classes strip it, which
           // silently changed the headline leading on every existing page.
           className={cn(
+            onBanner,
             sectionCaps
-              ? 'section-caps text-[1.4rem] md:text-[1.7rem] lg:text-[2.08vw] leading-tight mb-5'
+              ? 'section-caps text-[1.4rem] md:text-[1.7rem] lg:text-[2.08vw] leading-tight mb-5 [&_em]:text-brand-red [&_i]:text-brand-red [&_em]:border-b [&_em]:border-[#8e1e24] [&_em]:pb-[calc(1.25rem+0.03em)]'
               : 'editorial-display text-[2.5rem] md:text-[3.5rem] lg:text-[4rem] leading-tight mb-6 [&_em]:text-brand-red [&_i]:text-brand-red',
             // PDF: Gill Sans Light 79.8px with the italic accent word in
             // Cormorant at 85px (1.065x), both with a 0.5px same-colour
@@ -263,36 +340,34 @@ export const SectionIntroBlock: React.FC<
               'lg:text-[length:max(3rem,4.156vw)] lg:leading-[1.2] lg:mb-[1.19vw] lg:[&_em]:text-[1.065em] lg:[&_i]:text-[1.065em] lg:[-webkit-text-stroke:0.026vw_currentColor]',
           )}
         >
-          <RichText data={headline} enableGutter={false} enableProse={false} />
+          <RichText data={accentLastWord(headline)} enableGutter={false} enableProse={false} />
         </div>
         )}
 
-        {/* Short centred rule under a section-caps heading. The PDF draws
-            it at 124px on a 1921 artboard (6.45vw) in the same maroon as
-            the heading rules on the editorial bands. */}
-        {sectionCaps && showHeadline && (
-          <div
-            className="mx-auto w-[6.45vw] min-w-[80px] h-px bg-[#8e1e24] mb-5"
-            aria-hidden="true"
-          />
-        )}
+        {/* Spacer where the short centred maroon rule under a section-caps
+            heading used to be (the PDF drew it at 6.45vw). The line now
+            underlines the heading's last word instead (the em's bottom
+            border, padded down to the same spot); this keeps the spacing. */}
+        {sectionCaps && showHeadline && <div className="h-px mb-5" aria-hidden="true" />}
 
         {body && (
+          <div ref={bodyRef} className={cn(bodyClass, onBanner)}>
+            <RichText data={body} enableGutter={false} enableProse={false} />
+          </div>
+        )}
+
+        {/* The rest of the text, after the first sentence that the banner
+            above carries; shown on the windows where the banner does. */}
+        {restBelow && bodyBelowBanner && (
           <div
-            ref={bodyRef}
+            ref={restRef}
             className={cn(
-              'font-body opacity-95',
-              // The PDF sets the closing paragraph at 30px (= text-hero-body)
-              // and justifies it, with the last line centred.
-              sectionCaps
-                ? 'text-hero-body text-justify [text-align-last:center]'
-                : 'text-body',
-              // PDF: Gill Sans Light 24/28.8, pure black, 755px measure.
-              appointmentPage &&
-                'lg:text-[length:max(1.125rem,1.25vw)] lg:leading-[1.2] lg:opacity-100 lg:mx-auto lg:max-w-[max(30rem,39.3vw)]',
+              bodyClass,
+              'hidden',
+              onPhoneBanner ? '[@media_screen]:block' : '[@media_screen_and_(min-width:768px)_and_(min-height:481px)]:block',
             )}
           >
-            <RichText data={body} enableGutter={false} enableProse={false} />
+            <RichText data={bodyBelowBanner} enableGutter={false} enableProse={false} />
           </div>
         )}
 

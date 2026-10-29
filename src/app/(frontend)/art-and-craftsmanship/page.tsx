@@ -46,11 +46,19 @@ export default async function ArtAndCraftsmanshipPage() {
   // Same short-band editorial layout as the Founder's Vision page, plus the
   // italic-serif banner title this PDF uses. Both are route-level opt-ins, so
   // the shared blocks render unchanged on every other page.
+  // `introOnHero`: the title block's heading ("The Art of Meenakari") becomes
+  // the small line above the hero's title, its first sentence sits under it,
+  // at the hero's bottom-left (bottom centre on phones), as on the banner
+  // pages; the rest of its text stays below.
+  // `infoHeroWholePhotoOnPhone`: on phones the hero shows the whole photo at
+  // its own shape, neither cropped nor zoomed.
   return (
     <RenderBlocks
       blocks={layout}
       editorialSplitVariant="editorial-band"
       infoHeroVariant="banner-title"
+      introOnHero
+      infoHeroWholePhotoOnPhone
     />
   )
 }

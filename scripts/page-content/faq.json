@@ -10,6 +10,12 @@
  },
  "layout": [
   {
+   "blockType": "imageBanner",
+   "image": "__MEDIA:artboard-15.jpg__",
+   "headerTheme": "dark",
+   "height": "natural"
+  },
+  {
    "blockType": "sectionIntro",
    "backgroundColor": "ivory",
    "showTopDivider": false,

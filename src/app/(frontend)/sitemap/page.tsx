@@ -47,9 +47,10 @@ export async function generateMetadata(): Promise<Metadata> {
  *    1920 (5.026vw) before the flower row and footer, minus the Text
  *    Section's own 48px bottom padding and the part of its last line below the
  *    baseline (0.4202em of the body size).
- *  - Title (Section Intro, while it is the page's first section): no hero, so
- *    it sizes to its content; on phones the title sits 45px below the header
- *    (115px top padding) with the Text Sections' 36px side margins, as on
+ *  - Title (Section Intro, the first section below the haveli banner, or the
+ *    first section when there is none): it sizes to its content; on phones,
+ *    when it opens the page, the title sits 45px below the header (115px top
+ *    padding) with the Text Sections' 36px side margins, as on
  *    Terms. From lg up the intro column is Terms' (~885px at 1920) and the
  *    title -> intro gap is the PDF's 77.70pt baseline to baseline at 1920
  *    (4.047vw), by the same formula as Terms'.
@@ -89,16 +90,20 @@ export async function generateMetadata(): Promise<Metadata> {
 const PAGE_CLASSES = [
   'sitemap-page [--pp-vw:min(1vw,19.2px)]',
   'pb-8 lg:pb-[max(0px,calc(5.026*var(--pp-vw)_-_3rem_-_0.4202*var(--fs-body)))]',
-  // Title block: the first section, and only while it IS the title block
-  // (it holds .editorial-display; no hero block does). No quoted attribute
-  // selector here: Tailwind silently drops a breakpoint variant (lg:) whose
-  // selector has quotes.
-  '[&>section:first-of-type:has(.editorial-display)]:min-h-0',
-  '[@media(max-width:767px)]:[&>section:first-of-type:has(.editorial-display)]:px-9 [@media(max-width:767px)]:[&>section:first-of-type:has(.editorial-display)]:pt-[115px]',
-  'lg:[&>section:first-of-type:has(.editorial-display)>div]:max-w-[min(max(720px,46.1vw),885px)]',
-  'lg:[&>section:first-of-type:has(.editorial-display)_.editorial-display]:mb-[calc(min(4.047vw,77.70px)_-_17.6px_-_1.17*var(--fs-body))]',
+  // Title block: the first section that is not an Image Banner (the haveli
+  // photo above the title), and only while it IS the title block (it holds
+  // .editorial-display). The 115px phone top padding (and the touch-screen
+  // one below) clear the header, so they apply only when the title opens the
+  // page (first-of-type, and never the banner, which carries a copy of
+  // the title); under the banner the block keeps its own padding.
+  // No quoted attribute selector here: Tailwind silently drops a breakpoint
+  // variant (lg:) whose selector has quotes.
+  '[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)]:min-h-0',
+  '[@media(max-width:767px)]:[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)]:px-9 [@media(max-width:767px)]:[&>section:first-of-type:not(.image-banner):has(.editorial-display)]:pt-[115px]',
+  'lg:[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)>div]:max-w-[min(max(720px,46.1vw),885px)]',
+  'lg:[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)_.editorial-display]:mb-[calc(min(4.047vw,77.70px)_-_17.6px_-_1.17*var(--fs-body))]',
   // Touch screens from 768px: clear the always-expanded 14vh header.
-  '[@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&>section:first-of-type:has(.editorial-display)]:pt-[calc(14vh_+_52px)]',
+  '[@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&>section:first-of-type:not(.image-banner):has(.editorial-display)]:pt-[calc(14vh_+_52px)]',
   '[@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&_.text-section-heading]:scroll-mt-[calc(14vh_+_2rem)]',
   // The thank-you note: the PDF's two centred lines.
   'md:[&_.site-map+.text-section_.text-section-body]:max-w-[35.6em] md:[&_.site-map+.text-section_.text-section-body]:mx-auto',
@@ -106,7 +111,7 @@ const PAGE_CLASSES = [
   '[@media(max-width:767px)]:[&_.text-section-body_p[style*=justify]]:!text-left',
   // The phone number never breaks across two lines.
   '[&_.text-section-body_a[href^=tel]]:whitespace-nowrap',
-  '[html:has(&>section:first-of-type_.editorial-display)_header_button>svg.text-white]:text-ink',
+  '[html:has(&>section:first-of-type:not(.image-banner)_.editorial-display)_header_button>svg.text-white]:text-ink',
   'print:[html:has(&)]:!static print:[html:has(&)]:!inset-auto print:[html:has(&)]:!h-auto print:[html:has(&)]:!overflow-visible',
   'print:[html:has(&)_body]:!static print:[html:has(&)_body]:!inset-auto print:[html:has(&)_body]:!h-auto print:[html:has(&)_body]:!overflow-visible',
   'print:[html:has(&)_#scroll-container]:!h-auto print:[html:has(&)_#scroll-container]:!overflow-visible',
@@ -116,11 +121,19 @@ const PAGE_CLASSES = [
   '[@media(min-width:1921px)]:[&_.text-section]:[--pp-vw:min(1vw,25.6px)] [@media(min-width:1921px)]:[&_.lotus-divider]:[--pp-vw:min(1vw,25.6px)] [@media(min-width:1921px)]:[&_.site-map]:[--pp-vw:min(1vw,25.6px)]',
   '[@media(min-width:1921px)]:[&_.text-section>div]:max-w-[min(59.39vw,1520.4px)]',
   '[@media(min-width:1921px)]:[&_.lotus-divider>img:first-child]:w-[min(40.5644vw,1038.4px)]',
-  '[@media(min-width:1921px)]:[&>section:first-of-type:has(.editorial-display)>div]:max-w-[min(46.1vw,1180px)]',
+  '[@media(min-width:1921px)]:[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)>div]:max-w-[min(46.1vw,1180px)]',
   // The title: 64px at 1920; the gap under it keeps its formula, the 17.6px
   // in it being 0.275em of the title.
-  '[@media(min-width:1921px)]:[&>section:first-of-type:has(.editorial-display)_.editorial-display]:text-[min(3.3333vw,85.333px)]',
-  '[@media(min-width:1921px)]:[&>section:first-of-type:has(.editorial-display)_.editorial-display]:mb-[calc(min(4.047vw,103.6px)_-_0.275em_-_1.17*var(--fs-body))]',
+  '[@media(min-width:1921px)]:[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)_.editorial-display]:text-[min(3.3333vw,85.333px)]',
+  '[@media(min-width:1921px)]:[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)_.editorial-display]:mb-[calc(min(4.047vw,103.6px)_-_0.275em_-_1.17*var(--fs-body))]',
+  // The lotus divider right under the haveli photo, when the title block
+  // between them is empty on screens (its one sentence sits on the photo):
+  // the divider would hug the photo, so it takes its whole gap above itself
+  // (the Divider block allows for a text block's padding there), matching
+  // the gap below it. When that block keeps more text under the photo, its
+  // own under-photo spacing sets this margin to 0 instead (SectionIntro's
+  // `underPhoto`). Print shows the title block, so it keeps its spacing.
+  '[@media_screen]:[&>section.image-banner+section+.lotus-divider]:mt-[var(--divider-gap-m)] [@media_screen]:lg:[&>section.image-banner+section+.lotus-divider]:mt-[var(--divider-gap)]',
 ].join(' ')
 
 /**
@@ -148,7 +161,10 @@ export default async function SitemapPage() {
   return (
     <div className={PAGE_CLASSES}>
       <h1 className="sr-only">Sitemap</h1>
-      <RenderBlocks blocks={layout} />
+      {/* As on /about: on phones too the title and its first sentence sit on
+          the haveli photo (centred at its bottom), and on laptops and
+          desktops the photo fills exactly the first screen. */}
+      <RenderBlocks blocks={layout} introOnBannerPhone bannerFillsScreen />
     </div>
   )
 }

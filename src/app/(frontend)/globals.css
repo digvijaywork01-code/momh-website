@@ -277,8 +277,8 @@ body > * {
 
 /* Banner title, Art & Craftsmanship variant — italic serif throughout with
  * the accent word in brand red ("The Art & *Craftsmanship*"). Distinct from
- * .statement-display, which is Gill Sans with a Playfair italic accent; that
- * one stays exactly as the About page ships it. */
+ * .statement-display, which is Gill Sans with a Cormorant Regular italic
+ * accent; that one stays exactly as the About page ships it. */
 .banner-display {
   font-family: var(--font-script);
   font-weight: 300;
@@ -292,13 +292,15 @@ body > * {
   color: #F1001C;
 }
 
-/* Statement-band headline (About page's "A *Homage* to Jaipur").
+/* Statement-band headline (About page's "A Homage to *Jaipur*").
  *
- * Same sans/serif mix as .editorial-display, but the PDF switches this
- * one accent to Playfair Display Italic 400 (not Cormorant Light 300 —
- * the hairline Cormorant strokes would wash out at ~80px white over a
- * busy photograph). Plain words stay Gill Sans Light. Pair with
- * `text-hero` for the PDF's 80px-at-1920 fluid scale. */
+ * Same sans/serif mix as .editorial-display, but the accent is Cormorant
+ * Regular Italic 400, not the Light 300 used elsewhere: the hairline Light
+ * strokes wash out at ~80px over a busy photograph. The PDF set this accent
+ * in Playfair Display Italic, but Playfair's swash capital J made "Jaipur"
+ * read as "faipur" once the accent moved to the last word. Plain words stay
+ * Gill Sans Light. Pair with `text-hero` for the PDF's 80px-at-1920 fluid
+ * scale. */
 .statement-display {
   font-family: var(--font-body);
   font-weight: 300;
@@ -306,7 +308,7 @@ body > * {
 }
 .statement-display em,
 .statement-display i {
-  font-family: 'Playfair Display', 'Cormorant', Georgia, serif;
+  font-family: var(--font-script);
   font-weight: 400;
   font-style: italic;
 }
