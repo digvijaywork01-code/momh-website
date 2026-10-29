@@ -10,22 +10,23 @@ import { COLUMN_ICONS, HomeIcon, SupportCircleIcon } from './icons'
  *
  * The tree: a red house, a 1px line running from the first column's icon
  * centre to the last one's, and from that line a 1px drop ending in an arrow
- * over each column's icon. Under each icon, the column's links as a list
- * whose text starts 60.83pt left of the icon centre (the "pin"), as the
- * PDF's first two columns do (D7: its third column sat 20pt further out).
- * From md up the list has no bullets (client request, 29 Oct); phones keep
- * their red dots (below).
+ * over each column's icon. Under each icon, the column's links as a list.
+ * The PDF starts their text 60.83pt left of the icon centre (the "pin"); from
+ * md up each line is centred under the pin instead, with no bullets (client
+ * requests, 29 Oct). Phones keep their red dots (below).
  *
  * How it is laid out (md and up): the columns are grid tracks with no gap,
  * and each column's pin sits the same distance (--sm-off) from its track's
  * left edge, so the pins are exactly one track apart. Every column except the
  * last draws one track-wide piece of the line, starting at its own pin, so the
- * pieces join from the first pin to the last for any number of columns. The
- * last track is only as wide as its list, capped so it ends 24px inside the
- * screen. The middle of the line sits on the page's centre line, under the
- * house, the title and the divider above (client request, 29 Oct: the house
- * centred like the divider). The lists hang to the right of their icons, so
- * the room beside the tree is smaller on the right than on the left.
+ * pieces join from the first pin to the last for any number of columns. Each
+ * list is a box --sm-list wide, centred on its pin: the distance between two
+ * pins less one text size, so two columns' text never touch, and never so
+ * wide that the first or last list comes within 24px of the screen's edge.
+ * A label wider than that wraps, its lines centred too (see ITEM). The
+ * middle of the line sits on the page's centre line, under the house, the
+ * title and the divider above (client request, 29 Oct: the house centred
+ * like the divider), so the room beside the tree is the same on both sides.
  *  - lg (1024 and up), the PDF: the line (--sm-span) is 1290.4pt long
  *    (67.21vw) whatever the number of columns, so with 3 columns the icons
  *    are 645.2pt apart.
@@ -70,9 +71,6 @@ const SECTION =
   "after:content-[''] after:self-stretch after:h-px after:bg-black/20 after:mt-12 md:after:hidden " +
   // The line's length, set here so --sm-cols (inline) can use it.
   'md:[--sm-span:var(--sm-span-md)] lg:[--sm-span:var(--sm-span-lg)] ' +
-  // The widest the last column's track (its list) may be: the tree is placed
-  // by its line, so the list must end 24px inside the screen.
-  'md:[--sm-last:calc(50vw_-_var(--sm-span)_/_2_+_var(--sm-off)_-_24px)] ' +
   '[--pp-vw:min(1vw,19.2px)] [--sm-u:max(0.617px,calc(var(--pp-vw)/19.2))] ' +
   // Phones' tree (the mobile design, measured at 390): the trunk's x (the
   // house's middle), the branch from it to an icon's circle, the space above
@@ -122,7 +120,7 @@ const ICON_SIZE: Record<keyof typeof COLUMN_ICONS, string> = {
   visit: `${PHONE_ICON} md:w-[calc(0.9948*var(--sm-ic))] md:h-[calc(0.9948*var(--sm-ic))]`,
 }
 
-/** The links: no bullets (md+, client request, 29 Oct), rows 1.6667em apart, underlined as in the PDF. */
+/** The links: centred under their icon with no bullets (md+, client requests, 29 Oct), rows 1.6667em apart, underlined as in the PDF. */
 const LIST =
   'font-body text-body leading-[var(--sm-row)] pl-0 ' +
   // Phones: the list sits under its icon's middle, where its line runs down;
@@ -130,7 +128,9 @@ const LIST =
   // the first tick) and continues beside each link.
   'relative list-none w-max max-w-full pt-[calc(var(--m-ul)_-_var(--sm-row)_/_2)] ml-[calc(var(--m-t)_+_var(--m-b)_+_var(--m-ic))] ' +
   'before:absolute before:left-0 before:top-0 before:h-[calc(var(--m-ul)_-_var(--sm-row)_/_2)] before:w-px before:bg-black/20 ' +
-  'md:pt-0 md:mx-0 md:w-auto md:before:hidden ' +
+  'md:pt-0 md:before:hidden ' +
+  // md+: a box --sm-list wide whose middle is the pin, every line centred in it.
+  'md:mr-0 md:ml-[calc(var(--sm-off)_-_var(--sm-list)_/_2)] md:w-[var(--sm-list)] md:max-w-none md:text-center ' +
   // Icon slot bottom to the first baseline: 56.14pt. The baseline sits 1.1631em
   // down a 1.6667em row.
   'md:mt-[max(4px,calc(56.14*var(--sm-u)_-_1.1631*var(--fs-body)))] ' +
@@ -146,11 +146,12 @@ const ITEM =
   'after:absolute after:left-0 after:top-[calc(var(--sm-row)_/_2)] after:w-[var(--m-tick)] after:h-px after:bg-black/20 ' +
   '[&>a]:before:absolute [&>a]:before:left-[calc((var(--m-tick)_+_var(--m-text))_/_2_-_2.5px)] [&>a]:before:top-[calc(var(--sm-row)_/_2_-_2.5px)] ' +
   '[&>a]:before:w-[5px] [&>a]:before:h-[5px] [&>a]:before:rounded-full [&>a]:before:bg-brand-red ' +
-  'md:before:hidden md:after:hidden md:[&>a]:before:hidden ' +
-  // md+, no bullets: a label that wraps hangs its next lines 0.75em in, so
-  // they never read as another link. First lines (and captions, which inherit
-  // the indent) start where the text did before.
-  'md:pl-[0.75em] md:-indent-[0.75em]'
+  'md:pl-0 md:before:hidden md:after:hidden md:[&>a]:before:hidden ' +
+  // md+, no bullets: a label that wraps keeps its lines 1.25em apart, closer
+  // than the rows (1.6667em), so it never reads as two links. As an inline
+  // block on the row's baseline, a one-line label sits where it did. The
+  // caption does the same (below).
+  'md:[&>a]:inline-block md:[&>a]:leading-[1.25]'
 
 /** Phones: the plain branch from the trunk to an icon's circle, level with its centre. */
 const Branch: React.FC = () => (
@@ -169,10 +170,16 @@ export const SiteMapBlock: React.FC<SiteMapBlockProps> = ({ columns }) => {
   if (!cols.length) return null
   const n = cols.length
 
-  // The last track: as wide as its list, at most --sm-last (set above for md and up: the list ends 24px inside the screen).
-  const last = 'fit-content(var(--sm-last))'
+  // The last track: as wide as its column (up to its pin and half its list).
+  const last = 'max-content'
   const style = {
     '--sm-cols': n === 1 ? last : `repeat(${n - 1}, calc(var(--sm-span) / ${n - 1})) ${last}`,
+    // md+: each list's box (see LIST): the pins' distance less one text size,
+    // and at most twice the room between the outer pins and a 24px margin.
+    '--sm-list':
+      n === 1
+        ? 'calc(100vw - 48px)'
+        : `min(calc(var(--sm-span) / ${n - 1} - var(--fs-body)), calc(100vw - var(--sm-span) - 48px))`,
     // md: n-1 gaps of (screen minus the 48px margins) / n, less 16px each.
     '--sm-span-md': `calc(${n - 1} * ((100vw - 96px) / ${n} - 16px))`,
     '--sm-span-lg': n === 1 ? '0px' : 'calc(67.208 * var(--pp-vw))',
@@ -199,11 +206,7 @@ export const SiteMapBlock: React.FC<SiteMapBlockProps> = ({ columns }) => {
           {cols.map((col, i) => {
             const Icon = COLUMN_ICONS[col.icon] ?? COLUMN_ICONS.info
             return (
-              <div
-                key={col.id ?? i}
-                // A 1em gap after every list but the last, so it never touches the next column's text.
-                className={`relative block min-w-0 pt-[var(--m-pt)] md:pt-0 ${i < n - 1 ? 'md:pr-[1em]' : ''}`}
-              >
+              <div key={col.id ?? i} className="relative block min-w-0 pt-[var(--m-pt)] md:pt-0">
                 {/* Phones: the trunk beside this column; the last column's stops at its branch. */}
                 <span
                   aria-hidden="true"
@@ -246,7 +249,8 @@ export const SiteMapBlock: React.FC<SiteMapBlockProps> = ({ columns }) => {
                       )}
                       {link.caption && (
                         <span className="block italic text-black/70 text-[length:var(--sm-cap)] leading-[24px] md:leading-[var(--sm-row)]">
-                          {link.caption}
+                          {/* md+: as the label (see ITEM), its lines 1.25em apart if it wraps. */}
+                          <span className="md:inline-block md:leading-[1.25]">{link.caption}</span>
                         </span>
                       )}
                     </li>
