@@ -10,30 +10,28 @@ import { COLUMN_ICONS, HomeIcon, SupportCircleIcon } from './icons'
  *
  * The tree: a red house, a 1px line running from the first column's icon
  * centre to the last one's, and from that line a 1px drop ending in an arrow
- * over each column's icon. Under each icon, the column's links as a bulleted
- * list whose text starts 60.83pt left of the icon centre (the "pin"), as the
+ * over each column's icon. Under each icon, the column's links as a list
+ * whose text starts 60.83pt left of the icon centre (the "pin"), as the
  * PDF's first two columns do (D7: its third column sat 20pt further out).
+ * From md up the list has no bullets (client request, 29 Oct); phones keep
+ * their red dots (below).
  *
  * How it is laid out (md and up): the columns are grid tracks with no gap,
  * and each column's pin sits the same distance (--sm-off) from its track's
  * left edge, so the pins are exactly one track apart. Every column except the
  * last draws one track-wide piece of the line, starting at its own pin, so the
  * pieces join from the first pin to the last for any number of columns. The
- * last track is only as wide as its list, capped so it stays on screen.
+ * last track is only as wide as its list, capped so it ends 24px inside the
+ * screen. The middle of the line sits on the page's centre line, under the
+ * house, the title and the divider above (client request, 29 Oct: the house
+ * centred like the divider). The lists hang to the right of their icons, so
+ * the room beside the tree is smaller on the right than on the left.
  *  - lg (1024 and up), the PDF: the line (--sm-span) is 1290.4pt long
  *    (67.21vw) whatever the number of columns, so with 3 columns the icons
- *    are 645.2pt apart. The lists hang to the right of their icons, so a tree
- *    centred on its line leaves less room on the right than on the left. The
- *    whole tree (from the first column's dots to the end of the longest line in
- *    the last column) is centred on the page instead, so the room is even on
- *    both sides (client request, 21 Oct). The house stays over the middle of
- *    the line, which puts it a little left of the title's centre (57px at
- *    1920, 49px at 1440).
- *  - md (768-1023): no design. The middle of the line sits on the page's
- *    centre line, under the house and the title. The PDF's spacing would push
- *    the last list off screen, so the icons are a share of the width minus
- *    16px apart (208px at 768 with 3 columns), which keeps a gap between the
- *    lists.
+ *    are 645.2pt apart.
+ *  - md (768-1023): no design. The PDF's spacing would push the last list
+ *    off screen, so the icons are a share of the width minus 16px apart
+ *    (208px at 768 with 3 columns), which keeps a gap between the lists.
  *  - Phones (under 768): a vertical tree, from the client's mobile design
  *    (21 Oct). The house is the root at the top left of a centred block; a
  *    light grey trunk runs down from its middle, with a plain branch out to
@@ -72,14 +70,9 @@ const SECTION =
   "after:content-[''] after:self-stretch after:h-px after:bg-black/20 after:mt-12 md:after:hidden " +
   // The line's length, set here so --sm-cols (inline) can use it.
   'md:[--sm-span:var(--sm-span-md)] lg:[--sm-span:var(--sm-span-lg)] ' +
-  // How far the list dots hang left of their text: Chrome draws them 7.4px +
-  // 0.5625em out (measured at 18, 20.9 and 26px).
-  '[--sm-dot:calc(7.4px_+_0.5625*var(--fs-body))] ' +
-  // The widest the last column's track (its list) may be: md, the tree is
-  // placed by its line, so the list must end 24px inside the screen; lg, the
-  // whole tree is centred, so it may take what is left of the screen less
-  // 24px each side.
-  'md:[--sm-last:calc(50vw_-_var(--sm-span)_/_2_+_var(--sm-off)_-_24px)] lg:[--sm-last:calc(100vw_-_48px_-_var(--sm-span)_-_var(--sm-dot))] ' +
+  // The widest the last column's track (its list) may be: the tree is placed
+  // by its line, so the list must end 24px inside the screen.
+  'md:[--sm-last:calc(50vw_-_var(--sm-span)_/_2_+_var(--sm-off)_-_24px)] ' +
   '[--pp-vw:min(1vw,19.2px)] [--sm-u:max(0.617px,calc(var(--pp-vw)/19.2))] ' +
   // Phones' tree (the mobile design, measured at 390): the trunk's x (the
   // house's middle), the branch from it to an icon's circle, the space above
@@ -129,10 +122,9 @@ const ICON_SIZE: Record<keyof typeof COLUMN_ICONS, string> = {
   visit: `${PHONE_ICON} md:w-[calc(0.9948*var(--sm-ic))] md:h-[calc(0.9948*var(--sm-ic))]`,
 }
 
-/** The links: disc markers hanging outside the text (md+), rows 1.6667em apart, underlined as in the PDF. */
+/** The links: no bullets (md+, client request, 29 Oct), rows 1.6667em apart, underlined as in the PDF. */
 const LIST =
-  // md+: the dots are brand red (client request, 21 Oct), like the phones' dots.
-  'font-body text-body leading-[var(--sm-row)] pl-0 md:list-disc md:list-outside md:marker:text-brand-red ' +
+  'font-body text-body leading-[var(--sm-row)] pl-0 ' +
   // Phones: the list sits under its icon's middle, where its line runs down;
   // the line starts at the circle (this padding, which ends half a row above
   // the first tick) and continues beside each link.
@@ -154,7 +146,11 @@ const ITEM =
   'after:absolute after:left-0 after:top-[calc(var(--sm-row)_/_2)] after:w-[var(--m-tick)] after:h-px after:bg-black/20 ' +
   '[&>a]:before:absolute [&>a]:before:left-[calc((var(--m-tick)_+_var(--m-text))_/_2_-_2.5px)] [&>a]:before:top-[calc(var(--sm-row)_/_2_-_2.5px)] ' +
   '[&>a]:before:w-[5px] [&>a]:before:h-[5px] [&>a]:before:rounded-full [&>a]:before:bg-brand-red ' +
-  'md:pl-0 md:before:hidden md:after:hidden md:[&>a]:before:hidden'
+  'md:before:hidden md:after:hidden md:[&>a]:before:hidden ' +
+  // md+, no bullets: a label that wraps hangs its next lines 0.75em in, so
+  // they never read as another link. First lines (and captions, which inherit
+  // the indent) start where the text did before.
+  'md:pl-[0.75em] md:-indent-[0.75em]'
 
 /** Phones: the plain branch from the trunk to an icon's circle, level with its centre. */
 const Branch: React.FC = () => (
@@ -173,7 +169,7 @@ export const SiteMapBlock: React.FC<SiteMapBlockProps> = ({ columns }) => {
   if (!cols.length) return null
   const n = cols.length
 
-  // The last track: as wide as its list, at most --sm-last (set per breakpoint above).
+  // The last track: as wide as its list, at most --sm-last (set above for md and up: the list ends 24px inside the screen).
   const last = 'fit-content(var(--sm-last))'
   const style = {
     '--sm-cols': n === 1 ? last : `repeat(${n - 1}, calc(var(--sm-span) / ${n - 1})) ${last}`,
@@ -184,21 +180,20 @@ export const SiteMapBlock: React.FC<SiteMapBlockProps> = ({ columns }) => {
 
   return (
     <nav aria-label="Sitemap" className={SECTION} style={style}>
-      {/* lg: this box is exactly as wide as the tree, dots included, and centred. */}
-      {/* Phones: as wide as the tree, centred. md: the full width. */}
-      <div className="w-max md:w-auto lg:w-max lg:mx-auto">
-        {/* House: 67.43 x 54.42pt; its foot is 32.55pt above the line, over its middle. */}
+      {/* Phones: as wide as the tree, centred. md+: the full width. */}
+      <div className="w-max md:w-auto">
+        {/* House: 67.43 x 54.42pt; its foot is 32.55pt above the line, over its middle (the page's centre from md up). */}
         <HomeIcon
           className={
             'block overflow-visible text-brand-red w-[calc(67.43*var(--sm-u))] h-[calc(54.42*var(--sm-u))] ' +
-            'md:mx-auto md:mb-[calc(32.55*var(--sm-u))] lg:ml-[calc(var(--sm-dot)_+_var(--sm-off)_+_var(--sm-span)_/_2_-_33.715*var(--sm-u))]'
+            'md:mx-auto md:mb-[calc(32.55*var(--sm-u))]'
           }
         />
         <div
           className={
             'block ' +
             'md:grid md:items-start md:gap-0 md:w-max md:[grid-template-columns:var(--sm-cols)] ' +
-            'md:ml-[calc(50%_-_var(--sm-span)_/_2_-_var(--sm-off))] lg:ml-0 lg:pl-[var(--sm-dot)]'
+            'md:ml-[calc(50%_-_var(--sm-span)_/_2_-_var(--sm-off))]'
           }
         >
           {cols.map((col, i) => {
@@ -206,7 +201,7 @@ export const SiteMapBlock: React.FC<SiteMapBlockProps> = ({ columns }) => {
             return (
               <div
                 key={col.id ?? i}
-                // A 1em gap after every list but the last, so it never touches the next column's dots.
+                // A 1em gap after every list but the last, so it never touches the next column's text.
                 className={`relative block min-w-0 pt-[var(--m-pt)] md:pt-0 ${i < n - 1 ? 'md:pr-[1em]' : ''}`}
               >
                 {/* Phones: the trunk beside this column; the last column's stops at its branch. */}
