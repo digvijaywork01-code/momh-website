@@ -163,6 +163,7 @@ export const RenderBlocks: React.FC<{
     first?.blockType === 'imageBanner' &&
     (first.height !== 'natural' ||
       (!!photo?.width && !!photo?.height && photo.width / photo.height <= 3))
+  const openingPhoto = first?.blockType === 'imageBanner' || first?.blockType === 'infoHero'
   const second = hasBlocks ? blocks[1] : undefined
   const intro = introOnBanner && roomyBanner && second?.blockType === 'sectionIntro' ? second : null
   const introText = intro?.body ? splitFirstSentence(intro.body) : null
@@ -211,6 +212,9 @@ export const RenderBlocks: React.FC<{
                       onPhoneBanner: true,
                       bodyBelowBanner: heroIntroText?.rest ?? null,
                     }
+                  : {}),
+                ...(openingPhoto && index === 1 && blockType === 'sectionIntro'
+                  ? { afterOpeningPhoto: true }
                   : {}),
                 ...(bannerFillsScreen && index === 0 && roomyBanner
                   ? { fillScreen: bannerFillsScreen }

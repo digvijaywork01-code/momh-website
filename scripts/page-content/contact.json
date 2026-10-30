@@ -84,6 +84,15 @@
          "detail": 0,
          "format": 0,
          "version": 1
+        },
+        {
+         "mode": "normal",
+         "text": " Below, you will see how to get in touch, where we are, and a short note on each kind of enquiry, from press and image requests to group, school and research visits.",
+         "type": "text",
+         "style": "",
+         "detail": 0,
+         "format": 0,
+         "version": 1
         }
        ],
        "direction": "ltr",

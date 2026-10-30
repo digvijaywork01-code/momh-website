@@ -119,11 +119,13 @@ const PAGE_CLASSES = [
   // in it being 0.275em of the title.
   '[@media(min-width:1921px)]:[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)_.editorial-display]:text-[min(3.3333vw,85.333px)]',
   '[@media(min-width:1921px)]:[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)_.editorial-display]:mb-[calc(min(4.047vw,103.6px)_-_0.275em_-_1.17*var(--fs-body))]',
-  // The lotus divider right under the haveli photo: on screens the title
-  // block between them is empty (its one sentence sits on the photo), so the
-  // divider would hug the photo. It takes its whole gap above itself instead
+  // The lotus divider right under the haveli photo, when the title block
+  // between them is empty on screens (its one sentence sits on the photo):
+  // the divider would hug the photo, so it takes its whole gap above itself
   // (the Divider block allows for a text block's padding there), matching
-  // the gap below it. Print shows the title block, so it keeps its spacing.
+  // the gap below it. When that block keeps more text under the photo, its
+  // own under-photo spacing sets this margin to 0 instead (SectionIntro's
+  // `underPhoto`). Print shows the title block, so it keeps its spacing.
   '[@media_screen]:[&>section.image-banner+section+.lotus-divider]:mt-[var(--divider-gap-m)] [@media_screen]:lg:[&>section.image-banner+section+.lotus-divider]:mt-[var(--divider-gap)]',
 ].join(' ')
 

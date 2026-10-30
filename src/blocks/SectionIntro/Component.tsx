@@ -57,6 +57,19 @@ const bgClass: Record<BgKey, string> = {
   maroon: 'bg-maroon text-offwhite',
 }
 
+// For text under the opening photo: the next block's top padding, when that
+// block has the same background (it would read as part of this block's gap).
+// A band of another colour keeps its padding: the gap ends at its edge. That
+// includes ivory (#FFFEFA) after white: faint, but its edge shows.
+const sameBgNextClass: Record<BgKey, string> = {
+  cream: '[@media_screen]:[&+.bg-cream]:!pt-0',
+  ivory: '[@media_screen]:[&+.bg-ivory]:!pt-0',
+  white: '[@media_screen]:[&+.bg-white]:!pt-0',
+  black: '[@media_screen]:[&+.bg-black]:!pt-0',
+  emerald: '[@media_screen]:[&+.bg-emerald]:!pt-0',
+  maroon: '[@media_screen]:[&+.bg-maroon]:!pt-0',
+}
+
 const isDarkBg = (bg: BgKey): boolean =>
   bg === 'black' || bg === 'emerald' || bg === 'maroon'
 
@@ -80,12 +93,19 @@ export const SectionIntroBlock: React.FC<
      *  introOnBannerPhone): the parts above then hide on every screen, not
      *  only on the larger ones. Print still renders this block whole. */
     onPhoneBanner?: boolean
+    /** Set by RenderBlocks (NOT a CMS field): this block comes right after
+     *  the page's opening photo (an Image Banner or Info Hero). When all it
+     *  shows there is running text (the rest of a title that sits on the
+     *  photo, or a block with no eyebrow or heading), that text gets the same
+     *  space above and below it on screens (see `underPhoto`). */
+    afterOpeningPhoto?: boolean
   }
 > = ({
   variant,
   phoneOnly = false,
   bodyBelowBanner = null,
   onPhoneBanner = false,
+  afterOpeningPhoto = false,
   eyebrow,
   headline,
   body,
@@ -123,11 +143,15 @@ export const SectionIntroBlock: React.FC<
   // here on the same windows (the query matches ImageBanner's overlay).
   const restBelow = phoneOnly && richTextHasText(bodyBelowBanner)
   const keepBelow = restBelow || !!ctaLabel || !!cta2Label
-  // On phones (the windows where ImageBanner's phone overlay shows) a page
-  // with introOnBannerPhone keeps here only the rest of the text, a
-  // continuation of the sentence on the photo: no top rule (it sat above the
-  // title) and no title-sized 40vh minimum height.
-  const continuationOnPhone = phoneOnly && onPhoneBanner && keepBelow
+  // Running text right under the opening photo: the rest of a title that
+  // sits on the photo on every screen (introOnBannerPhone, introOnHero), or a
+  // block with no eyebrow or heading. On screens it gets the same space above
+  // and below: 80px on phones, 112px from 768px (this block's usual top
+  // padding), from the photo's edge to the first line and from the last line
+  // to whatever follows. No top rule (it sat above the title) and no
+  // title-sized 40vh minimum height. Print keeps the whole block as it was.
+  const underPhoto =
+    afterOpeningPhoto && (phoneOnly ? onPhoneBanner && keepBelow : !showHeadline && !eyebrow)
   const onBanner =
     phoneOnly && (onPhoneBanner ? '[@media_screen]:hidden' : '[@media_screen_and_(min-width:768px)_and_(min-height:481px)]:hidden')
   const bodyClass = cn(
@@ -205,8 +229,17 @@ export const SectionIntroBlock: React.FC<
         // min-height held, the padding cut would be swallowed by the
         // centring and the visual gap would barely move.
         tightTop ? 'min-h-0 pt-8 md:pt-12' : 'min-h-[40vh] pt-20 md:pt-28',
-        continuationOnPhone && '[@media_screen_and_(max-width:767.98px)]:min-h-0 [@media_screen_and_(max-height:480px)]:min-h-0',
         tightBottom ? 'pb-8 md:pb-12' : 'pb-20 md:pb-28',
+        // Under the photo (see `underPhoto`). Important, so that it also wins
+        // over the routes' own rules for their first text block, and over the
+        // tight / appointment-page paddings. The next block's top margin goes
+        // (a flower divider's gap, a band's offset): the bottom padding is
+        // the whole gap. When the next block has this block's background
+        // (sameBgNextClass), or none of its own (the process carousel), its
+        // own top padding goes too, or it would add to the gap unseen.
+        underPhoto &&
+          "[@media_screen]:!min-h-0 [@media_screen]:!pt-20 [@media_screen]:!pb-20 [@media_screen]:md:!pt-28 [@media_screen]:md:!pb-28 [@media_screen]:[&+*]:!mt-0 [@media_screen]:[&+section:not([class*='bg-'])]:!pt-0",
+        underPhoto && sameBgNextClass[bg],
         bgClass[bg],
         // The bottom padding scales with the PDF (48px at 1920, as
         // tightBottom gives today) so the gap to the form does too.
@@ -235,7 +268,7 @@ export const SectionIntroBlock: React.FC<
           className={cn(
             'w-full max-w-6xl h-px mb-16 lg:mb-20 lg:hidden',
             dark ? 'bg-offwhite/40' : 'bg-warm-gray/40',
-            continuationOnPhone && '[@media_screen_and_(max-width:767.98px)]:hidden [@media_screen_and_(max-height:480px)]:hidden',
+            underPhoto && '[@media_screen]:hidden',
           )}
           aria-hidden="true"
         />
