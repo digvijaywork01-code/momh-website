@@ -822,9 +822,12 @@ export const Header = () => {
   // Narrowing the window to phone width (or a pointer change to touch)
   // hides the desktop bar and its panel (the drawer takes over), so close
   // the panel there rather than leave its scroll lock on a page that can
-  // no longer show it.
+  // no longer show it. Widening (or a pointer change to a mouse) does the
+  // same for the slide-in menu, which the desktop bar hides: left open, it
+  // kept the page frozen (navLocked) with nothing on screen to close it.
   useEffect(() => {
     if (isMobile) setOpenMenu(null)
+    else setIsMobileNavOpen(false)
   }, [isMobile])
 
   // Each panel animates max-height to its content's exact height
