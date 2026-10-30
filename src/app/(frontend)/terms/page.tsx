@@ -52,11 +52,6 @@ export async function generateMetadata(): Promise<Metadata> {
  *    Contact and Accessibility. From lg up the intro column is Accessibility's
  *    (~885px at 1920) and the title -> intro gap is the PDF's 89.36pt baseline
  *    to baseline at 1920 (4.654vw), by the same formula as Accessibility's.
- *  - Touch screens from 768px (no mouse hover): the header never shrinks there;
- *    it stays expanded and white, at 14vh (header.tsx: isExpanded when the
- *    pointer cannot hover). So the title starts 51px below that header (the
- *    gap a mouse user gets below the shrunk 61px header: 112px padding), and
- *    in-page jumps (Contact below) stop 2rem below it instead of under it.
  *  - Phones: justified paragraphs are left-aligned (as the list items are, and
  *    as on Accessibility); on a narrow column justified text opens wide gaps,
  *    worst before an unbreakable email address. Desktop keeps the PDF's
@@ -96,8 +91,8 @@ const PAGE_CLASSES = [
   'pb-8 lg:pb-[calc(12.871*var(--pp-vw)_-_3rem_-_0.4202*var(--fs-body))]',
   // Title block: the first section that is not an Image Banner (the haveli
   // photo above the title), and only while it IS the title block (it holds
-  // .editorial-display). The 115px phone top padding (and the touch-screen
-  // one below) clear the header, so they apply only when the title opens the
+  // .editorial-display). The 115px phone top padding clears the header, so it
+  // applies only when the title opens the
   // page (first-of-type, and never the banner, which carries a copy of
   // the title); under the banner the block keeps its own padding.
   // No quoted attribute selector here: Tailwind silently drops a breakpoint
@@ -106,9 +101,6 @@ const PAGE_CLASSES = [
   '[@media(max-width:767px)]:[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)]:px-9 [@media(max-width:767px)]:[&>section:first-of-type:not(.image-banner):has(.editorial-display)]:pt-[115px]',
   'lg:[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)>div]:max-w-[min(max(720px,46.1vw),885px)]',
   'lg:[&>section:nth-child(1_of_section:not(.image-banner)):has(.editorial-display)_.editorial-display]:mb-[calc(min(4.654vw,89.36px)_-_17.6px_-_1.17*var(--fs-body))]',
-  // Touch screens from 768px: clear the always-expanded 14vh header.
-  '[@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&>section:first-of-type:not(.image-banner):has(.editorial-display)]:pt-[calc(14vh_+_52px)]',
-  '[@media(min-width:768px)_and_(not_((hover:hover)_and_(pointer:fine)))]:[&_.text-section-heading]:scroll-mt-[calc(14vh_+_2rem)]',
   // Phones: justified paragraphs left-aligned (beats Lexical's inline style).
   '[@media(max-width:767px)]:[&_.text-section-body_p[style*=justify]]:!text-left',
   // Intro links: red, underlined on hover and keyboard focus only.
