@@ -136,6 +136,26 @@ const registerEases = () => {
 const installSectionSnapManager = (): (() => void) => {
   let isAnimating = false
 
+  // Below 1024 globals.css locks html and body and the page scrolls inside
+  // #scroll-container, where the window can't move: animating the window
+  // there left every wheel and trackpad gesture swallowed and the page
+  // stuck (only the arrow keys scrolled it). So below 1024 the snap reads
+  // and slides that container instead. Touch never reaches this observer
+  // and keeps the container's own CSS snap. Looked up on every gesture,
+  // so it follows the window across 1024.
+  const innerScroller = window.matchMedia('(max-width: 1023px)')
+  const getScroller = (): HTMLElement | null =>
+    innerScroller.matches ? document.getElementById('scroll-container') : null
+  const getScrollY = () => getScroller()?.scrollTop ?? window.scrollY
+  const getMaxScroll = () => {
+    const sc = getScroller()
+    return sc
+      ? Math.max(0, sc.scrollHeight - sc.clientHeight)
+      : Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
+  }
+  // An overrun smaller than this is not worth a gesture of its own.
+  const MIN_OVERRUN_STOP = 24
+
   const getSections = () =>
     Array.from(
       document.querySelectorAll<HTMLElement>('[data-snap-section]'),
@@ -152,12 +172,25 @@ const installSectionSnapManager = (): (() => void) => {
     return maxEnd
   }
 
-  // Section tops outside the Hero pin range, sorted ascending.
-  const getSectionTops = (pinEnd: number): number[] =>
-    getSections()
-      .map((el) => Math.round(el.getBoundingClientRect().top + window.scrollY))
+  // Section tops outside the Hero pin range, sorted ascending. In the
+  // container a stacked section can run past the bottom of the screen; it
+  // also gets a stop with its bottom on the screen's, as the CSS snap
+  // allows a swipe, so none of it is skipped. Not the last section:
+  // goForward already lands that one bottom-aligned.
+  const getSectionTops = (pinEnd: number): number[] => {
+    const sc = getScroller()
+    const offset = sc ? sc.scrollTop - sc.getBoundingClientRect().top : window.scrollY
+    const sections = getSections()
+    return sections
+      .flatMap((el, i) => {
+        const r = el.getBoundingClientRect()
+        const top = Math.round(r.top + offset)
+        const overrun = sc && i < sections.length - 1 ? Math.round(r.height - sc.clientHeight) : 0
+        return overrun >= MIN_OVERRUN_STOP ? [top, top + overrun] : [top]
+      })
       .filter((y) => y >= pinEnd - 2)
       .sort((a, b) => a - b)
+  }
 
   // Animate scroll to a target with uniform motion.
   //
@@ -185,7 +218,16 @@ const installSectionSnapManager = (): (() => void) => {
   // "confident editorial" quality.
   const animateTo = (target: number, duration = 1.4) => {
     isAnimating = true
-    gsap.to(window, {
+    const sc = getScroller()
+    if (sc) {
+      // The container's CSS snap would pull every frame of the slide back
+      // to the nearest section, so it is off while the slide runs.
+      sc.style.scrollSnapType = 'none'
+      // A short step (a section's overrun) takes its share of the time.
+      const share = Math.abs(target - sc.scrollTop) / sc.clientHeight
+      duration = Math.min(duration, Math.max(0.5, duration * share))
+    }
+    gsap.to(sc ?? window, {
       scrollTo: { y: target, autoKill: false },
       duration,
       ease: 'inOutQuart',
@@ -203,6 +245,7 @@ const installSectionSnapManager = (): (() => void) => {
       // and avoid full repaints per frame.
       force3D: true,
       onComplete: () => {
+        if (sc) sc.style.scrollSnapType = ''
         gsap.delayedCall(0.05, () => {
           isAnimating = false
         })
@@ -219,7 +262,7 @@ const installSectionSnapManager = (): (() => void) => {
 
   const goForward = () => {
     if (isAnimating) return
-    const scrollY = window.scrollY
+    const scrollY = getScrollY()
     const pinEnd = getPinEnd()
 
     if (scrollY < pinEnd - 4) {
@@ -243,11 +286,7 @@ const installSectionSnapManager = (): (() => void) => {
     // full with a peek of the prior block above.
     const isLastSection = target === tops[tops.length - 1]
     if (isLastSection) {
-      const maxScroll = Math.max(
-        0,
-        document.documentElement.scrollHeight - window.innerHeight,
-      )
-      animateTo(maxScroll, SECTION_DURATION)
+      animateTo(getMaxScroll(), SECTION_DURATION)
       return
     }
     animateTo(target, SECTION_DURATION)
@@ -255,7 +294,7 @@ const installSectionSnapManager = (): (() => void) => {
 
   const goBackward = () => {
     if (isAnimating) return
-    const scrollY = window.scrollY
+    const scrollY = getScrollY()
     const pinEnd = getPinEnd()
 
     if (scrollY < pinEnd - 4) {
@@ -279,16 +318,31 @@ const installSectionSnapManager = (): (() => void) => {
     animateTo(target, duration)
   }
 
-  // ── DESKTOP / WHEEL — Observer with preventDefault, unchanged.
+  // ── WHEEL — Observer with preventDefault. It slides the window from
+  // 1024 up and #scroll-container below (see getScroller).
   //
   // `type: 'wheel'` only (NOT 'pointer') — pointer events fire on touch
   // devices alongside touch events; if the wheel observer captured
   // pointer it would also fire on phone swipes with the wrong direction.
+  //
+  // Below lg an opened "Read more" text can scroll inside its block
+  // (.expandable-text-scroll, ExpandableText). The wheel is left to it,
+  // unprevented, until it reaches its end in that direction.
+  const wheelForReadMore = (e: Event) => {
+    if (!innerScroller.matches) return false
+    const box = (e.target as Element | null)?.closest?.('.expandable-text-scroll')
+    if (!(box instanceof HTMLElement) || box.scrollHeight <= box.clientHeight) return false
+    const dy = (e as WheelEvent).deltaY
+    return dy > 0
+      ? box.scrollTop + box.clientHeight < box.scrollHeight - 1
+      : dy < 0 && box.scrollTop > 0
+  }
   const wheelObserver = Observer.create({
     target: window,
     type: 'wheel',
     tolerance: 6,
     preventDefault: true,
+    ignoreCheck: wheelForReadMore,
     onDown: () => goForward(),
     onUp: () => goBackward(),
   })
@@ -317,6 +371,19 @@ const installSectionSnapManager = (): (() => void) => {
   // deliberate than CSS scroll-snap's instant snap, and wheel users
   // don't have the touch-direction problem.
 
+  // Stops a slide where it is. The container gets its CSS snap back.
+  const releaseContainer = () => {
+    const sc = document.getElementById('scroll-container')
+    if (!sc) return
+    gsap.killTweensOf(sc)
+    sc.style.scrollSnapType = ''
+  }
+  const stopSlide = () => {
+    gsap.killTweensOf(window)
+    releaseContainer()
+    isAnimating = false
+  }
+
   // While the header's dropdown panel is open it locks page scroll
   // (html overflow:hidden), but this observer scrolls with JS, which
   // ignores that lock, and its preventDefault would also stop an
@@ -328,18 +395,21 @@ const installSectionSnapManager = (): (() => void) => {
   const onNavLock = (e: Event) => {
     if ((e as CustomEvent<boolean>).detail) {
       wheelObserver.disable()
-      gsap.killTweensOf(window)
-      isAnimating = false
+      stopSlide()
     } else {
       wheelObserver.enable()
     }
   }
   window.addEventListener('momh:nav-lock', onNavLock)
+  // Crossing 1024 swaps the scroller under a slide in flight.
+  innerScroller.addEventListener('change', stopSlide)
   if (document.documentElement.dataset.navLock) wheelObserver.disable()
 
   return () => {
     window.removeEventListener('momh:nav-lock', onNavLock)
+    innerScroller.removeEventListener('change', stopSlide)
     wheelObserver.kill()
+    releaseContainer()
   }
 }
 
