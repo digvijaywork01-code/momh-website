@@ -31,6 +31,8 @@ import { CustomEase } from 'gsap/CustomEase'
 
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 
+import { installMouseDragScroll } from './mouseDragScroll'
+
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer, CustomEase)
 
@@ -418,6 +420,10 @@ export const SmoothScrollProvider: React.FC<Props> = ({ children }) => {
   const noScrollAnim = useNoScrollAnimations()
   const lenisRef = useRef<Lenis | null>(null)
   const tickerCbRef = useRef<((time: number) => void) | null>(null)
+
+  // A mouse press-and-drag scrolls the page below 1024 as a finger does
+  // (mouseDragScroll.ts). Every page, whatever the motion settings.
+  useEffect(() => installMouseDragScroll(), [])
 
   // Boot once.
   useEffect(() => {
