@@ -228,9 +228,15 @@ const relLuminance = (r: number, g: number, b: number): number => {
   return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
 }
 
-// Above this luminance a dark icon reads better than a white one (the point
-// where both have the same contrast).
-const LIGHT_ABOVE = 0.179
+// The burger keeps the colour it has while that colour still reads at 3:1
+// (WCAG's minimum for icons) on the luminance behind it, and changes only
+// past that: white until the ground is lighter than 0.30, black (ink) until
+// it is darker than 0.10. Between the two both read, and the photos the
+// burger crosses sit there, around the 0.179 point where the two are equal,
+// so switching at that one point flipped it back and forth every few pixels
+// of scroll.
+const WHITE_UNTIL = 1.05 / 3 - 0.05
+const BLACK_UNTIL = 3 * 0.05 - 0.05
 
 let sampleCanvas: HTMLCanvasElement | null = null
 
@@ -908,7 +914,9 @@ export const Header = () => {
         return
       }
       const lum = luminanceBehind(r)
-      setMenuIconOnLight(lum === null ? isLightBehind(under) : lum > LIGHT_ABOVE)
+      setMenuIconOnLight((onLight) =>
+        lum === null ? isLightBehind(under) : onLight ? lum >= BLACK_UNTIL : lum > WHITE_UNTIL,
+      )
     }
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update)
@@ -1181,9 +1189,11 @@ export const Header = () => {
               photo/video on home). White reads cleanly against the dark
               imagery; mix-blend on the icon would muddy the line weight.
               It turns ink over light sections once the photo has
-              scrolled away (see menuIconOnLight). */}
+              scrolled away (see menuIconOnLight), fading between the two. */}
           <button ref={menuButtonRef} onClick={() => setIsMobileNavOpen(true)}>
-            <MenuIcon className={menuIconOnLight ? 'text-ink' : 'text-white'} />
+            <MenuIcon
+              className={`${menuIconOnLight ? 'text-ink' : 'text-white'} transition-colors duration-300`}
+            />
           </button>
         </div>
 
