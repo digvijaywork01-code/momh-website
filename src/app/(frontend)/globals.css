@@ -165,6 +165,17 @@
   }
 }
 
+/* A mouse or trackpad with "reduce motion" on: the homepage's wheel slide is
+ * not installed for these visitors (SmoothScroll), and the mandatory snap pulls
+ * each wheel movement back to the section it left, so the wheel could not move
+ * the page at all. Without the snap it scrolls as a plain page. Touch keeps the
+ * snap: a swipe travels far enough to land. */
+@media (max-width: 1023px) and (prefers-reduced-motion: reduce) and (hover: hover) and (pointer: fine) {
+  #scroll-container[data-snap-enabled='true'] {
+    scroll-snap-type: none;
+  }
+}
+
 /* Custom form field styling */
 .form-field-rounded {
   border-radius: 4px !important;

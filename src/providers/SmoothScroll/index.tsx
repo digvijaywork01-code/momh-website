@@ -245,12 +245,20 @@ const installSectionSnapManager = (): (() => void) => {
       // though scrollTop is a paint property (not transform), the
       // hint lets the compositor cache adjacent content in textures
       // and avoid full repaints per frame.
-      force3D: true,
+      // Window only: on an element GSAP writes this as an inline transform,
+      // and a transform on #scroll-container makes it the box the fixed
+      // header inside it is placed against, so the header scrolled away.
+      ...(sc ? {} : { force3D: true }),
       onComplete: () => {
         if (sc) sc.style.scrollSnapType = ''
         gsap.delayedCall(0.05, () => {
           isAnimating = false
         })
+      },
+      // A mouse drag's glide can take over (mouseDragScroll.ts); onComplete
+      // then never runs, and this flag would leave the wheel dead.
+      onInterrupt: () => {
+        isAnimating = false
       },
     })
   }
