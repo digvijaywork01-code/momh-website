@@ -48,20 +48,30 @@ if (typeof window !== 'undefined') {
   // BEFORE any child component's useEffect runs. By the time block triggers
   // are created with the default `scroller: window`, the proxy is already
   // intercepting window scroll queries and redirecting to #scroll-container.
-  const installMobileScrollerProxy = () => {
-    if (!window.matchMedia('(max-width: 1023px)').matches) return
+  const innerScroller = window.matchMedia('(max-width: 1023px)')
+  let proxied = false
+  const installScrollerProxy = () => {
+    if (proxied) return
     const sc = document.getElementById('scroll-container')
     if (!sc) return
-    ScrollTrigger.scrollerProxy(window, {
+    proxied = true
+    // On <html>, not window: GSAP keeps the window's cached scroll reader under
+    // <html>, and only naming <html> clears it, so triggers made after this
+    // read the proxy even when others read the window first (below).
+    ScrollTrigger.scrollerProxy(document.documentElement, {
+      // Answers for whichever one scrolls right now, so the same triggers keep
+      // working when the window crosses 1024 (below).
       scrollTop(value) {
         // Diagnostic counter so we can verify in production whether
         // ScrollTrigger is actually querying the proxy.
         ;(window as unknown as { __proxyHits: number }).__proxyHits =
           ((window as unknown as { __proxyHits?: number }).__proxyHits || 0) + 1
+        const inner = innerScroller.matches
         if (arguments.length && value !== undefined) {
-          sc.scrollTop = value
+          if (inner) sc.scrollTop = value
+          else window.scrollTo(0, value)
         }
-        return sc.scrollTop
+        return inner ? sc.scrollTop : window.scrollY
       },
       getBoundingClientRect() {
         return {
@@ -76,6 +86,9 @@ if (typeof window !== 'undefined') {
     // the inner scroller moves.
     sc.addEventListener('scroll', () => ScrollTrigger.update(), { passive: true })
   }
+  const installMobileScrollerProxy = () => {
+    if (innerScroller.matches) installScrollerProxy()
+  }
 
   // #scroll-container is SSR'd by layout.tsx; in normal Next.js script
   // order it's already in the DOM by the time this module executes. But
@@ -86,6 +99,34 @@ if (typeof window !== 'undefined') {
   } else {
     installMobileScrollerProxy()
   }
+
+  // The window crossing 1024 (a resize, an iPad turned) swaps what scrolls.
+  // A page loaded at 1024 or wider has no proxy yet and its triggers still
+  // read the window, so they would never fire below 1024 and their text would
+  // stay invisible; they are made again to read the proxy, keeping their
+  // animations and settings. A page that never crosses 1024 skips all of this,
+  // so from 1024 up it runs without a proxy, as it always has.
+  innerScroller.addEventListener('change', () => {
+    const hadProxy = proxied
+    installScrollerProxy()
+    if (!hadProxy) {
+      ScrollTrigger.getAll().forEach((t) => {
+        const { vars, animation } = t
+        // A trigger made inside a gsap context (FounderQuote's matchMedia) is
+        // remade inside it, or the context's revert would not reach it.
+        const ctx = (t as unknown as { _ctx?: gsap.Context })._ctx
+        const remake = () => ScrollTrigger.create({ ...vars, animation })
+        t.kill(false, true)
+        if (ctx) {
+          ctx.data.splice(ctx.data.indexOf(t), 1)
+          ctx.add(remake)
+        } else {
+          remake()
+        }
+      })
+    }
+    ScrollTrigger.refresh()
+  })
 }
 
 type Props = { children: React.ReactNode }
