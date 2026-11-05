@@ -18,7 +18,7 @@ import Link from 'next/link'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
-import { accentLastWord } from '@/utilities/accentLastWord'
+import { accentLastWord, accentRule } from '@/utilities/accentLastWord'
 import { richTextHasText as hasText } from '@/utilities/richTextHasText'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
@@ -176,7 +176,7 @@ export const VisitInfoBlock: React.FC<VisitInfoBlockProps> = ({
           className="mb-10 lg:mb-[min(8.5vw,164px)] lg:max-w-[min(62.4vw,1198px)]"
         >
           {showIntroHeadline && introHeadline && (
-            <div className="editorial-display text-[2.25rem] md:text-[3rem] lg:text-[3.5rem] leading-tight [&_em]:text-brand-red [&_i]:text-brand-red">
+            <div className={cn('editorial-display text-[2.25rem] md:text-[3rem] lg:text-[3.5rem] leading-tight [&_em]:text-brand-red [&_i]:text-brand-red', accentRule(bg))}>
               <RichText data={accentLastWord(introHeadline)} enableGutter={false} enableProse={false} />
             </div>
           )}
@@ -231,7 +231,7 @@ export const VisitInfoBlock: React.FC<VisitInfoBlockProps> = ({
             ref={headlineRef}
             // Italic words render in brand red to match the PDF's
             // "*Here*" emphasis treatment.
-            className="editorial-display text-[2.25rem] md:text-[3rem] lg:text-[3.5rem] leading-tight [&_em]:text-brand-red [&_i]:text-brand-red"
+            className={cn('editorial-display text-[2.25rem] md:text-[3rem] lg:text-[3.5rem] leading-tight [&_em]:text-brand-red [&_i]:text-brand-red', accentRule(bg))}
           >
             <RichText data={accentLastWord(headline)} enableGutter={false} enableProse={false} />
           </div>

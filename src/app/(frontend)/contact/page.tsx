@@ -69,8 +69,10 @@ const NO_LINK_UNDERLINE = '[&_a.underline]:no-underline'
  *    hours on one row, and tighter text in short windows so map and text fit
  *    one window below the 61px header.
  *  - Desktop (1536px+): wider Enquiries and Find Us text.
- *  - Phones (under 768px): 32px side space, 120px gaps around the ivory band
- *    and above "Find Us"; under 390px the opening time drops below the day.
+ *  - Phones (under 768px): 32px side space, 120px below the ivory band and
+ *    above "Find Us"; under 390px the opening time drops below the day.
+ *  - Under the opening photo, all sizes: the sentence has the same space below
+ *    it as above it, down to "We are happy to help" (user's request, 5 Nov).
  *  - The 40vh minimum height of the title and Find Us sections is released
  *    wherever their padding is set, so tall windows add no space.
  */
@@ -102,6 +104,15 @@ const PAGE_CLASSES = [
   // 80px top padding; padding cannot go negative, so below ~1310px wide the
   // gap stays at about 141px (the PDF would give 112px at 1024).
   'lg:[&>section:nth-child(1_of_section:not(.image-banner))]:min-h-0 lg:[&>section:nth-child(1_of_section:not(.image-banner))]:pb-[max(0px,calc(min(10.906vw,209.4px)_-_143px))]',
+  // Screens, under the opening photo: the sentence -> "We are happy to help"
+  // looks the same as photo -> sentence (user's request, 5 Nov). Section
+  // Intro's own padding reaches only the ivory band, and the band's top padding
+  // added about 80px that read as one white gap, its colour being so close to
+  // white. The space is split about evenly around the band's edge, less the
+  // empty space above the large heading's letters, so the gap is equal to the
+  // eye. Important, to win over Section Intro's rule for text under the photo.
+  '[@media_screen_and_(min-width:768px)]:[&>.image-banner+section]:!pb-[54px] [@media_screen_and_(min-width:768px)]:[&>.image-banner+section+section]:!pt-[49px]',
+  '[@media_screen_and_(max-width:767.98px)]:[&>.image-banner+section]:!pb-[38px] [@media_screen_and_(max-width:767.98px)]:[&>.image-banner+section+section]:!pt-[35px]',
   // lg+, title -> first text line 2.115vw (40.6pt); 23px + 0.95 x body size
   // is the measured type between them at zero margin.
   'lg:[&>section:nth-child(1_of_section:not(.image-banner))_.editorial-display]:mb-[calc(min(2.115vw,40.6px)_-_23px_-_0.95*var(--fs-body))]',
@@ -158,8 +169,9 @@ const PAGE_CLASSES = [
   '[@media(max-width:767.98px)]:[&>section:nth-child(1_of_section:not(.image-banner))]:min-h-0 [@media(max-width:767.98px)]:[&>section:first-of-type:not(.image-banner):has(.editorial-display)]:pt-[115px] [@media(max-width:767.98px)]:[&>section:nth-child(1_of_section:not(.image-banner))]:pb-0',
   // Phones, the two gaps around the ivory "We are happy to help" band = 120px
   // each (user's choice, 9 Oct; were 173px and 141px at 390x844). Top: 78px
-  // padding + 42px of type (body 18px, heading 36px). Bottom: 43px padding +
-  // the Enquiries block's 32px top padding + 45px of type.
+  // padding + 42px of type (body 18px, heading 36px); under the opening photo
+  // this reaches print only, on screens the rule under the title wins. Bottom:
+  // 43px padding + the Enquiries block's 32px top padding + 45px of type.
   '[@media(max-width:767.98px)]:[&>section:nth-child(2_of_section:not(.image-banner))]:pt-[calc(120px_-_42px)] [@media(max-width:767.98px)]:[&>section:nth-child(2_of_section:not(.image-banner))]:pb-[calc(120px_-_32px_-_45px)]',
   // Phones, last Enquiries line -> "Find Us" baseline = 120px (user's
   // choice, 9 Oct; was 158px). 78px = the Enquiries block's 32px bottom

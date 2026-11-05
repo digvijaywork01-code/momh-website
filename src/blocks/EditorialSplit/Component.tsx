@@ -28,7 +28,7 @@ import RichText from '@/components/RichText'
 import { EditorialCta } from '@/components/EditorialCta'
 import { ExpandableText } from '@/components/ExpandableText'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
-import { accentLastWord } from '@/utilities/accentLastWord'
+import { accentLastWord, accentRule } from '@/utilities/accentLastWord'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { isCtaTargetLive } from '@/utilities/validRoutes'
 import { cn } from '@/utilities/ui'
@@ -493,7 +493,7 @@ export const EditorialSplitBlock: React.FC<
                   as usual (rendering here too duplicated it). */}
               {headingOverImage && headline && (
                 <div className={cn('mb-6', imageFirst ? '' : 'sbs:text-right')}>
-                  <div className="section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4 [&_em]:text-brand-red [&_i]:text-brand-red [&_em]:border-b [&_em]:border-[#8e1e24] [&_em]:pb-[calc(1rem+0.03em)]">
+                  <div className={cn('section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4 [&_em]:text-brand-red [&_i]:text-brand-red', accentRule(bg))}>
                     <RichText data={accentLastWord(headline)} enableGutter={false} enableProse={false} />
                   </div>
                   {/* Spacer where the maroon rule was; the rule is now drawn
@@ -625,11 +625,11 @@ export const EditorialSplitBlock: React.FC<
                 className={cn(
                   band
                     ? // PDF: 40px on a 1921 artboard = 2.08vw, Cormorant
-                      // capitals, typed in the case the design wants. The
-                      // maroon rule underlines the last word: the em's bottom
-                      // border, padded down to where the rule used to sit.
-                      'section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4 [&_em]:border-b [&_em]:border-[#8e1e24] [&_em]:pb-[calc(1rem+0.03em)]'
+                      // capitals, typed in the case the design wants.
+                      'section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4'
                     : 'editorial-display text-display mb-6',
+                  // The maroon rule under the last word (the em's bottom border).
+                  accentRule(bg),
                   // Only the last word is italic (accentLastWord), in red on
                   // every band colour.
                   '[&_em]:text-brand-red [&_i]:text-brand-red',
