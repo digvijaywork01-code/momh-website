@@ -6,9 +6,10 @@
  * WHAT IT UPLOADS
  *   Every folder under scripts/page-content/media/ that holds a manifest.json
  *   (today: media/press/, the 34 Press photos momh-press-01.jpg ...
- *   momh-press-34.jpg). The manifest lists each file with its alt text, size,
+ *   momh-press-34.jpg, and media/banners/, the 16 page banner photos banner-*.jpg,
+ *   see page-banners.mts). The manifest lists each file with its alt text, size,
  *   pixel size and SHA-256; a file that does not match it exactly is refused.
- *   SET=press limits the run to that folder.
+ *   SET=press or SET=banners limits the run to that folder.
  *
  * WHERE THE FILES GO
  *   The script uploads through Payload, so the files go where the site keeps
