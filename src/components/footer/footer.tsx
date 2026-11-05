@@ -7,7 +7,7 @@
  * (rendered by the separate FlowerPaintings component, also on black).
  * Below it: logo + social icons on the left, then a 4-column link grid
  * (Story / Support / Visit / Opening Hours). Bottom bar has copyright
- * + 3 legal links and Cookie Settings on the right.
+ * + 2 legal links and Cookie Settings on the right.
  *
  * Note on the logo: per the user's instruction, the current red
  * `momh-logo.jpg` is used as a placeholder until the white footer logo
@@ -56,15 +56,12 @@ const ABOUT_LINKS: LinkColumn = {
   items: [
     // "Our Story" -> /about, "Founder's Vision" -> /founders-vision,
     // "Press" -> /press and "Testimonials" -> /testimonials are real pages
-    // now. The remaining anchor ID (#blogs) is absent from the rendered home
-    // page DOM, so that label would silently scroll nowhere. Marked disabled
-    // until a matching section gains that id.
+    // now.
     { label: 'Our Story', href: '/about' },
     { label: "Founder's Vision", href: '/founders-vision' },
     { label: 'The Art & Craftsmanship', href: '/art-and-craftsmanship' },
     { label: 'The Architecture', href: '/architecture' },
     { label: 'Press', href: '/press' },
-    { label: 'Blog', href: '/#blogs', disabled: true },
     { label: 'Testimonials', href: '/testimonials' },
   ],
 }
@@ -105,10 +102,6 @@ const OPENING_HOURS: { day: string; time: string }[] = [
 ]
 
 const LEGAL_LINKS: LinkItem[] = [
-  // Copyright still 404s — disabled until its page exists. Sequenced in
-  // the footer bottom bar; disabled items render as plain <span>s by the
-  // disabled branch below.
-  { label: 'Copyright', href: '/copyright', disabled: true },
   { label: 'Privacy Policy', href: '/privacy-policy' },
   { label: 'Terms of Use', href: '/terms' },
 ]
