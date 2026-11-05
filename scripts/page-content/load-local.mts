@@ -102,7 +102,12 @@ const mediaId = async (placeholder: string): Promise<number> => {
       limit: 1,
       depth: 0,
     })
-    if (!found.docs[0]) fail(`media ${filename} not found (needed for ${placeholder})`)
+    if (!found.docs[0]) {
+      fail(
+        `media ${filename} not found (needed for ${placeholder}). If it is a photo shipped in scripts/page-content/media/, ` +
+          'add it to this database with upload-media.mts (SET=<its folder>, a dry run, then APPLY), or re-sync from production once it is released.',
+      )
+    }
     mediaIds[placeholder] = found.docs[0].id
   }
   return mediaIds[placeholder]

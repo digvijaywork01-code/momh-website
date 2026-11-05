@@ -79,7 +79,8 @@ export const RenderBlocks: React.FC<{
    *  so shared-block rendering on every other page is untouched. */
   editorialSplitVariant?: 'fifty-justified' | 'editorial-band'
   /** Page-level render variant forwarded to every infoHero block.
-   *  'banner-title' = italic-serif title with a red accent word. */
+   *  'banner-title' = italic-serif title with a red accent word, and with no
+   *  dark layer over the photo the banner pages' shade and red-word glow. */
   infoHeroVariant?: 'banner-title'
   /** Page-level render variant forwarded to every faq block.
    *  'faq-page' = the /faq page (FAQ PDF): one block per question group,

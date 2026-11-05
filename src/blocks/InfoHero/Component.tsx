@@ -59,9 +59,11 @@ const isVideoResource = (resource: unknown): boolean => {
 export const InfoHeroBlock: React.FC<
   InfoHeroBlockProps & {
     /** Render variant forwarded by RenderBlocks (NOT a CMS field).
-     *  'banner-title' = the Art & Craftsmanship banner: the whole title in
-     *  italic serif with the accent word in brand red. Default (undefined)
-     *  keeps the home cards hero and the About statement band untouched. */
+     *  'banner-title' = the Architecture and Art & Craftsmanship banners: the
+     *  whole title in italic serif with the accent word in brand red. With no
+     *  dark layer over the photo (overlayDarkness 0) it also takes the banner
+     *  pages' shade and red-word glow. Default (undefined) keeps the home cards
+     *  hero and the About statement band untouched. */
     variant?: 'banner-title'
     /** Set by RenderBlocks' infoHeroTextAtBottom (NOT a CMS field), for a
      *  hero without cards: the title and its line sit at the bottom instead
@@ -144,6 +146,20 @@ export const InfoHeroBlock: React.FC<
     wholePhotoOnPhone && !hasCards && photo?.width && photo?.height
       ? `${photo.width} / ${photo.height}`
       : undefined
+  // A bright photo with no dark layer over it gets what the banner pages'
+  // title has (ImageBanner). A page still at its old darkness looks as before.
+  const bannerLook = bannerTitle && overlayOpacity === 0
+  // From 768px this hero fills the screen, so a window narrower than the
+  // photo's shape (an upright iPad) zooms into the photo. Ask for the copy that
+  // zoom needs: the screen's width alone picks a smaller one, stretched and soft.
+  const photoSizes =
+    bannerLook && photoRatio && photo?.width && photo?.height
+      ? `(max-width: 767.98px) 100vw, (max-aspect-ratio: ${photo.width}/${photo.height}) ${Math.ceil((photo.width / photo.height) * 100)}vh, 100vw`
+      : undefined
+  // The tighter, darker glow of the banner pages' red last word.
+  const redWordGlow = bannerLook
+    ? '[&_em]:[text-shadow:0_0_2px_rgba(0,0,0,0.9),0_0_6px_rgba(0,0,0,0.85),0_0_14px_rgba(0,0,0,0.75),0_0_22px_rgba(0,0,0,0.6)] [&_i]:[text-shadow:0_0_2px_rgba(0,0,0,0.9),0_0_6px_rgba(0,0,0,0.85),0_0_14px_rgba(0,0,0,0.75),0_0_22px_rgba(0,0,0,0.6)]'
+    : undefined
 
   return (
     <section
@@ -158,6 +174,9 @@ export const InfoHeroBlock: React.FC<
       ref={sectionRef}
       className={cn(
         'relative w-full h-svh overflow-hidden text-offwhite',
+        // Dark while the photo loads, as on the banner pages, so the white title
+        // never sits on the page's white.
+        bannerLook && 'bg-ink',
         // Phones, wholePhotoOnPhone: the photo's own shape, full width, so it
         // is neither cropped nor zoomed (the ratio comes in --hero-ratio).
         photoRatio && '[@media_screen_and_(max-width:767.98px)]:!h-auto [@media_screen_and_(max-width:767.98px)]:aspect-[var(--hero-ratio)]',
@@ -174,6 +193,7 @@ export const InfoHeroBlock: React.FC<
           videoClassName="absolute inset-0 w-full h-full object-cover z-0"
           resource={backgroundMedia}
           priority={!isVideo}
+          size={photoSizes}
         />
       )}
 
@@ -182,6 +202,17 @@ export const InfoHeroBlock: React.FC<
         style={{ opacity: overlayOpacity }}
         aria-hidden="true"
       />
+
+      {/* The banner pages' shade, so the title reads on a bright photo that keeps
+          its colour everywhere else: rising from the bottom-left from 768px, from
+          the bottom edge under the centred title on phones. The title stays on the
+          photo in print too, so the shade prints with it. */}
+      {bannerLook && (
+        <div
+          className="absolute inset-0 z-10 bg-gradient-to-t md:bg-gradient-to-tr from-black/75 via-black/30 to-transparent [print-color-adjust:exact]"
+          aria-hidden="true"
+        />
+      )}
 
       {/* Desktop content — cards stack vertically at bottom-left of viewport.
           PDF p2 spec: cards left-aligned to x=110, buttons exactly 257×40 px
@@ -215,6 +246,7 @@ export const InfoHeroBlock: React.FC<
               <h1
                 className={cn(
                   'text-offwhite drop-shadow-lg [&_em]:text-brand-red [&_i]:text-brand-red',
+                  redWordGlow,
                   // PDF spec for the statement band: ~80px at 1920 (text-hero
                   // clamp), plain words Gill Sans Light, *accent* in Cormorant
                   // Regular Italic (.statement-display). Cards variant keeps
@@ -298,6 +330,10 @@ export const InfoHeroBlock: React.FC<
       <div
         className={cn(
           'md:hidden absolute inset-0 z-20 flex flex-col',
+          // A phone held sideways: the photo's shape can run past the window's
+          // bottom edge, and the title stays on the first screen, as on the
+          // banner pages.
+          bannerLook && photoRatio && 'bottom-auto h-[min(100%,100svh)]',
           photoRatio ? 'px-4 pb-3 [@media(max-width:359.98px)]:pb-2' : 'p-4',
         )}
       >
@@ -318,6 +354,7 @@ export const InfoHeroBlock: React.FC<
           <h1
             className={cn(
               'text-offwhite drop-shadow-lg [&_em]:text-brand-red [&_i]:text-brand-red',
+              redWordGlow,
               hasCards
                 ? 'font-display text-display font-normal'
                 : photoRatio

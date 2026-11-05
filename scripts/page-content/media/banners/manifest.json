@@ -1,0 +1,134 @@
+{
+  "set": "banners",
+  "note": "The page banner photos, 4 Nov 2026: the client's compressed set, except FAQ, Accessibility and Terms (re-made from the PNG originals, see-through edges filled) and Contact, Architecture and Art & Craftsmanship (compressed here). Embedded metadata removed: this repo is public. Uploaded by scripts/page-content/upload-media.mts with SET=banners; used by scripts/page-content/page-banners.mts and the page JSON files as __MEDIA:<file>__.",
+  "files": [
+    {
+      "file": "banner-contact-haveli.jpg",
+      "alt": "Shekhawat Haveli at dusk seen from below, its carved screens glowing from within under a moonlit sky",
+      "width": 5472,
+      "height": 2486,
+      "bytes": 960401,
+      "sha256": "5f8a3cedd0604800e7f4bd2d58ab64718c26c0032785e5fc15c51d865f92fdf8"
+    },
+    {
+      "file": "banner-museum-guidelines.jpg",
+      "alt": "A spiral staircase rising through a dark gallery lined with framed works",
+      "width": 3166,
+      "height": 3687,
+      "bytes": 797669,
+      "sha256": "ccf63aaf2f938d03f75318b1a2a793c20a34c8ae40f88258ca007e78a6612ac4"
+    },
+    {
+      "file": "banner-faq.jpg",
+      "alt": "The museum lounge, with curved armchairs and bookshelves under a painted ceiling",
+      "width": 3571,
+      "height": 3781,
+      "bytes": 897374,
+      "sha256": "84e86ca6afe6644ba3f57ce05ce4c640e30ba4810b84ea20df53ac2a4ec8d762"
+    },
+    {
+      "file": "banner-accessibility.jpg",
+      "alt": "The museum's round glass lift beside a lit display case and an armchair",
+      "width": 3302,
+      "height": 4033,
+      "bytes": 864511,
+      "sha256": "ae74d3d9489532fecd0dd530183da40e330ff738bcb5706ed5c67919c4c02aec"
+    },
+    {
+      "file": "banner-terms-of-use.jpg",
+      "alt": "A pale spiral staircase curving above the museum lobby, with the glass lift beside it",
+      "width": 3556,
+      "height": 3781,
+      "bytes": 817540,
+      "sha256": "26fbbcec5e7ae6fc5b53a836ddf09732f13148f120d4868bf31cec60f50ee16f"
+    },
+    {
+      "file": "banner-cookies-policy.jpg",
+      "alt": "Tall carved screens with sunlight falling through them onto the floor",
+      "width": 4521,
+      "height": 2751,
+      "bytes": 846497,
+      "sha256": "d7f266e0b67050eed29e86ea7bc6c0d26ea651b952225896ad5b86c1033bcdf4"
+    },
+    {
+      "file": "banner-sitemap.jpg",
+      "alt": "Shekhawat Haveli at dusk, its carved screens lit from within",
+      "width": 4899,
+      "height": 3266,
+      "bytes": 684366,
+      "sha256": "efbd13833c9ecfaec91a8fbbf5ae559b15ea998c531a09deaca9fd70ec43625d"
+    },
+    {
+      "file": "banner-about-us.jpg",
+      "alt": "An enamelled plate of birds and flowers under a maker's hands",
+      "width": 5472,
+      "height": 3648,
+      "bytes": 717580,
+      "sha256": "b1c93c532d8ad1f6b50623afaa16bc799efc9562cdfd2a3b58953a6a6d48f205"
+    },
+    {
+      "file": "banner-book-your-appointment.jpg",
+      "alt": "Shekhawat Haveli after dark, its screens and doorways lit, seen from the gate",
+      "width": 4914,
+      "height": 3256,
+      "bytes": 897427,
+      "sha256": "d4944e851645b618ed21abcf17f26434cc9c48a70279fe2d59ba62b3f031d79e"
+    },
+    {
+      "file": "banner-personal-consultation.jpg",
+      "alt": "A maker's hands pencilling a flower pattern onto gold pieces",
+      "width": 5472,
+      "height": 3648,
+      "bytes": 806887,
+      "sha256": "5d10022cc8250d458734bfb16cc220d5d09eee337c59c26c5079811df4804eca"
+    },
+    {
+      "file": "banner-craft-your-jewellery.jpg",
+      "alt": "A maker's hands enamelling a small gold horse beside a tray of colours",
+      "width": 5472,
+      "height": 3648,
+      "bytes": 927984,
+      "sha256": "45101561582826050213413972b0a2e21181f6e8e61035f78ceef29f0c4c1668"
+    },
+    {
+      "file": "banner-press.jpg",
+      "alt": "A maker's hand touching a fine needle to an engraved gold piece",
+      "width": 4899,
+      "height": 3266,
+      "bytes": 875108,
+      "sha256": "a025a0b9124f5b2a1e745afd7f105f4fcabb03e8ccb3e1ea9f54a609b8f141ff"
+    },
+    {
+      "file": "banner-testimonials.jpg",
+      "alt": "A tiny gold and enamel horse held up close in a maker's fingers",
+      "width": 5472,
+      "height": 3648,
+      "bytes": 871591,
+      "sha256": "119f531003e0e3950982a2d48929e365cd87bbd1be04beba266c265deeec16cc"
+    },
+    {
+      "file": "banner-thank-you.jpg",
+      "alt": "An engraved gold disc held in the hand, with green enamel along one edge",
+      "width": 5472,
+      "height": 3648,
+      "bytes": 927142,
+      "sha256": "a8ebc7faaaeda01a30884711ba7ab43fa1a9b7ead38a8cd5c5514eca2f7b78c6"
+    },
+    {
+      "file": "banner-architecture.jpg",
+      "alt": "Shekhawat Haveli seen from one corner at sunset, with its name carved above a lit doorway and a golden sky behind",
+      "width": 4900,
+      "height": 3267,
+      "bytes": 983329,
+      "sha256": "f5f331115dffbad1127d3520919f2e052c2281a1b0f3a5a082d64f95d72735d8"
+    },
+    {
+      "file": "banner-art-and-craftsmanship.jpg",
+      "alt": "A maker's hands working a fine tool across a gold jewel set with green enamel",
+      "width": 5472,
+      "height": 3648,
+      "bytes": 925104,
+      "sha256": "dd87b8ee556cc53a520254a2a0ff8881be181400ed9fb150462381e6994d93bc"
+    }
+  ]
+}
