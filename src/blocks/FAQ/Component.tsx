@@ -18,7 +18,7 @@ import RichText from '@/components/RichText'
 import { FaqItem } from '@/components/FaqItem'
 import { FAQ_PAGE_CLOSED_FLAG, FAQ_PAGE_PHONE_QUERY } from '@/blocks/FAQ/phoneQuery'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
-import { accentLastWord } from '@/utilities/accentLastWord'
+import { accentLastWord, accentRule } from '@/utilities/accentLastWord'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
 
@@ -231,16 +231,15 @@ export const FAQBlock: React.FC<
             // Only the last word is italic (accentLastWord).
             // /faq: the headline is a group heading ("Visiting"), all red,
             // exposed as a level-2 heading. A real <h2> cannot hold the rich
-            // text's <div><p>, hence role + aria-level. Its italics stay as
-            // typed: the all-red group headings are left as they are.
+            // text's <div><p>, hence role + aria-level.
             {...(page ? { id: headingId, role: 'heading', 'aria-level': 2 } : {})}
             className={
               page
-                ? cn(PAGE_HEADING_CLASSES, dark ? 'text-offwhite' : 'text-brand-red')
+                ? cn(PAGE_HEADING_CLASSES, dark ? 'text-offwhite' : 'text-brand-red', accentRule(bg))
                 : 'editorial-display text-[2.5rem] md:text-[3.5rem] lg:text-[4.5rem] leading-[1.05] mb-6 [&_em]:text-brand-red [&_i]:text-brand-red'
             }
           >
-            <RichText data={page ? headline : accentLastWord(headline)} enableGutter={false} enableProse={false} />
+            <RichText data={accentLastWord(headline)} enableGutter={false} enableProse={false} />
           </div>
           {intro && (
             <div ref={introRef} className="font-body text-body opacity-95 max-w-xl mx-auto">

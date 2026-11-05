@@ -105,3 +105,12 @@ const sameLook = (a: LexicalNode, b: LexicalNode): boolean => {
   const { text: _b, ...restB } = b
   return JSON.stringify(restA) === JSON.stringify(restB)
 }
+
+// The rule under that last word: a 1px maroon bottom border on the word, as
+// close as the letters that hang down allow (with no padding it touches the p
+// and the g). Only on a white or ivory background: a heading on a coloured band
+// has no rule, and neither has text on a banner photo.
+export const accentRule = (background: string): string =>
+  background === 'white' || background === 'ivory'
+    ? '[&_em]:border-b [&_em]:border-[#8e1e24] [&_em]:pb-[0.06em]'
+    : ''

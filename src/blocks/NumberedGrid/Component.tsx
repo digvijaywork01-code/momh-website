@@ -25,7 +25,7 @@ import type { NumberedGridBlock as NumberedGridBlockProps } from '@/payload-type
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
-import { accentLastWord } from '@/utilities/accentLastWord'
+import { accentLastWord, accentRule } from '@/utilities/accentLastWord'
 import { cn } from '@/utilities/ui'
 
 type ColumnsKey = NonNullable<NumberedGridBlockProps['columns']>
@@ -523,7 +523,7 @@ export const NumberedGridBlock: React.FC<NumberedGridBlockProps> = ({
           <div className={cn('sbs:flex-[55] sbs:min-w-0', textPos === 'left' ? '' : 'sbs:text-right')}>
             {headline && (
               <>
-                <div className="section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4 [&_em]:text-brand-red [&_i]:text-brand-red [&_em]:border-b [&_em]:border-[#8e1e24] [&_em]:pb-[calc(1rem+0.03em)]">
+                <div className={cn('section-caps text-[1.4rem] md:text-[1.7rem] sbs:text-[2.08vw] leading-tight mb-4 [&_em]:text-brand-red [&_i]:text-brand-red', accentRule('ivory'))}>
                   <RichText data={accentLastWord(headline)} enableGutter={false} enableProse={false} />
                 </div>
                 {/* Spacer where the maroon rule was; the rule is now drawn

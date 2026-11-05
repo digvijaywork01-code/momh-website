@@ -23,7 +23,7 @@ import type {
 import RichText from '@/components/RichText'
 import { EditorialCta } from '@/components/EditorialCta'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
-import { accentLastWord } from '@/utilities/accentLastWord'
+import { accentLastWord, accentRule } from '@/utilities/accentLastWord'
 import { richTextHasText } from '@/utilities/richTextHasText'
 import { useNoScrollAnimations } from '@/utilities/useNoScrollAnimations'
 import { cn } from '@/utilities/ui'
@@ -321,7 +321,8 @@ export const SectionIntroBlock: React.FC<
           //    1920-wide artboard. Italic words render in brand red.
           //  - 'section-caps': the Founder's Vision closing statement —
           //    Cormorant Light capitals at the PDF's 40px/1921 = 2.08vw,
-          //    with a maroon rule under its last word (the em's border).
+          //    with a maroon rule under its last word (the em's border) on
+          //    a white or ivory background.
           // In both, only the last word is italic (accentLastWord), in red.
           // NOTE: `leading-tight` must sit AFTER the text-size utilities in
           // each branch. cn() runs tailwind-merge, which treats font-size as
@@ -331,8 +332,10 @@ export const SectionIntroBlock: React.FC<
           className={cn(
             onBanner,
             sectionCaps
-              ? 'section-caps text-[1.4rem] md:text-[1.7rem] lg:text-[2.08vw] leading-tight mb-5 [&_em]:text-brand-red [&_i]:text-brand-red [&_em]:border-b [&_em]:border-[#8e1e24] [&_em]:pb-[calc(1.25rem+0.03em)]'
+              ? 'section-caps text-[1.4rem] md:text-[1.7rem] lg:text-[2.08vw] leading-tight mb-5 [&_em]:text-brand-red [&_i]:text-brand-red'
               : 'editorial-display text-[2.5rem] md:text-[3.5rem] lg:text-[4rem] leading-tight mb-6 [&_em]:text-brand-red [&_i]:text-brand-red',
+            // A display title that belongs to the opening photo has no rule.
+            (sectionCaps || !afterOpeningPhoto) && accentRule(bg),
             // PDF: Gill Sans Light 79.8px with the italic accent word in
             // Cormorant at 85px (1.065x), both with a 0.5px same-colour
             // stroke.
@@ -347,7 +350,7 @@ export const SectionIntroBlock: React.FC<
         {/* Spacer where the short centred maroon rule under a section-caps
             heading used to be (the PDF drew it at 6.45vw). The line now
             underlines the heading's last word instead (the em's bottom
-            border, padded down to the same spot); this keeps the spacing. */}
+            border); this keeps the spacing. */}
         {sectionCaps && showHeadline && <div className="h-px mb-5" aria-hidden="true" />}
 
         {body && (
