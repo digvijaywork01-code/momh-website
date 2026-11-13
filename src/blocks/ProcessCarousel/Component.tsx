@@ -322,10 +322,9 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
       // No background colour, no horizontal padding — the image inside
       // each slide bleeds the entire viewport width. Vertical padding
       // keeps the step label + body from bumping into adjacent blocks.
-      // Less space under the text so the slider sits closer to the next
-      // section: phones 24px (was 64px), md 64px (unchanged), lg+ 48px
-      // (was 80px).
-      className="w-full pt-16 pb-6 md:pb-16 lg:pt-20 lg:pb-12"
+      // The same 24px under the text at every width (was 64px, and 80px
+      // on lg+), so the slider sits close to the next section.
+      className="w-full pt-16 pb-6 lg:pt-20"
       data-theme={dark ? 'dark' : 'light'}
       {...(noScrollAnim ? {} : { 'data-snap-section': true })}
       aria-label="Process"
