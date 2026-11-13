@@ -415,20 +415,21 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
                         {slide.stepLabel}
                       </p>
 
-                      {/* Body — wider container (max-w-3xl / 768px)
-                          plus a small bump above the inherited
-                          `text-body` token. 20 / 21 / 22px sits 1px
-                          above the body default on desktop — just
-                          enough presence without making the whole
-                          carousel overflow the viewport once the
-                          banner image + step label + dots are added. */}
+                      {/* Body — wider container (max-w-3xl / 768px),
+                          set in the site's body size and line height
+                          (--fs-body / --lh-body, what `text-body` uses)
+                          so it matches every other paragraph on the
+                          page at every screen width. Written as
+                          arbitrary values because cn() would read
+                          `text-body` as a colour and drop it in favour
+                          of the text colour below. */}
                       <div
                         ref={(el) => {
                           bodyRefs.current[idx] = el
                         }}
                         className={cn(
-                          'mt-3 max-w-3xl mx-auto font-body opacity-95 leading-relaxed',
-                          'text-[1.25rem] md:text-[1.3125rem] lg:text-[1.375rem]',
+                          'mt-3 max-w-3xl mx-auto font-body opacity-95',
+                          'text-[length:var(--fs-body)] leading-[var(--lh-body)]',
                           dark ? 'text-offwhite/95' : 'text-ink/95',
                         )}
                       >
