@@ -7,8 +7,7 @@
  * DEVELOPMENT sequence. Single slide visible at a time, full image up
  * top, red step label + body below. Red prev/next circles and the
  * pagination dots both sit on the photo, still, while the slides
- * glide sideways one at a time underneath (as the site's other
- * carousels move; it used to cross-fade).
+ * cross-fade in place underneath, one at a time.
  *
  * One static section bg (no per-slide colour change) — the calmer
  * editorial choice per design direction.
@@ -17,6 +16,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import useEmblaCarousel from 'embla-carousel-react'
+import Fade from 'embla-carousel-fade'
 
 import type { ProcessCarouselBlock as ProcessCarouselBlockProps } from '@/payload-types'
 
@@ -54,11 +54,17 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
   // pages so the header theme stays "light" (dark text on light bg).
   const dark = false
 
-  // Plain sideways slide, one slide per move, Embla's default speed
-  // (as the Press carousel). Movement is independent of `noScrollAnim`:
-  // that flag governs SCROLL-driven motion (entrance cascades, smooth
-  // scroll, snap), not self-driven UI like a carousel.
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' })
+  // Cross-fade in place with Embla's official Fade plugin, the same
+  // fade as before (`duration: 30` sets how long it takes): the slides
+  // stack and dissolve into each other, one slide per move. Movement is
+  // independent of `noScrollAnim`: that flag governs SCROLL-driven
+  // motion (entrance cascades, smooth scroll, snap), not self-driven UI
+  // like a carousel. One plugin instance for the life of the carousel.
+  const [plugins] = useState(() => [Fade()])
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true, align: 'start', dragFree: false, duration: 30 },
+    plugins,
+  )
 
   const [selectedIndex, setSelectedIndex] = useState(0)
   const slideList = Array.isArray(slides) ? slides : []
@@ -106,43 +112,34 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
   const bodyRefs = useRef<(HTMLDivElement | null)[]>([])
 
   // Track which slide is active. The select handler ALSO drives the
-  // per-slide text entrance: label rises + fades in, body follows
-  // ~0.15s later. The text of every other slide waits 24/16px low and
-  // transparent, so a slide gliding in (or dragged into view) shows its
-  // photo first and its words rise in once it is the current one, and
-  // the outgoing slide's words fade away as it glides off rather than
-  // vanishing mid-move (as the Press carousel's cards do). With "reduce
-  // motion" all text simply shows.
+  // per-slide text entrance, as before: every slide's text is reset
+  // (24/16px low, transparent), then the current label rises + fades
+  // in and the body follows ~0.15s later, while the photos cross-fade.
+  // With "reduce motion" the current slide's text simply shows and the
+  // others' is hidden, at once: the slides lie on top of each other, so
+  // showing every slide's text printed two texts over each other while
+  // a finger swiped the photo.
   useEffect(() => {
     if (!emblaApi) return
-    const texts = () => [...labelRefs.current, ...bodyRefs.current]
-    let first = true
     const onSelect = () => {
       const idx = emblaApi.selectedScrollSnap()
       setSelectedIndex(idx)
 
       if (reduced) {
-        texts().forEach((el) => {
-          if (el) gsap.set(el, { y: 0, opacity: 1, overwrite: true })
+        ;[labelRefs.current, bodyRefs.current].forEach((els) => {
+          els.forEach((el, i) => {
+            if (el) gsap.set(el, { y: 0, opacity: i === idx ? 1 : 0, overwrite: true })
+          })
         })
-        first = true
         return
       }
 
-      // On the first run everything starts hidden (the current slide's
-      // text then rises in, as before); afterwards the others ease out.
-      const hide = (el: HTMLElement | null, y: number) => {
-        if (!el) return
-        if (first) gsap.set(el, { y, opacity: 0, overwrite: true })
-        else gsap.to(el, { y, opacity: 0, duration: 0.5, ease: 'power2.out', overwrite: true })
-      }
-      labelRefs.current.forEach((el, i) => {
-        if (first || i !== idx) hide(el, 24)
+      labelRefs.current.forEach((el) => {
+        if (el) gsap.set(el, { y: 24, opacity: 0, overwrite: true })
       })
-      bodyRefs.current.forEach((el, i) => {
-        if (first || i !== idx) hide(el, 16)
+      bodyRefs.current.forEach((el) => {
+        if (el) gsap.set(el, { y: 16, opacity: 0, overwrite: true })
       })
-      first = false
 
       // Animate the active slide's text in.
       const label = labelRefs.current[idx]
@@ -187,13 +184,22 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
       if (swiped) moved()
       pressed.current = false
     }
+    // A width change (a tablet turned, a window resized) rebuilds Embla.
+    // A press open at that moment is dropped and its release never
+    // reported, so treat it as released here, or the automatic move
+    // would keep waiting for that finger for good.
+    const onReInit = () => {
+      if (pressed.current) onUp()
+    }
     emblaApi.on('pointerDown', onDown)
     emblaApi.on('scroll', onScroll)
     emblaApi.on('pointerUp', onUp)
+    emblaApi.on('reInit', onReInit)
     return () => {
       emblaApi.off('pointerDown', onDown)
       emblaApi.off('scroll', onScroll)
       emblaApi.off('pointerUp', onUp)
+      emblaApi.off('reInit', onReInit)
     }
   }, [emblaApi, moved])
 
@@ -349,8 +355,14 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
         {/* Viewport — clips the slide track. Full width, no max-w.
             `relative` anchors the controls overlay to its top, i.e. to
             the top of the image. The track must stay its first child
-            (Embla takes root.children[0] as the container). */}
-        <div ref={emblaRef} className="relative overflow-hidden">
+            (Embla takes root.children[0] as the container).
+            `overflow-clip` clips without making a scroll box, so a
+            link to a hidden slide's words (Google's "jump to this
+            sentence") can no longer scroll the slider sideways and leave
+            it blank. `overflow-hidden` stays as the fallback for browsers
+            without `clip` (Safari before 16): Tailwind writes the clip
+            rule after the hidden one, so clip wins wherever it works. */}
+        <div ref={emblaRef} className="relative overflow-hidden overflow-clip">
           {/* Track — flex row, each slide takes 100% of the viewport. */}
           <div className="flex">
             {slideList.map((slide, idx) => {
@@ -450,7 +462,7 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
               same 16:5 ratio, top 0 (the image is every slide's first
               child and `image` is a required field). One shared set of
               arrows and dots (not one per slide), so they stay put while
-              the slides glide underneath. The box itself ignores the
+              the slides fade underneath. The box itself ignores the
               pointer so the photo stays draggable; only the arrows and
               the dot row take clicks. Being inside Embla's root, a swipe
               that starts on an arrow or the dots still moves the slides
