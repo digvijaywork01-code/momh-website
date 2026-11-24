@@ -41,12 +41,24 @@ export const RANDOM_FIELDS_TO_REFUSE = 3
 // Links (a pasted Pinterest or Instagram link is mostly random letters by
 // design), email addresses and anything else with a dot or slash inside a
 // word, such as "pin.it/4kXqZJb2T": not judged at all.
-const LINK_LIKE = /\S*(?:[a-z]+:\/\/|www\.|@|[\w-]\.[a-z]{2,}|\/)\S*/gi
+// Tested one word (a run without spaces) at a time, with no open-ended
+// repeats, so this test takes time only in step with the answer's length.
+// A single pattern over the whole answer, with repeats on both sides, took
+// 32 seconds on one 4,000-letter word and held up the server.
+const LINK_LIKE_WORD = /[a-z]:\/\/|www\.|@|[\w-]\.[a-z]{2}|\//i
+
+// Only an answer's first 2,000 characters are judged: plenty to tell, and
+// it keeps every answer cheap. The tidying step (normalize) slows down
+// sharply on one long run of accent marks, so it never sees more.
+const JUDGED_LENGTH = 2000
 
 export const randomTextScore = (value: unknown): number | null => {
   if (typeof value !== 'string') return null
   const words = value
-    .replace(LINK_LIKE, ' ')
+    .slice(0, JUDGED_LENGTH)
+    .split(/\s+/)
+    .filter((word) => !LINK_LIKE_WORD.test(word))
+    .join(' ')
     .normalize('NFKD')
     .split(/[^A-Za-z]+/)
     .map((w) => w.toLowerCase())

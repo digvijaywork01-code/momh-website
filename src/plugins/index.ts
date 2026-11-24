@@ -44,6 +44,10 @@ const RANDOM_CHECK_FIELDS: ReadonlySet<string> = new Set([
 // The consultation's upload fields, exactly as ConsultationForm sends them.
 const UPLOAD_FIELDS = new Set(['referenceImage', 'referenceImageName', 'referenceImageNote'])
 
+// The longest field name any form may send. The site's own are under 30
+// characters; 200 leaves room for names typed into a CMS form.
+const MAX_FIELD_NAME_LENGTH = 200
+
 // Spam-protection checks (origin, honeypot, signed time pass, throwaway
 // domains) live in src/utilities/formGuards.ts, shared with /api/newsletter
 // and /api/email-forwarding. Same rules as the SS site.
@@ -149,6 +153,20 @@ export const plugins: Plugin[] = [
             )
               ? data.submissionData
               : []
+            // (0a) Every field name is text of at most MAX_FIELD_NAME_LENGTH
+            // characters. Checked before anything else reads a name: step 0b
+            // tidies each name (normalize), which slows down sharply on one
+            // long run of accent marks, and one such name could hold up the
+            // server for minutes.
+            if (
+              submissionData.some(
+                (f) => typeof f.field !== 'string' || f.field.length > MAX_FIELD_NAME_LENGTH,
+              )
+            ) {
+              req.payload.logger.warn({ msg: 'Form spam blocked: field name not text or too long' })
+              throw new Error('Submission rejected.')
+            }
+
             // (0) Every field name once. The site's forms never repeat one;
             // a repeat could slip a second value past the checks below,
             // which each read the first entry with that name.
@@ -201,9 +219,15 @@ export const plugins: Plugin[] = [
                 throw new Error('Submission rejected.')
               }
             }
-            // The form keeps at most 200 characters of the file's name.
+            // The form sends the file's name as text of at most 200
+            // characters. A list or object would slip past the length rule
+            // and be saved as one long text.
             const fileName = submissionData.find((f) => f.field === 'referenceImageName')?.value
-            if (typeof fileName === 'string' && fileName.length > 200) {
+            if (
+              fileName !== undefined &&
+              fileName !== null &&
+              (typeof fileName !== 'string' || fileName.length > 200)
+            ) {
               req.payload.logger.warn({ msg: 'Form spam blocked: file name too long' })
               throw new Error('Submission rejected.')
             }

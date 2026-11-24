@@ -70,7 +70,11 @@ export const UPLOAD_KEY_RE =
  */
 export const safeFileName = (visitorName: unknown, key: string): string => {
   const ext = key.slice(key.lastIndexOf('.') + 1)
-  const base = (typeof visitorName === 'string' ? visitorName : '').split(/[\\/]/).pop() ?? ''
+  // The form sends at most 200 characters, and the spam hook refuses more.
+  // Cut again here, before the tidying below: normalize slows down sharply
+  // on a long run of accent marks.
+  const base =
+    (typeof visitorName === 'string' ? visitorName.slice(0, 200) : '').split(/[\\/]/).pop() ?? ''
   const dot = base.lastIndexOf('.')
   const clean = (dot >= 0 ? base.slice(0, dot) : base)
     .normalize('NFC')

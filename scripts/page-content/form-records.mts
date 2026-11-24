@@ -13,13 +13,18 @@
  * does, so this script creates exactly those two numbers.
  *
  * ORDER (this script ships in the same PR as the form-validation code):
+ *   0. Not while production runs Payload older than 3.90.0: the form
+ *      builder there has a critical security hole (advisory
+ *      GHSA-r488-j9vj-wx3q, CVSS 10). Upgrade and deploy that first.
  *   1. BEFORE merging, check out the PR's branch (pnpm install) and run this
  *      script on production: a dry run, then APPLY (below). The live site
  *      still runs the old code then, and no page reads these records, so
  *      creating them changes nothing visitors see.
- *   2. Only then merge the PR, which deploys the form-validation code.
- *      Deployed without these records, every enquiry would be refused
- *      ("Submission failed").
+ *   2. Only then merge the PR and deploy main from the CLI
+ *      (`vercel deploy --prod`): the Vercel project has no Git link, so a
+ *      merge alone deploys nothing, and the deploy's build runs
+ *      `payload migrate`. Deployed without these records, every enquiry
+ *      would be refused ("Submission failed").
  *   3. Never delete these two records or give them email recipients in the
  *      admin: the site's own email step sends the emails.
  *
@@ -504,6 +509,8 @@ if (!UNDO) {
     `Id counter: next form made in the admin gets ${Number(next.last_value) + (next.is_called ? 1 : 0)}.`,
   )
   console.log(`To undo: UNDO=${recordDir} (dry run; add APPLY=1 CONFIRM_DB=${dbName}).`)
-  console.log('Next: run pnpm payload migrate, then merge the PR (that deploys the code).')
+  console.log(
+    'Next: merge the PR, then deploy main with vercel deploy --prod (its build runs the migration).',
+  )
 }
 process.exit(0)
