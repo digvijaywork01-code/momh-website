@@ -63,7 +63,13 @@ const resolveLinkHref = (link: CtaLink | null | undefined): string | null => {
   return null
 }
 
-const Column: React.FC<{ column: Column; dark: boolean }> = ({ column, dark }) => {
+const Column: React.FC<{
+  column: Column
+  dark: boolean
+  // True for the copy inside the phone/tablet carousel, whose clipping
+  // box ends at the newsletter button (see NewsletterWidget errorInFlow).
+  inCarousel?: boolean
+}> = ({ column, dark, inCarousel = false }) => {
   const ref = useRef<HTMLDivElement | null>(null)
   const eyebrowRef = useRef<HTMLParagraphElement | null>(null)
   const headlineRef = useRef<HTMLDivElement | null>(null)
@@ -223,6 +229,7 @@ const Column: React.FC<{ column: Column; dark: boolean }> = ({ column, dark }) =
           buttonLabel={column.newsletterButtonLabel || 'SUBSCRIBE'}
           endpoint={column.newsletterEndpoint || ''}
           dark={dark}
+          errorInFlow={inCarousel}
         />
       )}
     </div>
@@ -275,7 +282,7 @@ const MobileColumnCarousel: React.FC<{
         <div className="flex">
           {columns.map((col, i) => (
             <div key={i} className="shrink-0 grow-0 basis-full">
-              <Column column={col} dark={dark} />
+              <Column column={col} dark={dark} inCarousel />
             </div>
           ))}
         </div>

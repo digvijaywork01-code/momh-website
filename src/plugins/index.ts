@@ -5,8 +5,6 @@ import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
 import { Plugin } from 'payload'
-import disposableDomains from 'disposable-email-domains'
-import crypto from 'node:crypto'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -15,43 +13,23 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
+import {
+  checkFormToken,
+  emailDomain,
+  isAllowedOrigin,
+  isDisposableEmail,
+  isHoneypotFilled,
+} from '@/utilities/formGuards'
+import { UPLOAD_KEY_RE } from '@/utilities/uploadRules'
+import { isEmailTooLong } from '@/utilities/emailFormat'
+import { FORM_FIELD_NAMES } from '@/utilities/formIds'
 
-// ── Spam-protection helpers (used by formSubmissionOverrides hook) ─────
-// Same approach as the SS site: layered cheap checks at the
-// /api/form-submissions endpoint so the simplest bot traffic never
-// reaches the DB or the email pipeline.
+// The consultation's upload fields, exactly as ConsultationForm sends them.
+const UPLOAD_FIELDS = new Set(['referenceImage', 'referenceImageName', 'referenceImageNote'])
 
-// Built once at module load — Set lookup is O(1) vs array .includes()
-// over ~121k domains.
-const DISPOSABLE_DOMAINS = new Set<string>(disposableDomains as string[])
-
-// Origin allowlist — kept in sync with the same constants in
-// app/(payload)/api/email-forwarding/route.ts.
-const ALLOWED_ORIGINS = [
-  'https://momhindia.org',
-  'https://www.momhindia.org',
-] as const
-const VERCEL_PREVIEW_RE = /^https:\/\/[a-z0-9-]+\.vercel\.app$/
-const LOCALHOST_RE = /^http:\/\/localhost(:\d+)?$/
-
-const safeUrlOrigin = (input: string): string => {
-  try {
-    return input ? new URL(input).origin : ''
-  } catch {
-    return ''
-  }
-}
-
-const isAllowedOrigin = (origin: string, referer: string): boolean => {
-  const refererOrigin = safeUrlOrigin(referer)
-  for (const candidate of [origin, refererOrigin]) {
-    if (!candidate) continue
-    if ((ALLOWED_ORIGINS as readonly string[]).includes(candidate)) return true
-    if (VERCEL_PREVIEW_RE.test(candidate)) return true
-    if (LOCALHOST_RE.test(candidate)) return true
-  }
-  return false
-}
+// Spam-protection checks (origin, honeypot, signed time pass, throwaway
+// domains) live in src/utilities/formGuards.ts, shared with /api/newsletter
+// and /api/email-forwarding. Same rules as the SS site.
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -98,6 +76,11 @@ export const plugins: Plugin[] = [
     fields: {
       payment: false,
     },
+    // The plugin's own email step runs BEFORE the spam hook below and would
+    // send whatever emails a form record lists. MOMH's emails are sent by
+    // /api/email-forwarding instead, after the submission has passed the
+    // spam checks and been saved, so the plugin must never send any.
+    beforeEmail: () => [],
     formOverrides: {
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
@@ -122,11 +105,92 @@ export const plugins: Plugin[] = [
     // Spam-protection hook — layered cheap checks before a submission
     // touches the DB. Mirrors the SS site's approach.
     formSubmissionOverrides: {
+      // Admin only: an "Open file" button in the sidebar of a Personal
+      // Consultation enquiry with an uploaded file. A 'ui' field stores
+      // nothing, so it needs no database change.
+      fields: ({ defaultFields }) => [
+        ...defaultFields,
+        {
+          name: 'uploadedFile',
+          type: 'ui',
+          admin: {
+            position: 'sidebar',
+            // Not a list column: it stores nothing, so every row would read
+            // "<No Uploaded File>" and the date column would be pushed out.
+            disableListColumn: true,
+            components: {
+              Field: '@/components/admin/ConsultationFileLink#ConsultationFileLink',
+            },
+          },
+        },
+      ],
       hooks: {
         beforeChange: [
           ({ data, req }) => {
-            const submissionData: Array<{ field: string; value: unknown }> =
-              Array.isArray(data?.submissionData) ? data.submissionData : []
+            const submissionData: Array<{ field: string; value: unknown }> = Array.isArray(
+              data?.submissionData,
+            )
+              ? data.submissionData
+              : []
+            // (0) Every field name once. The site's forms never repeat one;
+            // a repeat could slip a second value past the checks below,
+            // which each read the first entry with that name.
+            const names = submissionData.map((f) => String(f.field).trim().toLowerCase())
+            if (new Set(names).size !== names.length) {
+              req.payload.logger.warn({ msg: 'Form spam blocked: repeated field name' })
+              throw new Error('Submission rejected.')
+            }
+
+            // (0b) Only the real upload fields may look like one (all forms;
+            // the two hand-built forms are held to an exact list in 0c). The team
+            // email trusts the 'Reference Image' label; a look-alike name
+            // ('ReferenceImage', 'reference_image', 'Reference Image') could
+            // put a sender's link under it.
+            const squash = (n: string) =>
+              n
+                .normalize('NFKC')
+                .toLowerCase()
+                .replace(/[^a-z0-9]/g, '')
+            if (
+              submissionData.some(
+                (f) =>
+                  typeof f.field === 'string' &&
+                  squash(f.field).startsWith('referenceimage') &&
+                  !UPLOAD_FIELDS.has(f.field),
+              )
+            ) {
+              req.payload.logger.warn({ msg: 'Form spam blocked: look-alike upload field' })
+              throw new Error('Submission rejected.')
+            }
+
+            // (0c) The two hand-built forms save a fixed list of field names
+            // (src/utilities/formIds.ts). Any other name is refused, so no
+            // made-up or look-alike label (another alphabet, '1' for 'I')
+            // can reach the team email, and the upload fields can only
+            // come with a Personal Consultation enquiry.
+            const formRef = data?.form as unknown
+            const formId = Number(
+              typeof formRef === 'object' && formRef !== null
+                ? (formRef as { id?: unknown }).id
+                : formRef,
+            )
+            const allowedNames = FORM_FIELD_NAMES[formId]
+            if (allowedNames) {
+              const allowed = new Set<string>([...allowedNames, '_hp', '_t'])
+              if (
+                submissionData.some((f) => typeof f.field !== 'string' || !allowed.has(f.field))
+              ) {
+                req.payload.logger.warn({ msg: 'Form spam blocked: unexpected field name', formId })
+                throw new Error('Submission rejected.')
+              }
+            }
+            // The form keeps at most 200 characters of the file's name.
+            const fileName = submissionData.find((f) => f.field === 'referenceImageName')?.value
+            if (typeof fileName === 'string' && fileName.length > 200) {
+              req.payload.logger.warn({ msg: 'Form spam blocked: file name too long' })
+              throw new Error('Submission rejected.')
+            }
+
             const hp = submissionData.find((f) => f.field === '_hp')?.value
             const t = submissionData.find((f) => f.field === '_t')?.value
 
@@ -151,75 +215,52 @@ export const plugins: Plugin[] = [
             }
 
             // (2) Honeypot — any non-empty value means a bot filled the trap.
-            if (hp && String(hp).length > 0) {
+            if (isHoneypotFilled(hp)) {
               req.payload.logger.warn({ msg: 'Form spam blocked: honeypot', ip })
               throw new Error('Submission rejected.')
             }
 
             // (3) HMAC-signed timestamp token (issued by /api/form-token).
-            // Token format: `<timestamp>.<base64url-hmac>`. Server verifies
-            // the signature + that the elapsed time falls in [3s, 30 min].
-            const SECRET = process.env.PAYLOAD_SECRET || ''
-            const tokenStr = String(t ?? '')
-            const dotIdx = tokenStr.indexOf('.')
-            if (!SECRET || dotIdx < 0) {
-              req.payload.logger.warn({ msg: 'Form spam blocked: token shape', ip })
-              throw new Error('Submission rejected.')
-            }
-            const tsPart = tokenStr.slice(0, dotIdx)
-            const sigPart = tokenStr.slice(dotIdx + 1)
-            const expectedSig = crypto
-              .createHmac('sha256', SECRET)
-              .update(tsPart)
-              .digest('base64url')
-            const sigBuf = Buffer.from(sigPart)
-            const expectedBuf = Buffer.from(expectedSig)
-            if (
-              sigBuf.length !== expectedBuf.length ||
-              !crypto.timingSafeEqual(sigBuf, expectedBuf)
-            ) {
+            // Token format: `<timestamp>.<base64url-hmac>`. Valid when the
+            // signature matches and the pass is 3 s to 30 min old.
+            const token = checkFormToken(t)
+            if (!token.ok) {
               req.payload.logger.warn({
-                msg: 'Form spam blocked: token signature',
-                ip,
-              })
-              throw new Error('Submission rejected.')
-            }
-            const renderedAt = Number(tsPart)
-            const elapsed = Date.now() - renderedAt
-            const TOKEN_MIN_MS = 3_000
-            const TOKEN_MAX_MS = 30 * 60 * 1000
-            if (
-              !Number.isFinite(renderedAt) ||
-              renderedAt <= 0 ||
-              elapsed < TOKEN_MIN_MS ||
-              elapsed > TOKEN_MAX_MS
-            ) {
-              req.payload.logger.warn({
-                msg: 'Form spam blocked: token age',
-                elapsed: Number.isFinite(elapsed) ? elapsed : null,
+                msg: `Form spam blocked: ${token.reason}`,
+                ...(token.elapsed !== undefined ? { elapsed: token.elapsed } : {}),
                 ip,
               })
               throw new Error('Submission rejected.')
             }
 
+            // (4a) Every field whose name contains "email" (so only real
+            // address boxes may use that word in their name), checked before
+            // anything else reads it:
+            //   - a list or object instead of text: a bot (the forms only
+            //     send text), and it would slip past the length rule;
+            //   - longer than any real address: over 254 characters, or over
+            //     64 before the "@" (src/utilities/emailFormat.ts).
+            const emailFields = submissionData.filter(
+              (f) => typeof f.field === 'string' && f.field.toLowerCase().includes('email'),
+            )
+            if (emailFields.some((f) => typeof f.value === 'object' && f.value !== null)) {
+              req.payload.logger.warn({ msg: 'Form spam blocked: email not text', ip })
+              throw new Error('Submission rejected.')
+            }
+            if (emailFields.some((f) => typeof f.value === 'string' && isEmailTooLong(f.value))) {
+              req.payload.logger.warn({ msg: 'Form spam blocked: email too long', ip })
+              throw new Error('Submission rejected.')
+            }
+
             // (4) Disposable / abused-email-domain blocklist.
             const emailEntry = submissionData.find(
-              (f) =>
-                typeof f.field === 'string' &&
-                f.field.toLowerCase().includes('email'),
+              (f) => typeof f.field === 'string' && f.field.toLowerCase().includes('email'),
             )
-            if (
-              emailEntry?.value &&
-              typeof emailEntry.value === 'string'
-            ) {
-              const domain = emailEntry.value
-                .split('@')[1]
-                ?.toLowerCase()
-                .trim()
-              if (domain && DISPOSABLE_DOMAINS.has(domain)) {
+            if (emailEntry?.value && typeof emailEntry.value === 'string') {
+              if (isDisposableEmail(emailEntry.value)) {
                 req.payload.logger.warn({
                   msg: 'Form spam blocked: disposable email',
-                  domain,
+                  domain: emailDomain(emailEntry.value),
                   ip,
                 })
                 throw new Error('Submission rejected.')
@@ -227,9 +268,12 @@ export const plugins: Plugin[] = [
             }
 
             // (5) Name fields containing digits — real names don't have digits.
+            // Not the consultation's file name ('referenceImageName'): phone
+            // photos are called IMG_4021.jpg and the like.
             const nameEntries = submissionData.filter((f) => {
               if (typeof f.field !== 'string') return false
               const n = f.field.toLowerCase()
+              if (n.startsWith('referenceimage')) return false
               return (
                 n.includes('first') ||
                 n.includes('last') ||
@@ -237,10 +281,7 @@ export const plugins: Plugin[] = [
               )
             })
             for (const entry of nameEntries) {
-              if (
-                typeof entry.value === 'string' &&
-                /\d/.test(entry.value)
-              ) {
+              if (typeof entry.value === 'string' && /\d/.test(entry.value)) {
                 req.payload.logger.warn({
                   msg: 'Form spam blocked: digits in name',
                   field: entry.field,
@@ -250,32 +291,61 @@ export const plugins: Plugin[] = [
               }
             }
 
-            // (6) Message field — reject if longer than 25 chars with zero
-            // whitespace. Random-string spam payloads always fail this;
-            // real customer enquiries always have spaces.
-            const messageEntry = submissionData.find((f) => {
+            // (6) Description boxes — reject if longer than 25 chars with
+            // zero whitespace. Random-string spam payloads always fail this;
+            // real customer enquiries always have spaces. Same rule as the
+            // SS site, which covers every description box; here every
+            // matching box is checked, not just the first:
+            //   Book An Appointment: 'hearAboutUs', 'queriesComments'
+            //   Personal Consultation: 'additionalNotes'
+            // ('designIdea' is not matched: visitors paste a reference link
+            // there, since the upload sends only the file name.)
+            const descriptionEntries = submissionData.filter((f) => {
               if (typeof f.field !== 'string') return false
               const n = f.field.toLowerCase()
-              return n.includes('message') || n.includes('details') || n.includes('queries') || n.includes('comments')
+              return (
+                n.includes('message') ||
+                n.includes('details') ||
+                n.includes('hear') ||
+                n.includes('queries') ||
+                n.includes('comments') ||
+                n.includes('notes')
+              )
             })
+            for (const entry of descriptionEntries) {
+              if (
+                typeof entry.value === 'string' &&
+                entry.value.length > 25 &&
+                !/\s/.test(entry.value)
+              ) {
+                req.payload.logger.warn({
+                  msg: 'Form spam blocked: message no-whitespace',
+                  field: entry.field,
+                  ip,
+                })
+                throw new Error('Submission rejected.')
+              }
+            }
+
+            // (7) Consultation reference upload: a non-empty value must have
+            // the shape of a key this site issues
+            // (consultation-uploads/<yyyy>/<mm>/<uuid>.<ext>), never a link or
+            // path chosen by the sender. Shape only: whether the file is
+            // really there is checked by the email step (readUpload).
+            const uploadEntry = submissionData.find((f) => f.field === 'referenceImage')
             if (
-              messageEntry?.value &&
-              typeof messageEntry.value === 'string' &&
-              messageEntry.value.length > 25 &&
-              !/\s/.test(messageEntry.value)
+              uploadEntry?.value &&
+              !(typeof uploadEntry.value === 'string' && UPLOAD_KEY_RE.test(uploadEntry.value))
             ) {
-              req.payload.logger.warn({
-                msg: 'Form spam blocked: message no-whitespace',
-                ip,
-              })
+              req.payload.logger.warn({ msg: 'Form spam blocked: bad upload key', ip })
               throw new Error('Submission rejected.')
             }
 
-            // Strip spam-protection markers from the stored submission
-            // so they don't pollute the admin's submission view.
-            data.submissionData = submissionData.filter(
-              (f) => f.field !== '_hp' && f.field !== '_t',
-            )
+            // Strip spam-protection markers (and any reCAPTCHA token) from
+            // the stored submission so they never reach the admin view or
+            // the emails.
+            const STRIP = new Set(['_hp', '_t', 'recaptchaToken', 'g-recaptcha-response'])
+            data.submissionData = submissionData.filter((f) => !STRIP.has(f.field))
             return data
           },
         ],

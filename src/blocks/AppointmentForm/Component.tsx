@@ -20,9 +20,12 @@
  * no rounded corners, Gill Sans labels above inputs, focus shifts
  * the border to brand-red.
  *
- * Submission pattern mirrors `ConsultationForm` too — POSTs FormData
- * to `endpoint`, on success redirects to the shared `/thank-you`
- * confirmation page (configurable via `successRedirect`).
+ * Validation and submission follow the SS site's Book an Appointment
+ * form (see src/utilities/enquiryForm.ts): browser checks, a red line
+ * under each box at fault, a phone filter + at least 10 digits, a signed
+ * time pass and a hidden trap box. The enquiry is saved in Form
+ * Submissions first, then emailed; on success the visitor goes to the
+ * shared `/thank-you` page (configurable via `successRedirect`).
  */
 
 import React, { useState } from 'react'
@@ -33,6 +36,21 @@ import ReCAPTCHA from 'react-google-recaptcha'
 import type { AppointmentFormBlock as AppointmentFormBlockProps } from '@/payload-types'
 
 import { cn } from '@/utilities/ui'
+import { APPOINTMENT_FIELD_NAMES, FORM_IDS } from '@/utilities/formIds'
+import {
+  HONEYPOT_STYLE,
+  INIT_ERROR,
+  MIN_PHONE_DIGITS,
+  NOT_READY,
+  SUBMIT_FAILED,
+  countDigits,
+  filterPhoneInput,
+  focusFirstProblem,
+  formValue,
+  submitEnquiry,
+  useFormToken,
+} from '@/utilities/enquiryForm'
+import { isEmailTooLong } from '@/utilities/emailFormat'
 
 type BgKey = NonNullable<AppointmentFormBlockProps['backgroundColor']>
 
@@ -78,13 +96,38 @@ const FieldLabel: React.FC<FieldLabelProps> = ({ htmlFor, label, required }) => 
   </label>
 )
 
+// Every answer this form saves, in order, with the red line shown under
+// the box when it is left empty (SS validate()).
+type FieldName = (typeof APPOINTMENT_FIELD_NAMES)[number]
+const MESSAGES: Record<FieldName, string> = {
+  firstName: 'Please enter your first name.',
+  lastName: 'Please enter your last name.',
+  email: 'Please enter your email.',
+  phone: 'Please enter your phone number.',
+  city: 'Please enter your city.',
+  country: 'Please enter your country.',
+  occupation: 'Please enter your occupation.',
+  groupSize: 'Please enter your group size.',
+  hearAboutUs: 'Please tell us how you heard about the Museum.',
+  queriesComments: 'Please enter your queries or comments.',
+}
+// Every field this form saves, in order (the list the spam hook allows).
+const FIELDS = APPOINTMENT_FIELD_NAMES.map((name) => [name, MESSAGES[name]] as const)
+
+const FieldError: React.FC<{ message?: string }> = ({ message }) =>
+  message ? <p className="mt-1 text-sm text-brand-red font-body">{message}</p> : null
+
 /** Shared input styling — thin grey box, no rounded corners, focus
  *  shifts the border to brand-red. Same look as `ConsultationForm`.
  *  lg+: the Book An Appointment PDF's lighter #D4D4D4 border. */
 const inputClass =
   'w-full px-4 py-3 bg-white border border-warm-gray/40 rounded-none font-body text-base text-ink ' +
   'focus:outline-none focus:border-brand-red focus:ring-0 transition-colors duration-150 ' +
-  'lg:border-[#D4D4D4]'
+  'lg:border-[#D4D4D4] ' +
+  // When the browser's own check scrolls to an empty box, stop 128px short
+  // of the top so its label stays visible below the fixed MOMH logo.
+  // Changes only where the page scrolls to, never the layout.
+  'scroll-mt-32'
 
 /** lg+ box heights from the PDF (1920 artboard): inputs 62px, both
  *  textareas 173px, with floors so 1024-1440 never shrink too far. The
@@ -136,8 +179,8 @@ const resolveFaqHref = (
 export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
   submitLabel,
   // `endpoint` is retained on the block schema for backward compat but
-  // no longer used — submissions go through /api/email-forwarding so
-  // both the visitor and info@momhindia.org get their respective emails.
+  // no longer used: enquiries are saved through /api/form-submissions and
+  // then emailed by /api/email-forwarding.
   endpoint: _endpoint,
   successRedirect,
   backgroundColor,
@@ -148,47 +191,74 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
   const [status, setStatus] = useState<'idle' | 'submitting' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
+  const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({})
+  const [notice, setNotice] = useState('')
+  const [honeypot, setHoneypot] = useState('')
+  const { token, tokenError, freshToken } = useFormToken()
 
   const { href: faqHref, newTab: faqNewTab } = resolveFaqHref(faqLink)
   const redirectTarget = successRedirect || '/thank-you'
 
+  // Runs only after the browser's own checks pass (required boxes, email
+  // shape, group size of at least 1). Empty boxes are re-checked here as a
+  // backup, and the phone needs at least 10 digits (SS rules).
+  // Returns the names of the boxes with a problem ([] when all is well).
+  const validate = (fd: FormData): string[] => {
+    const next: Partial<Record<FieldName, string>> = {}
+    for (const [name, message] of FIELDS) {
+      if (!formValue(fd, name)) next[name] = message
+    }
+    const phone = formValue(fd, 'phone')
+    if (phone && countDigits(phone) < MIN_PHONE_DIGITS)
+      next.phone = 'Please enter at least 10 digits.'
+    // The browser lets any length through; the server refuses an address
+    // longer than any real one, so say so here, under the email box.
+    const email = formValue(fd, 'email')
+    if (email && isEmailTooLong(email)) next.email = 'Please enter a valid email address.'
+    setErrors(next)
+    return Object.keys(next)
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (status === 'submitting') return
+    setStatus('idle')
+    setErrorMessage(null)
+    setNotice('')
+
+    const form = e.currentTarget
+    const fd = new FormData(form)
+    const problems = validate(fd)
+    if (problems.length) {
+      focusFirstProblem(form, problems)
+      return
+    }
 
     if (!recaptchaToken) {
       setStatus('error')
       setErrorMessage('Please complete the reCAPTCHA before submitting.')
       return
     }
-
-    // Convert FormData entries into the `{ field, value }` array shape
-    // expected by /api/email-forwarding (same shape Payload's form-
-    // submissions endpoint uses, so the email template logic stays the
-    // same across hand-rolled and Payload-managed forms).
-    const formEl = e.currentTarget
-    const fd = new FormData(formEl)
-    const submissionData: Array<{ field: string; value: string }> = []
-    for (const [key, value] of fd.entries()) {
-      submissionData.push({ field: key, value: typeof value === 'string' ? value : '' })
+    // Without a valid pass the server refuses the enquiry.
+    if (!token) {
+      setNotice(tokenError ? INIT_ERROR : NOT_READY)
+      return
     }
-    submissionData.push({ field: 'recaptchaToken', value: recaptchaToken })
 
     try {
       setStatus('submitting')
-      const res = await fetch('/api/email-forwarding', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          formType: 'appointment',
-          submissionData,
-        }),
+      const pass = await freshToken()
+      if (!pass) throw new Error(SUBMIT_FAILED)
+      await submitEnquiry({
+        formId: FORM_IDS.appointment,
+        fields: FIELDS.map(([name]) => ({ field: name, value: formValue(fd, name) })),
+        honeypot,
+        token: pass,
       })
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
       router.push(redirectTarget)
     } catch (err) {
       setStatus('error')
-      setErrorMessage(err instanceof Error ? err.message : 'Submission failed.')
+      setErrorMessage(err instanceof Error ? err.message : 'Submission failed')
     }
   }
 
@@ -206,7 +276,6 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
         onSubmit={handleSubmit}
         // lg+: the PDF's 1124px column (of 1920), never narrower than 768px.
         className="w-full max-w-4xl mx-auto lg:max-w-[max(48rem,58.54vw)]"
-        noValidate
       >
         <SectionHeader title="Personal Details" />
 
@@ -215,31 +284,58 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 lg:gap-x-[1.25vw] lg:gap-y-[1.17vw]">
           <div>
             <FieldLabel htmlFor="firstName" label="First Name" required />
-            <input id="firstName" name="firstName" type="text" required className={textInputClass} />
+            <input
+              id="firstName"
+              name="firstName"
+              type="text"
+              required
+              className={textInputClass}
+            />
+            <FieldError message={errors.firstName} />
           </div>
           <div>
             <FieldLabel htmlFor="lastName" label="Last Name" required />
             <input id="lastName" name="lastName" type="text" required className={textInputClass} />
+            <FieldError message={errors.lastName} />
           </div>
           <div>
             <FieldLabel htmlFor="email" label="Email Address" required />
             <input id="email" name="email" type="email" required className={textInputClass} />
+            <FieldError message={errors.email} />
           </div>
           <div>
             <FieldLabel htmlFor="phone" label="Phone Number" required />
-            <input id="phone" name="phone" type="tel" required className={textInputClass} />
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              autoComplete="tel"
+              required
+              onChange={filterPhoneInput}
+              className={textInputClass}
+            />
+            <FieldError message={errors.phone} />
           </div>
           <div>
             <FieldLabel htmlFor="city" label="City" required />
             <input id="city" name="city" type="text" required className={textInputClass} />
+            <FieldError message={errors.city} />
           </div>
           <div>
             <FieldLabel htmlFor="country" label="Country" required />
             <input id="country" name="country" type="text" required className={textInputClass} />
+            <FieldError message={errors.country} />
           </div>
           <div>
             <FieldLabel htmlFor="occupation" label="Occupation" required />
-            <input id="occupation" name="occupation" type="text" required className={textInputClass} />
+            <input
+              id="occupation"
+              name="occupation"
+              type="text"
+              required
+              className={textInputClass}
+            />
+            <FieldError message={errors.occupation} />
           </div>
           <div>
             <FieldLabel htmlFor="groupSize" label="Group Size" required />
@@ -251,6 +347,7 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
               required
               className={textInputClass}
             />
+            <FieldError message={errors.groupSize} />
           </div>
         </div>
 
@@ -259,11 +356,7 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
             width, not the 2-col grid). */}
         <div className="mt-6 flex flex-col gap-6 lg:mt-[1.17vw] lg:gap-[1.17vw]">
           <div>
-            <FieldLabel
-              htmlFor="hearAboutUs"
-              label="How did you hear about the Museum?"
-              required
-            />
+            <FieldLabel htmlFor="hearAboutUs" label="How did you hear about the Museum?" required />
             <textarea
               id="hearAboutUs"
               name="hearAboutUs"
@@ -271,13 +364,10 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
               required
               className={textareaClass}
             />
+            <FieldError message={errors.hearAboutUs} />
           </div>
           <div>
-            <FieldLabel
-              htmlFor="queriesComments"
-              label="Any queries or comments?"
-              required
-            />
+            <FieldLabel htmlFor="queriesComments" label="Any queries or comments?" required />
             <textarea
               id="queriesComments"
               name="queriesComments"
@@ -285,8 +375,22 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
               required
               className={textareaClass}
             />
+            <FieldError message={errors.queriesComments} />
           </div>
         </div>
+
+        {/* Spam protection: do not remove. Checked by the form-submissions
+            hook. Off-screen and out of the layout, so nothing moves. */}
+        <input
+          type="text"
+          name="website_url"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          style={HONEYPOT_STYLE}
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+        />
 
         {/* reCAPTCHA — sits below the textareas, left-aligned. */}
         <div className="mt-8 lg:mt-[1.4vw]">
@@ -318,9 +422,12 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
           </button>
           {status === 'error' && (
             <p className="text-sm text-brand-red font-body">
-              Sorry — {errorMessage || 'something went wrong'}. Please try again or email
-              us at info@momhindia.org.
+              Sorry — {errorMessage || 'something went wrong'}. Please try again or email us at
+              info@momhindia.org.
             </p>
+          )}
+          {(notice || tokenError) && (
+            <p className="text-sm text-brand-red font-body">{notice || INIT_ERROR}</p>
           )}
 
           {/* FAQ link line — italic + underlined "Frequently Asked

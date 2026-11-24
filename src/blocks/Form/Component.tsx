@@ -96,11 +96,6 @@ export const FormBlock: React.FC<
           { field: '_hp', value: honeypot },
           { field: '_t', value: token },
         ]
-        // Cleaned data sent to email-forwarding so the owner email
-        // doesn't show the internal markers.
-        const cleanSubmissionData = submissionData.filter(
-          (f) => f.field !== '_hp' && f.field !== '_t',
-        )
 
         // delay loading indicator by 1s
         loadingTimerID = setTimeout(() => {
@@ -138,13 +133,14 @@ export const FormBlock: React.FC<
           // notification emails. Failures here are logged but don't
           // bubble up to the user; the submission is already safe in
           // the database, and the team can recover via the admin.
+          // Only the saved submission's id travels: the route rebuilds both
+          // emails from the stored record.
           try {
             await fetch('/api/email-forwarding', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                form: formID,
-                submissionData: cleanSubmissionData,
+                submissionId: res?.doc?.id ?? res?.id,
               }),
             })
           } catch (emailErr) {
