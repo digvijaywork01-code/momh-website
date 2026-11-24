@@ -11,9 +11,9 @@
  *   5. Row: Occupation * | Group Size *
  *   6. How did you hear about the Museum? * (textarea)
  *   7. Any queries or comments? * (textarea)
- *   8. reCAPTCHA widget
- *   9. Submit button (red filled rectangular)
- *  10. FAQ link line — "Have a specific query in mind? Find
+ *   8. Submit button (red filled rectangular), with Google's
+ *      reCAPTCHA notice under it once reCAPTCHA v3 is set up
+ *   9. FAQ link line — "Have a specific query in mind? Find
  *      answers in our Frequently Asked Questions."
  *
  * Field styling mirrors `ConsultationForm`: thin grey box border,
@@ -23,15 +23,16 @@
  * Validation and submission follow the SS site's Book an Appointment
  * form (see src/utilities/enquiryForm.ts): browser checks, a red line
  * under each box at fault, a phone filter + at least 10 digits, a signed
- * time pass and a hidden trap box. The enquiry is saved in Form
+ * time pass, a hidden trap box and an invisible reCAPTCHA v3 check
+ * (src/utilities/recaptchaClient.ts; it replaced the old "I'm not a
+ * robot" tick box, whose answer was never checked). The enquiry is saved in Form
  * Submissions first, then emailed; on success the visitor goes to the
  * shared `/thank-you` page (configurable via `successRedirect`).
  */
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import ReCAPTCHA from 'react-google-recaptcha'
 
 import type { AppointmentFormBlock as AppointmentFormBlockProps } from '@/payload-types'
 
@@ -51,6 +52,8 @@ import {
   useFormToken,
 } from '@/utilities/enquiryForm'
 import { isEmailTooLong } from '@/utilities/emailFormat'
+import { RECAPTCHA_FAILED, getRecaptchaToken, loadRecaptcha } from '@/utilities/recaptchaClient'
+import { RecaptchaNotice } from '@/components/RecaptchaNotice'
 
 type BgKey = NonNullable<AppointmentFormBlockProps['backgroundColor']>
 
@@ -59,18 +62,6 @@ const bgClass: Record<BgKey, string> = {
   cream: 'bg-cream text-ink',
   white: 'bg-white text-ink',
 }
-
-/** reCAPTCHA v2 "I'm not a robot" checkbox site key, registered
- *  against `momhindia.org` + `www.momhindia.org` + `localhost` in the
- *  Google reCAPTCHA admin owned by support@sunitashekhawat.com.
- *  Hardcoded here rather than env-driven to match the existing
- *  behaviour (env-driven keys would require wiring + docs to be
- *  worth swapping in). If the site key needs to rotate, change this
- *  one constant. Site keys are public by design (visible in page
- *  source) so committing it is fine — the SECRET key is the one to
- *  guard, and we don't store that today since the form does
- *  client-side verification only. */
-const RECAPTCHA_SITE_KEY = '6LfkzwAtAAAAAMZzsPRnfpZR4A9ubzzRw5Qq24AE'
 
 const Asterisk: React.FC = () => (
   <span className="text-brand-red ml-0.5" aria-hidden="true">
@@ -190,11 +181,14 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
   const router = useRouter()
   const [status, setStatus] = useState<'idle' | 'submitting' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({})
   const [notice, setNotice] = useState('')
   const [honeypot, setHoneypot] = useState('')
   const { token, tokenError, freshToken } = useFormToken()
+  // Google's script, ready before the visitor sends (this page is the form).
+  useEffect(() => {
+    void loadRecaptcha()
+  }, [])
 
   const { href: faqHref, newTab: faqNewTab } = resolveFaqHref(faqLink)
   const redirectTarget = successRedirect || '/thank-you'
@@ -234,11 +228,6 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
       return
     }
 
-    if (!recaptchaToken) {
-      setStatus('error')
-      setErrorMessage('Please complete the reCAPTCHA before submitting.')
-      return
-    }
     // Without a valid pass the server refuses the enquiry.
     if (!token) {
       setNotice(tokenError ? INIT_ERROR : NOT_READY)
@@ -249,11 +238,14 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
       setStatus('submitting')
       const pass = await freshToken()
       if (!pass) throw new Error(SUBMIT_FAILED)
+      const recaptchaToken = await getRecaptchaToken('appointment')
+      if (recaptchaToken === null) throw new Error(RECAPTCHA_FAILED)
       await submitEnquiry({
         formId: FORM_IDS.appointment,
         fields: FIELDS.map(([name]) => ({ field: name, value: formValue(fd, name) })),
         honeypot,
         token: pass,
+        recaptchaToken,
       })
       router.push(redirectTarget)
     } catch (err) {
@@ -392,15 +384,6 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
           onChange={(e) => setHoneypot(e.target.value)}
         />
 
-        {/* reCAPTCHA — sits below the textareas, left-aligned. */}
-        <div className="mt-8 lg:mt-[1.4vw]">
-          <ReCAPTCHA
-            sitekey={RECAPTCHA_SITE_KEY}
-            onChange={(token) => setRecaptchaToken(token)}
-            onExpired={() => setRecaptchaToken(null)}
-          />
-        </div>
-
         {/* Submit + status — left-aligned per PDF (NOT centred). */}
         <div className="mt-8 lg:mt-[1.3vw] flex flex-col items-start gap-3 lg:gap-[0.625vw]">
           <button
@@ -429,6 +412,7 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
           {(notice || tokenError) && (
             <p className="text-sm text-brand-red font-body">{notice || INIT_ERROR}</p>
           )}
+          <RecaptchaNotice className="text-ink/80 lg:text-[length:max(0.75rem,0.625vw)]" />
 
           {/* FAQ link line — italic + underlined "Frequently Asked
               Questions" link, plain Gill Sans surrounding it.

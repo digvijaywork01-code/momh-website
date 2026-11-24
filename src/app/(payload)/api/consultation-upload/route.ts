@@ -3,7 +3,8 @@
  * presigned S3 upload link for its optional reference image / sketch.
  *
  * Body: { contentType, size, _hp, _t }. Same spam gate as the forms
- * (src/utilities/formGuards.ts): origin, hidden trap box, signed time pass.
+ * (src/utilities/formGuards.ts): origin, a cap per connection
+ * (src/utilities/rateLimit.ts), hidden trap box, signed time pass.
  * Then the file must be an accepted type and at most MAX_UPLOAD_BYTES.
  * Answers { url, fields, key }: the browser POSTs the file to `url` with
  * `fields` (S3 enforces the key, type and size) and sends `key` with the
@@ -14,12 +15,15 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 import {
   checkFormToken,
   isAllowedOrigin,
   isHoneypotFilled,
   requestIp,
 } from '@/utilities/formGuards'
+import { withinRateLimit } from '@/utilities/rateLimit'
 import { createUploadLink, isUploadConfigured, newUploadKey } from '@/utilities/s3Upload'
 import {
   MAX_UPLOAD_BYTES,
@@ -43,6 +47,18 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
   if (!isAllowedOrigin(origin, referer)) {
     console.warn('[consultation-upload] blocked: origin', { origin, referer, ip })
     return refuse(403, GENERIC_ERROR)
+  }
+
+  // A cap per connection; fails open if the count cannot be read. The form
+  // then sends the enquiry without the file, as for any upload failure.
+  try {
+    const payload = await getPayload({ config: configPromise })
+    if (!(await withinRateLimit(payload, 'upload', req.headers))) {
+      console.warn('[consultation-upload] blocked: rate limit', { ip })
+      return refuse(429, GENERIC_ERROR)
+    }
+  } catch (err) {
+    console.warn('[consultation-upload] rate limit unavailable', err)
   }
 
   const raw: unknown = await req.json().catch(() => ({}))

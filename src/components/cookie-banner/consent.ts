@@ -6,7 +6,8 @@
  * loads only after the visitor accepts it ("basic" consent mode: before that,
  * gtag.js is never requested, so Google receives nothing and no _ga cookie is
  * written). Everything else runs without asking: the stored choice itself,
- * reCAPTCHA on the booking form (spam protection), and Vercel's cookieless
+ * reCAPTCHA v3 on the booking, consultation and newsletter forms (spam
+ * protection, src/utilities/recaptchaClient.ts), and Vercel's cookieless
  * Web Analytics / Speed Insights. The Cookies Policy page lists all of them,
  * so keep it in step with any change here.
  *

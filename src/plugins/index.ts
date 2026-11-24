@@ -4,7 +4,7 @@ import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
-import { Plugin } from 'payload'
+import { APIError, Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -22,7 +22,24 @@ import {
 } from '@/utilities/formGuards'
 import { UPLOAD_KEY_RE } from '@/utilities/uploadRules'
 import { isEmailTooLong } from '@/utilities/emailFormat'
-import { FORM_FIELD_NAMES } from '@/utilities/formIds'
+import { FORM_FIELD_NAMES, FORM_IDS } from '@/utilities/formIds'
+import { RANDOM_FIELDS_TO_REFUSE, randomLookingFields } from '@/utilities/randomText'
+import { clientIp, withinRateLimit } from '@/utilities/rateLimit'
+import { verifyRecaptcha } from '@/utilities/recaptcha'
+
+// Free-text answers the random-letters check (step 6b) reads: names,
+// places, occupation and the description boxes of both enquiry forms.
+const RANDOM_CHECK_FIELDS: ReadonlySet<string> = new Set([
+  'firstName',
+  'lastName',
+  'city',
+  'country',
+  'occupation',
+  'hearAboutUs',
+  'queriesComments',
+  'designIdea',
+  'additionalNotes',
+])
 
 // The consultation's upload fields, exactly as ConsultationForm sends them.
 const UPLOAD_FIELDS = new Set(['referenceImage', 'referenceImageName', 'referenceImageNote'])
@@ -126,7 +143,7 @@ export const plugins: Plugin[] = [
       ],
       hooks: {
         beforeChange: [
-          ({ data, req }) => {
+          async ({ data, req }) => {
             const submissionData: Array<{ field: string; value: unknown }> = Array.isArray(
               data?.submissionData,
             )
@@ -176,7 +193,7 @@ export const plugins: Plugin[] = [
             )
             const allowedNames = FORM_FIELD_NAMES[formId]
             if (allowedNames) {
-              const allowed = new Set<string>([...allowedNames, '_hp', '_t'])
+              const allowed = new Set<string>([...allowedNames, '_hp', '_t', '_rc'])
               if (
                 submissionData.some((f) => typeof f.field !== 'string' || !allowed.has(f.field))
               ) {
@@ -193,6 +210,7 @@ export const plugins: Plugin[] = [
 
             const hp = submissionData.find((f) => f.field === '_hp')?.value
             const t = submissionData.find((f) => f.field === '_t')?.value
+            const rc = submissionData.find((f) => f.field === '_rc')?.value
 
             const ip =
               req?.headers?.get?.('x-forwarded-for') ??
@@ -214,6 +232,16 @@ export const plugins: Plugin[] = [
               throw new Error('Submission rejected.')
             }
 
+            // (1b) A cap per connection (src/utilities/rateLimit.ts) on
+            // saved enquiries. It runs on this save's own database
+            // connection, in a savepoint, so it never waits for a second
+            // connection and a counter problem never spoils the save (it
+            // fails open). A refused enquiry's count is rolled back with it.
+            if (!(await withinRateLimit(req.payload, 'enquiry', req?.headers, req))) {
+              req.payload.logger.warn({ msg: 'Form spam blocked: rate limit', ip })
+              throw new APIError('Too many forms sent from this connection.', 429, null, true)
+            }
+
             // (2) Honeypot — any non-empty value means a bot filled the trap.
             if (isHoneypotFilled(hp)) {
               req.payload.logger.warn({ msg: 'Form spam blocked: honeypot', ip })
@@ -231,6 +259,32 @@ export const plugins: Plugin[] = [
                 ip,
               })
               throw new Error('Submission rejected.')
+            }
+
+            // (3b) Google reCAPTCHA v3 (src/utilities/recaptcha.ts) on the two
+            // enquiry forms: the token must be Google's, made for this form
+            // on this site, with a score of at least RECAPTCHA_MIN_SCORE.
+            // Skipped while the secret is not set; allowed (and logged) if
+            // Google is down. (The generic CMS Form block, on no live page,
+            // sends no token and is not held to it.)
+            const captcha = allowedNames
+              ? await verifyRecaptcha(
+                  rc,
+                  formId === FORM_IDS.consultation ? 'consultation' : 'appointment',
+                  clientIp(req?.headers),
+                )
+              : ({ ok: true, outcome: 'skipped' } as const)
+            if (!captcha.ok) {
+              req.payload.logger.warn({
+                msg: `Form spam blocked: recaptcha ${captcha.reason}`,
+                ...(captcha.score !== undefined ? { score: captcha.score } : {}),
+                formId,
+                ip,
+              })
+              throw new Error('Submission rejected.')
+            }
+            if (captcha.outcome !== 'passed') {
+              req.payload.logger.warn({ msg: `Form recaptcha ${captcha.outcome}`, formId })
             }
 
             // (4a) Every field whose name contains "email" (so only real
@@ -327,6 +381,21 @@ export const plugins: Plugin[] = [
               }
             }
 
+            // (6b) Random letters: refused when RANDOM_FIELDS_TO_REFUSE (3) or
+            // more answers look like random letters (src/utilities/randomText.ts),
+            // as the Nov 2026 bots sent ("Zzdgamua Jaqkn", city "Pnpbxoo").
+            // One odd-looking answer is never enough, so unusual real names
+            // pass.
+            const randomFields = randomLookingFields(submissionData, RANDOM_CHECK_FIELDS)
+            if (randomFields.length >= RANDOM_FIELDS_TO_REFUSE) {
+              req.payload.logger.warn({
+                msg: 'Form spam blocked: random letters',
+                fields: randomFields,
+                ip,
+              })
+              throw new Error('Submission rejected.')
+            }
+
             // (7) Consultation reference upload: a non-empty value must have
             // the shape of a key this site issues
             // (consultation-uploads/<yyyy>/<mm>/<uuid>.<ext>), never a link or
@@ -344,7 +413,7 @@ export const plugins: Plugin[] = [
             // Strip spam-protection markers (and any reCAPTCHA token) from
             // the stored submission so they never reach the admin view or
             // the emails.
-            const STRIP = new Set(['_hp', '_t', 'recaptchaToken', 'g-recaptcha-response'])
+            const STRIP = new Set(['_hp', '_t', '_rc', 'recaptchaToken', 'g-recaptcha-response'])
             data.submissionData = submissionData.filter((f) => !STRIP.has(f.field))
             return data
           },

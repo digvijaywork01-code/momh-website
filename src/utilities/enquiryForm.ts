@@ -23,6 +23,10 @@ export const INIT_ERROR = 'Could not initialise the form. Please refresh the pag
 export const NOT_READY = 'Form is still initialising. Please wait a moment and try again.'
 // Shown inside the forms' "Sorry — {message}. Please try again or email us…" line.
 export const SUBMIT_FAILED = 'Submission failed'
+// Same line, when the server's per-connection cap (src/utilities/rateLimit.ts)
+// was reached.
+export const TOO_MANY_SENDS =
+  'too many forms have been sent from your connection just now. Please wait a few minutes'
 
 /** SS rule: digits, '+', spaces and '-' only; anything else is removed as you type. */
 export const sanitizePhone = (raw: string): string => raw.replace(/[^0-9+\s-]/g, '')
@@ -159,40 +163,48 @@ export const HONEYPOT_STYLE: React.CSSProperties = {
 }
 
 /**
- * Save the enquiry, then ask for the emails. Throws Error(SUBMIT_FAILED) if
- * the save is refused or the network fails; the email step never throws.
+ * Save the enquiry, then ask for the emails. Throws Error(TOO_MANY_SENDS)
+ * when the connection's cap is reached, Error(SUBMIT_FAILED) if the save is
+ * refused otherwise or the network fails; the email step never throws.
+ * `recaptchaToken` is '' when reCAPTCHA is not set up on the site.
  */
 export const submitEnquiry = async ({
   formId,
   fields,
   honeypot,
   token,
+  recaptchaToken,
 }: {
   formId: number
   fields: Array<{ field: string; value: string }>
   honeypot: string
   token: string
+  recaptchaToken: string
 }): Promise<void> => {
-  let created: { doc?: { id?: unknown }; id?: unknown } | null
+  let res: Response
   try {
-    const res = await fetch('/api/form-submissions', {
+    res = await fetch('/api/form-submissions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         form: formId,
         submissionData: [
           ...fields,
-          // Spam-protection markers; the hook strips both before saving.
+          // Spam-protection markers; the hook strips them before saving.
           { field: '_hp', value: honeypot },
           { field: '_t', value: token },
+          ...(recaptchaToken ? [{ field: '_rc', value: recaptchaToken }] : []),
         ],
       }),
     })
-    if (!res.ok) throw new Error(SUBMIT_FAILED)
-    created = await res.json().catch(() => null)
   } catch {
     throw new Error(SUBMIT_FAILED)
   }
+  if (res.status === 429) throw new Error(TOO_MANY_SENDS)
+  if (!res.ok) throw new Error(SUBMIT_FAILED)
+  const created: { doc?: { id?: unknown }; id?: unknown } | null = await res
+    .json()
+    .catch(() => null)
 
   const submissionId = created?.doc?.id ?? created?.id
   try {

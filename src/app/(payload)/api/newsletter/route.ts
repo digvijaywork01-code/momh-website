@@ -44,18 +44,22 @@ import {
   requestIp,
 } from '@/utilities/formGuards'
 import { syncNewsletterSignupToCRM } from '@/utilities/twentyCrm'
+import { clientIp, withinRateLimit } from '@/utilities/rateLimit'
+import { verifyRecaptcha } from '@/utilities/recaptcha'
 
 // The two emails run after the answer (after()), but inside this limit.
 export const maxDuration = 30
 
 const GENERIC_ERROR = 'Subscription failed. Please refresh the page and try again.'
 const EMAIL_ERROR = 'Please enter a valid email address.'
+const TOO_MANY =
+  'Too many sign-ups have been sent from your connection just now. Please try again later.'
 
 // Which box a sign-up came from. Anything else is replaced, not refused.
 const SOURCES = ['home-newsletter', 'craft-your-jewellery-newsletter'] as const
 const DEFAULT_SOURCE = 'home-newsletter'
 
-type Body = { email?: unknown; source?: unknown; _hp?: unknown; _t?: unknown }
+type Body = { email?: unknown; source?: unknown; _hp?: unknown; _t?: unknown; _rc?: unknown }
 
 const refuse = (status: number, error: string) =>
   NextResponse.json({ ok: false, error }, { status })
@@ -69,6 +73,20 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
   if (!isAllowedOrigin(origin, referer)) {
     console.warn('[newsletter] spam blocked: origin', { origin, referer, ip })
     return refuse(403, GENERIC_ERROR)
+  }
+
+  // 1b. A cap per connection (src/utilities/rateLimit.ts); every send from
+  // here on counts, refused or not. Fails open if the count cannot be read.
+  let payload: Awaited<ReturnType<typeof getPayload>>
+  try {
+    payload = await getPayload({ config: configPromise })
+  } catch (err) {
+    console.error('[newsletter] create failed:', err)
+    return refuse(500, GENERIC_ERROR)
+  }
+  if (!(await withinRateLimit(payload, 'newsletter', req.headers))) {
+    console.warn('[newsletter] spam blocked: rate limit', { ip })
+    return refuse(429, TOO_MANY)
   }
 
   // A body that is not JSON, or is JSON null / a non-object, reads as {}.
@@ -91,6 +109,18 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
     return refuse(400, GENERIC_ERROR)
   }
 
+  // 3b. Google reCAPTCHA v3 (src/utilities/recaptcha.ts). Skipped while the
+  // secret is not set; allowed (and logged) if Google cannot be reached.
+  const captcha = await verifyRecaptcha(body._rc, 'newsletter', clientIp(req.headers))
+  if (!captcha.ok) {
+    console.warn(`[newsletter] spam blocked: recaptcha ${captcha.reason}`, {
+      ...(captcha.score !== undefined ? { score: captcha.score } : {}),
+      ip,
+    })
+    return refuse(400, GENERIC_ERROR)
+  }
+  if (captcha.outcome !== 'passed') console.warn(`[newsletter] recaptcha ${captcha.outcome}`)
+
   // 4. Email shape. Trimmed and lower-cased, so one address is one row.
   const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : ''
   if (!email || !isValidEmail(email)) {
@@ -109,8 +139,6 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
       : DEFAULT_SOURCE
 
   try {
-    const payload = await getPayload({ config: configPromise })
-
     const isSubscribed = async () =>
       (
         await payload.find({

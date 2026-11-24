@@ -28,11 +28,12 @@
  * Validation and submission follow the SS site's Book an Appointment
  * form (see src/utilities/enquiryForm.ts): browser checks, a red line
  * under each box at fault, a phone filter + at least 10 digits, a signed
- * time pass and a hidden trap box. The enquiry is saved in Form
+ * time pass, a hidden trap box and an invisible reCAPTCHA v3 check
+ * (src/utilities/recaptchaClient.ts). The enquiry is saved in Form
  * Submissions first, then emailed. A red star only on compulsory boxes.
  */
 
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import type { ConsultationFormBlock as ConsultationFormBlockProps } from '@/payload-types'
@@ -58,6 +59,8 @@ import {
   useFormToken,
 } from '@/utilities/enquiryForm'
 import { isEmailTooLong } from '@/utilities/emailFormat'
+import { RECAPTCHA_FAILED, getRecaptchaToken, loadRecaptcha } from '@/utilities/recaptchaClient'
+import { RecaptchaNotice } from '@/components/RecaptchaNotice'
 import {
   MAX_UPLOAD_BYTES,
   UPLOAD_ACCEPT,
@@ -212,6 +215,10 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
   const [notice, setNotice] = useState('')
   const [honeypot, setHoneypot] = useState('')
   const { token, tokenError, freshToken } = useFormToken()
+  // Google's script, ready before the visitor sends (this page is the form).
+  useEffect(() => {
+    void loadRecaptcha()
+  }, [])
   // The last file S3 confirmed it stored. If the enquiry is then refused
   // and the visitor presses the button again with the same file, its key
   // is reused instead of uploading the file a second time.
@@ -305,7 +312,17 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
         ...imageFields,
         ...FIELDS_AFTER_IMAGE.map((name) => ({ field: name, value: formValue(fd, name) })),
       ]
-      await submitEnquiry({ formId: FORM_IDS.consultation, fields, honeypot, token: pass })
+      // Asked for last: Google's token is single-use and lasts 2 minutes,
+      // and the upload above can take a while.
+      const recaptchaToken = await getRecaptchaToken('consultation')
+      if (recaptchaToken === null) throw new Error(RECAPTCHA_FAILED)
+      await submitEnquiry({
+        formId: FORM_IDS.consultation,
+        fields,
+        honeypot,
+        token: pass,
+        recaptchaToken,
+      })
       router.push(redirectTarget)
     } catch (err) {
       setStatus('error')
@@ -589,6 +606,7 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
           {(notice || tokenError) && (
             <p className="text-sm text-brand-red font-body">{notice || INIT_ERROR}</p>
           )}
+          <RecaptchaNotice className="text-ink/80" />
         </div>
       </form>
     </section>

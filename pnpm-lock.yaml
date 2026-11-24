@@ -134,9 +134,6 @@ importers:
       react-dom:
         specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
-      react-google-recaptcha:
-        specifier: ^3.1.0
-        version: 3.1.0(react@19.1.0)
       react-hook-form:
         specifier: 7.45.4
         version: 7.45.4(react@19.1.0)
@@ -4784,11 +4781,6 @@ packages:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
 
-  react-async-script@1.2.0:
-    resolution: {integrity: sha512-bCpkbm9JiAuMGhkqoAiC0lLkb40DJ0HOEJIku+9JDjxX3Rcs+ztEOG13wbrOskt3n2DTrjshhaQ/iay+SnGg5Q==}
-    peerDependencies:
-      react: '>=16.4.1'
-
   react-datepicker@7.6.0:
     resolution: {integrity: sha512-9cQH6Z/qa4LrGhzdc3XoHbhrxNcMi9MKjZmYgF/1MNNaJwvdSjv3Xd+jjvrEEbKEf71ZgCA3n7fQbdwd70qCRw==}
     peerDependencies:
@@ -4810,11 +4802,6 @@ packages:
     resolution: {integrity: sha512-GQDxZ5Jd+Aq/qUxbCm1UtzmL/s++V7zKgE8yMktJiCQXCCFZnMZh9ng+6/Ne6PjNSXH0L9CjeOEREfRnq6Duag==}
     peerDependencies:
       react: '>=16.13.1'
-
-  react-google-recaptcha@3.1.0:
-    resolution: {integrity: sha512-cYW2/DWas8nEKZGD7SCu9BSuVz8iOcOLHChHyi7upUuVhkpkhYG/6N3KDiTQ3XAiZ2UAZkfvYKMfAHOzBOcGEg==}
-    peerDependencies:
-      react: '>=16.4.1'
 
   react-hook-form@7.45.4:
     resolution: {integrity: sha512-HGDV1JOOBPZj10LB3+OZgfDBTn+IeEsNOKiq/cxbQAIbKaiJUe/KV8DBUzsx0Gx/7IG/orWqRRm736JwOfUSWQ==}
@@ -10578,12 +10565,6 @@ snapshots:
 
   range-parser@1.2.1: {}
 
-  react-async-script@1.2.0(react@19.1.0):
-    dependencies:
-      hoist-non-react-statics: 3.3.2
-      prop-types: 15.8.1
-      react: 19.1.0
-
   react-datepicker@7.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@floating-ui/react': 0.27.19(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -10606,12 +10587,6 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.29.2
       react: 19.1.0
-
-  react-google-recaptcha@3.1.0(react@19.1.0):
-    dependencies:
-      prop-types: 15.8.1
-      react: 19.1.0
-      react-async-script: 1.2.0(react@19.1.0)
 
   react-hook-form@7.45.4(react@19.1.0):
     dependencies:

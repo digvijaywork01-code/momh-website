@@ -19,18 +19,29 @@
  *   - a signed time pass fetched from /api/form-token when the widget
  *     mounts, and a hidden trap box (`website_url`) for bots. Both are
  *     checked by /api/newsletter;
+ *   - an invisible reCAPTCHA v3 check (src/utilities/recaptchaClient.ts):
+ *     Google's script loads when the visitor first clicks into the email
+ *     box; Google's notice sits under the button (once the keys are set);
  *   - one error line under the button when anything fails.
  */
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { cn } from '@/utilities/ui'
 import { isValidEmail } from '@/utilities/emailFormat'
 import { HONEYPOT_STYLE, useFormToken } from '@/utilities/enquiryForm'
+import {
+  RECAPTCHA_FAILED,
+  RECAPTCHA_SITE_KEY,
+  getRecaptchaToken,
+  loadRecaptcha,
+} from '@/utilities/recaptchaClient'
+import { RecaptchaNotice } from '@/components/RecaptchaNotice'
 
 const INIT_ERROR = 'Could not initialise the form. Please refresh the page and try again.'
 const NOT_READY = 'Form is still initialising. Please wait a moment and try again.'
 const EMAIL_ERROR = 'Please enter a valid email address.'
 const GENERIC_ERROR = 'Subscription failed. Please refresh the page and try again.'
+const CAPTCHA_ERROR = `Sorry, ${RECAPTCHA_FAILED}. Please try again.`
 
 type Props = {
   inputLabel: string
@@ -66,6 +77,14 @@ export const NewsletterWidget: React.FC<Props> = ({
   // the page. /api/newsletter refuses any sign-up without a valid one that
   // is 3 s to 30 min old.
   const { token, tokenError, freshToken } = useFormToken()
+  // Google's script loads when the visitor first uses the form, not for
+  // every visitor of the page.
+  const captchaStarted = useRef(false)
+  const startCaptcha = () => {
+    if (captchaStarted.current) return
+    captchaStarted.current = true
+    void loadRecaptcha()
+  }
 
   const inkClass = dark ? 'text-offwhite' : 'text-warm-gray'
   const borderClass = dark ? 'border-offwhite/60' : 'border-warm-gray/60'
@@ -90,6 +109,7 @@ export const NewsletterWidget: React.FC<Props> = ({
     e.preventDefault()
     if (!email || status === 'submitting') return
     setErrorMessage('')
+    startCaptcha()
     if (!token) {
       setErrorMessage(tokenError ? INIT_ERROR : NOT_READY)
       return
@@ -109,10 +129,21 @@ export const NewsletterWidget: React.FC<Props> = ({
         setStatus('error')
         return
       }
+      const recaptchaToken = await getRecaptchaToken('newsletter')
+      if (recaptchaToken === null) {
+        setErrorMessage(CAPTCHA_ERROR)
+        setStatus('error')
+        return
+      }
       const res = await fetch(target, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, _hp: honeypot, _t: pass }),
+        body: JSON.stringify({
+          email,
+          _hp: honeypot,
+          _t: pass,
+          ...(recaptchaToken ? { _rc: recaptchaToken } : {}),
+        }),
       })
       if (res.ok) {
         setStatus('success')
@@ -142,6 +173,7 @@ export const NewsletterWidget: React.FC<Props> = ({
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onFocus={startCaptcha}
           aria-label={inputLabel}
           className={cn(
             'flex-1 bg-transparent border-0 border-b outline-none focus:outline-none focus:ring-0',
@@ -185,7 +217,12 @@ export const NewsletterWidget: React.FC<Props> = ({
         onChange={(e) => setHoneypot(e.target.value)}
       />
 
-      {/* Only shown when something went wrong, 8px under the button.
+      {/* Google's reCAPTCHA notice, 8px under the button (-mt-4 turns the
+          form's 24px gap into 8px). Always there once the keys are set, so it
+          never makes the form jump; nothing at all before that. */}
+      {RECAPTCHA_SITE_KEY && <RecaptchaNotice className={cn('-mt-4', inkClass)} />}
+
+      {/* Only shown when something went wrong, 8px under the last line.
           Normally taken out of the flow (absolute) so the email box and
           button never move: the panels centre or bottom-align this form.
           In flow when `errorInFlow` (-mt-4 turns the form's 24px gap into
