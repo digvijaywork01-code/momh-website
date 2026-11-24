@@ -504,6 +504,6 @@ if (!UNDO) {
     `Id counter: next form made in the admin gets ${Number(next.last_value) + (next.is_called ? 1 : 0)}.`,
   )
   console.log(`To undo: UNDO=${recordDir} (dry run; add APPLY=1 CONFIRM_DB=${dbName}).`)
-  console.log('Next: deploy the form-validation code.')
+  console.log('Next: run pnpm payload migrate, then merge the PR (that deploys the code).')
 }
 process.exit(0)

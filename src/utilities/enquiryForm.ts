@@ -87,8 +87,10 @@ const getPass = (): Promise<Pass> => {
  * The signed time pass, fetched when the form mounts (shared, see getPass).
  * `token` says whether the form is ready; call `freshToken()` when the form
  * is sent and use what it returns: the same pass, or a new one if this one
- * is getting old (it then waits out the 3-second minimum). null if a new
- * pass could not be fetched.
+ * is getting old. Either way it first waits out the rest of the server's
+ * 3-second minimum, so a quick visitor (an autofilled newsletter box sent
+ * straight after the page loads) is never refused. null if a new pass
+ * could not be fetched.
  */
 export const useFormToken = (): {
   token: string | null
@@ -116,7 +118,11 @@ export const useFormToken = (): {
 
   const freshToken = useCallback(async (): Promise<string | null> => {
     const held = passRef.current
-    if (held && Date.now() - held.arrivedAt < PASS_REFRESH_MS) return held.token
+    if (held && Date.now() - held.arrivedAt < PASS_REFRESH_MS) {
+      const wait = Math.min(PASS_MIN_AGE_MS, held.arrivedAt + PASS_MIN_AGE_MS - Date.now())
+      if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait))
+      return held.token
+    }
     try {
       // The held pass is over 20 minutes old, so the shared one is past its
       // 5 minutes of reuse and this asks the server for a new one.
