@@ -15,6 +15,15 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
+import { authenticated } from '@/access/authenticated'
+
+// STOP-GAP until the Payload 3.93 upgrade (GHSA-xx6w-jxg9-2wh8,
+// GHSA-v49j-62m6-pgrr, GHSA-r488-j9vj-wx3q): the four `access` lines marked
+// STOP-GAP below close what the plugins leave open to callers without a
+// login (read on redirects, forms and search; create on form-submissions),
+// and stop new forms being built in the admin for now.
+// The site's own code reads these through the Local API, which skips access
+// rules. To undo: delete the four lines and the import above.
 
 // ── Spam-protection helpers (used by formSubmissionOverrides hook) ─────
 // Same approach as the SS site: layered cheap checks at the
@@ -67,6 +76,7 @@ export const plugins: Plugin[] = [
   redirectsPlugin({
     collections: ['pages', 'posts'],
     overrides: {
+      access: { read: authenticated }, // STOP-GAP: plugin default is anyone
       // @ts-expect-error - This is a valid override, mapped fields don't resolve to the same type
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
@@ -99,6 +109,13 @@ export const plugins: Plugin[] = [
       payment: false,
     },
     formOverrides: {
+      // STOP-GAP: plugin default for read is anyone. `create` is off for
+      // everyone on purpose, so nobody builds a NEW form in the admin before
+      // the upgrade: such a form would work for the logged-in editor who
+      // tests it and fail for every visitor (403, nothing stored, no
+      // e-mail). No form exists in production today. The Local API (scripts)
+      // is not affected.
+      access: { read: authenticated, create: () => false },
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
           if ('name' in field && field.name === 'confirmationMessage') {
@@ -122,6 +139,11 @@ export const plugins: Plugin[] = [
     // Spam-protection hook — layered cheap checks before a submission
     // touches the DB. Mirrors the SS site's approach.
     formSubmissionOverrides: {
+      // STOP-GAP: plugin default is anyone. While this is closed the generic
+      // Form block cannot submit for a visitor (POST /api/form-submissions
+      // answers 403). No form exists in production today. Do not reopen
+      // before the upgrade (GHSA-r488-j9vj-wx3q).
+      access: { create: authenticated },
       hooks: {
         beforeChange: [
           ({ data, req }) => {
@@ -286,6 +308,7 @@ export const plugins: Plugin[] = [
     collections: ['posts'],
     beforeSync: beforeSyncWithSearch,
     searchOverrides: {
+      access: { read: authenticated }, // STOP-GAP: plugin default is anyone
       fields: ({ defaultFields }) => {
         return [...defaultFields, ...searchFields]
       },

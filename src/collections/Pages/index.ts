@@ -1,7 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
-import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Archive } from '../../blocks/ArchiveBlock/config'
 import { CallToAction } from '../../blocks/CallToAction/config'
 import { Content } from '../../blocks/Content/config'
@@ -51,7 +50,11 @@ export const Pages: CollectionConfig<'pages'> = {
   access: {
     create: authenticated,
     delete: authenticated,
-    read: authenticatedOrPublished,
+    // STOP-GAP until the Payload 3.93 upgrade (GHSA-xx6w-jxg9-2wh8,
+    // GHSA-v49j-62m6-pgrr): was `authenticatedOrPublished`. The public pages
+    // read through the Local API, which skips access rules, so they are not
+    // affected.
+    read: authenticated,
     update: authenticated,
   },
   // This config controls what's populated by default when a page is referenced

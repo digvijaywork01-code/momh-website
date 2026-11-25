@@ -19,7 +19,19 @@ const redirects = async () => {
     permanent: true,
   }
 
-  const redirects = [internetExplorerRedirect, planYourVisitRedirect]
+  // STOP-GAP until the Payload 3.93 upgrade: password reset by e-mail is
+  // switched off (src/access/stopgapGate.ts). The admin's "Forgot password"
+  // page would still say "Email sent", because it never looks at the status
+  // of the answer. So that address goes back to the login page, where a note
+  // says what to do instead (src/components/BeforeLogin). Remove this
+  // redirect together with the gate.
+  const forgotPasswordRedirect = {
+    source: '/admin/forgot',
+    destination: '/admin/login',
+    permanent: false,
+  }
+
+  const redirects = [internetExplorerRedirect, planYourVisitRedirect, forgotPasswordRedirect]
 
   return redirects
 }

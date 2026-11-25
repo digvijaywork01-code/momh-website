@@ -76,6 +76,10 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
     await payload.create({
       collection: 'newsletter-subscribers',
       data: { email, source },
+      // Explicit (it is already the Local API default): the collection no
+      // longer allows create without a login, so this route is the only
+      // public way in.
+      overrideAccess: true,
     })
     return NextResponse.json({ ok: true })
   } catch (err) {

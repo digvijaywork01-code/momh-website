@@ -1,0 +1,10 @@
+// STOP-GAP until the Payload 3.93 upgrade: password reset by e-mail is
+// switched off (src/access/stopgapGate.ts). The "Forgot password?" page
+// would still say "Email sent", because it never looks at the status of the
+// answer. So the link to it is hidden on the login form, and the address
+// itself goes back to the login page (redirects.js). The note that tells
+// editors what to do instead is in src/components/BeforeLogin.
+// Remove this rule together with the gate.
+.login__form a[href$='/forgot'] {
+  display: none;
+}

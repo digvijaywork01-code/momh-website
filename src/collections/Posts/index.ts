@@ -10,7 +10,6 @@ import {
 } from '@payloadcms/richtext-lexical'
 
 import { authenticated } from '../../access/authenticated'
-import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
@@ -32,7 +31,10 @@ export const Posts: CollectionConfig<'posts'> = {
   access: {
     create: authenticated,
     delete: authenticated,
-    read: authenticatedOrPublished,
+    // STOP-GAP until the Payload 3.93 upgrade (GHSA-xx6w-jxg9-2wh8,
+    // GHSA-v49j-62m6-pgrr): was `authenticatedOrPublished`. Reads from the
+    // site's own code go through the Local API, which skips access rules.
+    read: authenticated,
     update: authenticated,
   },
   // This config controls what's populated by default when a post is referenced
