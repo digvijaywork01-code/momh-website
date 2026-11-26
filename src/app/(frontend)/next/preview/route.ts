@@ -24,17 +24,26 @@ export async function GET(req: Request): Promise<Response> {
     return new Response('Insufficient search params', { status: 404 })
   }
 
-  if (!path.startsWith('/')) {
+  // BUG FIX shipped with the stop-gap release. KEEP it after the upgrade.
+  // The path must be a plain path on this site: letters, digits, "-", "_"
+  // and "/" only, and never two slashes at the start. It used to be enough
+  // that the path began with one slash. Was: `!path.startsWith('/')`.
+  if (!/^\/(?!\/)[\w/-]*$/.test(path)) {
     return new Response('This endpoint can only be used for relative previews', { status: 500 })
   }
 
   let user
 
   try {
-    user = await payload.auth({
+    // BUG FIX shipped with the stop-gap release. KEEP it after the upgrade.
+    // payload.auth() answers with an object that holds the user. This line
+    // used to keep the whole object, which is never empty, so the "no user"
+    // check below never refused and the preview secret alone was enough.
+    const authResult = await payload.auth({
       req: req as unknown as PayloadRequest,
       headers: req.headers,
     })
+    user = authResult.user
   } catch (error) {
     payload.logger.error({ err: error }, 'Error verifying token for live preview')
     return new Response('You are not allowed to preview this page', { status: 403 })

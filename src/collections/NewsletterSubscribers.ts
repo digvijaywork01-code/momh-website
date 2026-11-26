@@ -1,6 +1,5 @@
 import type { CollectionConfig } from 'payload'
 
-import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 
 /**
@@ -23,7 +22,11 @@ import { authenticated } from '../access/authenticated'
 export const NewsletterSubscribers: CollectionConfig = {
   slug: 'newsletter-subscribers',
   access: {
-    create: anyone,
+    // STOP-GAP until the Payload 3.93 upgrade: was `anyone`. Public sign-ups
+    // go through /api/newsletter, which uses the Local API and so does not
+    // need this. Closed, nobody can post straight to
+    // /api/newsletter-subscribers without a login.
+    create: authenticated,
     read: authenticated,
     update: authenticated,
     delete: authenticated,

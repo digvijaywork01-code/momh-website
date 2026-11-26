@@ -1,12 +1,15 @@
 import type { GlobalConfig } from 'payload'
 
+import { authenticated } from '@/access/authenticated'
 import { link } from '@/fields/link'
 import { revalidateHeader } from './hooks/revalidateHeader'
 
 export const Header: GlobalConfig = {
   slug: 'header',
   access: {
-    read: () => true,
+    // STOP-GAP until the Payload 3.93 upgrade: was `() => true`. Reads from
+    // the site's own code go through the Local API, which skips access rules.
+    read: authenticated,
   },
   fields: [
     {
