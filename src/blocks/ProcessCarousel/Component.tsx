@@ -35,6 +35,21 @@ const prefersReducedMotion = () =>
  *  and Press carousels. */
 const HOLD_AFTER = 8000
 
+/** Phones (below 768) only: the photo box, and the arrows-and-dots box laid
+ *  over it, are 16:9 instead of the flat 16:5 banner, so the photo is not a
+ *  thin strip on a narrow screen. The wide source photos fill it the same way
+ *  (object-cover), so only their left and right edges are trimmed. Tablet
+ *  and desktop keep 16:5. Tailwind's `max-md:` is not generated here (the
+ *  custom raw screens turn max-* off), hence the explicit media query. */
+const PHONE_PHOTO_RATIO = '[@media(max-width:767px)]:aspect-video'
+
+/** Which photo file the browser loads. Filling the taller phone box zooms the
+ *  ~3.15:1 photo to about 1.78 times the screen width (3.15 / 1.78), so phones
+ *  ask for a file that wide and the photo stays sharp. From 768 up it is the
+ *  full width, which is what the browser already used there (Media's default
+ *  list is all `w` values, which `sizes` ignores, leaving 100vw). */
+const PHONE_PHOTO_SIZES = '(max-width: 767px) 178vw, 100vw'
+
 // `backgroundColor` is kept on the schema for forward-compatibility,
 // but the component no longer paints the section bg — per design
 // direction the carousel images bleed full viewport width on a
@@ -374,7 +389,7 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
                   className="shrink-0 grow-0 w-full"
                 >
                   <div className="flex flex-col items-center text-center">
-                    {/* Image — full viewport width, ~16:5 aspect
+                    {/* Image — full viewport width, ~16:5 aspect (16:9 on phones, see PHONE_PHOTO_RATIO)
                         (3.2:1 — flat editorial banner). Matches the
                         natural crop of the supplied source files
                         (7990 × 2537 ≈ 3.15:1). Was 16:10 (1.6:1)
@@ -383,10 +398,11 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
                         in one viewport view; the flatter crop frees
                         ~450px of column height on a 1440 viewport. */}
                     {resource && (
-                      <div className="relative w-full aspect-[16/5] overflow-hidden">
+                      <div className={cn('relative w-full aspect-[16/5] overflow-hidden', PHONE_PHOTO_RATIO)}>
                         <Media
                           fill
                           loading="eager"
+                          size={PHONE_PHOTO_SIZES}
                           imgClassName="absolute inset-0 w-full h-full object-cover"
                           resource={resource}
                           alt={
@@ -459,7 +475,7 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
           </div>
 
           {/* Controls overlay — exactly the image box: full card width,
-              same 16:5 ratio, top 0 (the image is every slide's first
+              same ratio (16:5; 16:9 on phones), top 0 (the image is every slide's first
               child and `image` is a required field). One shared set of
               arrows and dots (not one per slide), so they stay put while
               the slides fade underneath. The box itself ignores the
@@ -468,7 +484,7 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
               that starts on an arrow or the dots still moves the slides
               (Embla cancels the click after a real drag, over 10px). */}
           {slideList.length > 1 && (
-            <div className="pointer-events-none absolute inset-x-0 top-0 z-10 aspect-[16/5]">
+            <div className={cn('pointer-events-none absolute inset-x-0 top-0 z-10 aspect-[16/5]', PHONE_PHOTO_RATIO)}>
               {/* Prev / Next — on the image at mid-height, left + right
                   edges. Solid brand-red circles, darkening to
                   brand-red-dark on hover (as the InfoHero red buttons
