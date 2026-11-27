@@ -89,6 +89,13 @@ const bottomSpacingClass: Record<BottomSpacingKey, string> = {
   lg: 'mb-16',
 }
 
+/** Phones (<768): the clear space above and below a panel's text, 48px.
+ *  The panel hugs its content there (see the section), so this padding is
+ *  the whole gap: from the photo to the first line, and from the last line
+ *  to the next photo or colour. Below, 46px: the last line (Read More, a
+ *  link) carries about 2px of its own line box under the letters. */
+const PHONE_TEXT_GAP = '[@media(max-width:767px)]:!flex-none [@media(max-width:767px)]:!pt-12 [@media(max-width:767px)]:!pb-[46px]'
+
 const resolveLinkHref = (
   link: EditorialSplitBlockProps['ctaLink'] | undefined | null,
 ): string | null => {
@@ -151,6 +158,14 @@ export const EditorialSplitBlock: React.FC<
   // (image spans 7.5->47.3vw / 52.7->92.5vw; text padded ~7.6vw in its
   // half). Only meaningful on the band layout; default keeps the bleed.
   const insetImage = band && imageStyle === 'inset'
+  // Cream panels (About's fifty-justified, the bands) get the phone 48px text
+  // gap (PHONE_TEXT_GAP). The full-screen colour panels (home, Museum
+  // Guidelines, Thank You) keep one panel per phone screen instead, and fill
+  // it with as much body text as fits (see the ExpandableText below).
+  const evenTextGap = band || fifty
+  // The content stack, whose auto top margin is a full-screen panel's spare
+  // room on phones (ExpandableText fills it).
+  const stackRef = useRef<HTMLDivElement | null>(null)
   const { setHeaderTheme } = useHeaderTheme()
   // On inner pages that opt out of scroll-driven motion (NO_ANIM_PATHS),
   // skip the entrance cascade entirely. Otherwise the gsap.set below
@@ -358,6 +373,24 @@ export const EditorialSplitBlock: React.FC<
             ? 'w-full sbs:h-screen'
             : 'w-full min-h-svh sbs:h-screen',
         bgClass[bg],
+        // Phones (<768), cream panels (evenTextGap): the panel hugs its
+        // photo + text, so the text sits in an even 48px gap (PHONE_TEXT_GAP).
+        evenTextGap && '[@media(max-width:767px)]:!min-h-0',
+        // `editorial-split` names the block (no styles of its own). A band's
+        // 3vw padding would add to that gap on phones: none below the text,
+        // and none above the photo when another panel ends right above it.
+        'editorial-split',
+        band &&
+          '[@media(max-width:767px)]:!pb-0 [@media(max-width:767px)]:[.editorial-split+&]:!pt-0',
+        // The block after a panel (a photo slider, a page intro) adds no top
+        // padding of its own on phones; the panel's gap below is the space.
+        evenTextGap && '[@media(max-width:767px)]:[&+section]:!pt-0',
+        // ...and when that block opens with a heading rather than a photo
+        // (a page intro, or a band whose heading sits over its photo), it
+        // moves up the ~6px its first line box leaves above the letters.
+        evenTextGap &&
+          '[@media(max-width:767px)]:[&+section:not(.editorial-split):not(:has(img))]:!-mt-[6px]',
+        headingOverImage && '[@media(max-width:767px)]:[.editorial-split+&]:!-mt-[6px]',
         topSpacingClass[topSpacing as TopSpacingKey],
         bottomSpacingClass[bottomSpacing as BottomSpacingKey],
       )}
@@ -374,6 +407,7 @@ export const EditorialSplitBlock: React.FC<
           // editorial-band: no floor at any breakpoint — the band is only
           // as tall as the taller of its two columns.
           band ? '' : fifty ? 'sbs:min-h-svh' : 'min-h-svh',
+          evenTextGap && '[@media(max-width:767px)]:!min-h-0',
         )}
       >
         {/* Image column — height matches section, width = height × image
@@ -536,6 +570,7 @@ export const EditorialSplitBlock: React.FC<
               : fifty
                 ? 'flex-1 flex flex-col px-8 md:px-16 sbs:!px-[6.77vw] py-8 sbs:py-20'
                 : 'flex-1 flex flex-col px-8 md:px-16 sbs:!px-24 py-8 sbs:py-20',
+            evenTextGap && PHONE_TEXT_GAP,
             // Mobile: always left-aligned. Desktop: alignment depends
             // on whether the image sits on the left or right of the
             // editorial split.
@@ -579,6 +614,7 @@ export const EditorialSplitBlock: React.FC<
               `md:mt-0` top-align was reverted per design review: the default
               bottom alignment reads better in the side-by-side.) */}
           <div
+            ref={stackRef}
             className={cn(
               // fifty-justified: `my-auto` centres the stack vertically in
               // the panel (PDF shows centred, not bottom-anchored) and the
@@ -589,6 +625,15 @@ export const EditorialSplitBlock: React.FC<
                   ? 'my-auto sbs:max-w-[700px] w-full'
                   : 'mt-auto max-w-2xl w-full',
               imageFirst ? 'sbs:ml-auto' : '',
+              // Phones: no leftover to anchor in, and the last line keeps no
+              // margin of its own, so the gap below is PHONE_TEXT_GAP alone.
+              evenTextGap && '[@media(max-width:767px)]:!my-0 [@media(max-width:767px)]:[&>*:last-child]:!mb-0',
+              // A first line of text starts below its own line box (Cormorant
+              // and Gill Sans leave about 6px above the letters, the 32px
+              // display heading 4px), so it moves up by that much and the
+              // letters, not the line box, sit 48px under the photo.
+              evenTextGap &&
+                '[@media(max-width:767px)]:[&>:first-child:not(img)]:!-mt-[6px] [@media(max-width:767px)]:[&>.editorial-display:first-child]:!-mt-[4px]',
             )}
           >
             {/* Mobile-only icon — sits directly above the eyebrow.
@@ -697,7 +742,12 @@ export const EditorialSplitBlock: React.FC<
                 imageFirst ? 'sbs:ml-auto' : '',
               )}
             >
-              <ExpandableText mobileLineClamp={mobileBodyLineClamp}>
+              <ExpandableText
+                mobileLineClamp={mobileBodyLineClamp}
+                // Full-screen panels: the body fills the panel's spare room on
+                // phones, and Read More shows only when it does not all fit.
+                fillSpaceRef={evenTextGap ? undefined : stackRef}
+              >
                 <div className={cn('font-body', band ? 'text-hero-body' : 'text-body')}>
                   <RichText
                     data={body}
