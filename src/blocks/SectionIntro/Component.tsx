@@ -239,6 +239,12 @@ export const SectionIntroBlock: React.FC<
         // own top padding goes too, or it would add to the gap unseen.
         underPhoto &&
           "[@media_screen]:!min-h-0 [@media_screen]:!pt-20 [@media_screen]:!pb-20 [@media_screen]:md:!pt-28 [@media_screen]:md:!pb-28 [@media_screen]:[&+*]:!mt-0 [@media_screen]:[&+section:not([class*='bg-'])]:!pt-0",
+        // Phones, when a lotus divider follows: end like a Text Section
+        // (32px) and give the divider back its own top margin, so it sits
+        // in the same even 48px gap as every other phone divider instead
+        // of 80px of padding with its margin removed.
+        underPhoto &&
+          '[@media_screen_and_(max-width:767px)]:[&:has(+.lotus-divider)]:!pb-8 [@media_screen_and_(max-width:767px)]:[&+.lotus-divider]:!mt-[max(0px,var(--divider-mt))]',
         underPhoto && sameBgNextClass[bg],
         bgClass[bg],
         // The bottom padding scales with the PDF (48px at 1920, as
