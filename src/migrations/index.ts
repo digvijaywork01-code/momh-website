@@ -10,6 +10,7 @@ import * as migration_20261016_104012_contact_page_fields from './20261016_10401
 import * as migration_20261017_100728_press_grid_block from './20261017_100728_press_grid_block';
 import * as migration_20261021_093343_site_map_block from './20261021_093343_site_map_block';
 import * as migration_20261021_131045_review_carousel_block from './20261021_131045_review_carousel_block';
+import * as migration_20261126_114800_upgrade_394 from './20261126_114800_upgrade_394';
 
 export const migrations = [
   {
@@ -70,6 +71,11 @@ export const migrations = [
   {
     up: migration_20261021_131045_review_carousel_block.up,
     down: migration_20261021_131045_review_carousel_block.down,
-    name: '20261021_131045_review_carousel_block'
+    name: '20261021_131045_review_carousel_block',
+  },
+  {
+    up: migration_20261126_114800_upgrade_394.up,
+    down: migration_20261126_114800_upgrade_394.down,
+    name: '20261126_114800_upgrade_394'
   },
 ];
