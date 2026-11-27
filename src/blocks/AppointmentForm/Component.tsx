@@ -197,6 +197,10 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
       className={cn(
         // lg+ top / bottom space from the PDF (1920 artboard).
         'w-full py-12 lg:pt-[5vw] lg:pb-[4.74vw] px-6 md:px-12 lg:px-20',
+        // Phones, under a lotus divider: the divider already owns the 48px
+        // gap, so the form adds no top padding of its own, and moves up the
+        // 3px of line space above the "Personal Details" capitals.
+        '[@media(max-width:767px)]:[.lotus-divider+&]:pt-0 [@media(max-width:767px)]:[.lotus-divider+&]:-mt-[3px]',
         bgClass[bg],
       )}
       data-theme="light"

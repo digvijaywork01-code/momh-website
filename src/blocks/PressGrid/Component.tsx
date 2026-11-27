@@ -176,6 +176,9 @@ export const PressGridBlock: React.FC<PressGridBlockProps> = ({
         '[--pg-fs:18px] [@media(min-width:1440px)]:[--pg-fs:calc(1.25*var(--pp-vw))]',
         'px-9 md:px-12 lg:px-[calc(5.156*var(--pp-vw))]',
         'pt-4 lg:pt-[max(1rem,calc(10.833*var(--pp-vw)_-_3rem_-_0.4202*var(--fs-body)))] pb-8 md:pb-12',
+        // Phones: the slider ends in its buttons, not a line of text, so a
+        // lotus divider below needs 8px more to sit in the usual 48px gap.
+        '[@media(max-width:767px)]:[&:has(+.lotus-divider)]:pb-10',
       ].join(' ')}
     >
       {/* Hides the cards before the browser first draws them (reveal.ts). */}
