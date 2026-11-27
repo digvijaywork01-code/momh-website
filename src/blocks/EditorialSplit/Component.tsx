@@ -96,6 +96,19 @@ const bottomSpacingClass: Record<BottomSpacingKey, string> = {
  *  link) carries about 2px of its own line box under the letters. */
 const PHONE_TEXT_GAP = '[@media(max-width:767px)]:!flex-none [@media(max-width:767px)]:!pt-12 [@media(max-width:767px)]:!pb-[46px]'
 
+/** Portrait tablets (768 up, portrait: the stacked layout), full-screen
+ *  panels only (default variant). The panel is one screen and the home page
+ *  snaps a screen at a time, so text taller than the room under the 60svh
+ *  photo ran off the bottom and could never be scrolled to. The panel's
+ *  inner box is now exactly one screen and the photo gives way first: it
+ *  starts at 60svh (as before, so panels that fit are unchanged) and shrinks,
+ *  never below 40svh, until the text fits. The photo stays object-cover. */
+// Written out in full (no `${}`): Tailwind only builds classes it can read
+// whole in the source.
+const TABLET_FIT_WRAP = '[@media(min-width:768px)_and_(orientation:portrait)]:h-svh'
+const TABLET_FIT_PHOTO =
+  '[@media(min-width:768px)_and_(orientation:portrait)]:!h-auto [@media(min-width:768px)_and_(orientation:portrait)]:!shrink [@media(min-width:768px)_and_(orientation:portrait)]:basis-[60svh] [@media(min-width:768px)_and_(orientation:portrait)]:max-h-[60svh] [@media(min-width:768px)_and_(orientation:portrait)]:min-h-[40svh]'
+
 const resolveLinkHref = (
   link: EditorialSplitBlockProps['ctaLink'] | undefined | null,
 ): string | null => {
@@ -407,6 +420,7 @@ export const EditorialSplitBlock: React.FC<
           // editorial-band: no floor at any breakpoint — the band is only
           // as tall as the taller of its two columns.
           band ? '' : fifty ? 'sbs:min-h-svh' : 'min-h-svh',
+          !band && !fifty && TABLET_FIT_WRAP,
           evenTextGap && '[@media(max-width:767px)]:!min-h-0',
         )}
       >
@@ -465,6 +479,7 @@ export const EditorialSplitBlock: React.FC<
               : fifty
                 ? 'relative shrink-0 w-full sbs:!w-1/2 h-[40svh] md:h-[60svh] sbs:!h-screen'
                 : 'relative shrink-0 w-full sbs:w-[55vw] wide:!w-auto h-[40svh] md:h-[60svh] sbs:!h-screen',
+            !band && !fifty && TABLET_FIT_PHOTO,
             // overflow:hidden contains the 1.08 scale during entrance so
             // the image doesn't bleed past the column edge.
             'overflow-hidden',
