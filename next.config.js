@@ -21,6 +21,14 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  // Keep uploaded media out of the server function bundles. The Media collection resolves its
+  // staticDir (public/media) at module scope, and Next 16's file tracing follows that path and
+  // would copy the whole folder into every function. Next 15 did not trace it, so this keeps the
+  // functions as they were: production media is served from Blob storage, and files under public/
+  // are deployed as static assets.
+  outputFileTracingExcludes: {
+    '*': ['./public/media/**'],
+  },
   images: {
     // AVIF first (≈30–50% smaller than WebP), then WebP fallback. The
     // optimizer negotiates format via the Accept header — these do NOT
@@ -31,6 +39,11 @@ const nextConfig = {
     // default 75). Without this, a custom quality can desync SSR vs
     // client and trigger a hydration mismatch.
     qualities: [75, 80],
+    // Next 16: local images with a query string must match localPatterns. Payload media
+    // (/api/media/file/<name>?<updatedAt>) is the only local source with a query string; every
+    // other local image keeps Next 16's default (no query string). Production media is on the
+    // Blob host (remotePatterns), so this matters for copies without BLOB_READ_WRITE_TOKEN.
+    localPatterns: [{ pathname: '/api/media/file/**' }, { pathname: '**', search: '' }],
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL /* 'https://example.com' */].map((item) => {
         const url = new URL(item)
