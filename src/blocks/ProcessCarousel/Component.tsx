@@ -488,7 +488,10 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
               {/* Prev / Next — on the image at mid-height, left + right
                   edges. Solid brand-red circles, darkening to
                   brand-red-dark on hover (as the InfoHero red buttons
-                  do). */}
+                  do). Hover only where there is a mouse
+                  (`hover: hover`): a touch screen keeps the last tapped
+                  button "hovered" until the next tap elsewhere, so a
+                  tapped arrow (or dot) stayed dark. */}
               <button
                 type="button"
                 onClick={() => go('prev')}
@@ -497,7 +500,7 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
                 className={cn(
                   'pointer-events-auto absolute left-3 md:left-6 top-1/2 -translate-y-1/2 z-10',
                   'h-11 w-11 md:h-12 md:w-12 flex items-center justify-center rounded-full',
-                  'bg-brand-red hover:bg-brand-red-dark text-offwhite transition-colors duration-200',
+                  'bg-brand-red [@media(hover:hover)]:hover:bg-brand-red-dark text-offwhite transition-colors duration-200',
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-offwhite',
                 )}
               >
@@ -523,7 +526,7 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
                 className={cn(
                   'pointer-events-auto absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-10',
                   'h-11 w-11 md:h-12 md:w-12 flex items-center justify-center rounded-full',
-                  'bg-brand-red hover:bg-brand-red-dark text-offwhite transition-colors duration-200',
+                  'bg-brand-red [@media(hover:hover)]:hover:bg-brand-red-dark text-offwhite transition-colors duration-200',
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-offwhite',
                 )}
               >
@@ -561,7 +564,7 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
                         'h-2 rounded-full transition-all duration-300',
                         active
                           ? 'w-6 bg-brand-red'
-                          : 'w-2 bg-offwhite/50 hover:bg-offwhite/80',
+                          : 'w-2 bg-offwhite/50 [@media(hover:hover)]:hover:bg-offwhite/80',
                       )}
                     />
                   )
