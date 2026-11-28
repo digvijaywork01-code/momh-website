@@ -8,7 +8,6 @@ import {
 import path from 'path'
 import { fileURLToPath } from 'url'
 
-import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 
 const filename = fileURLToPath(import.meta.url)
@@ -19,7 +18,16 @@ export const Media: CollectionConfig = {
   access: {
     create: authenticated,
     delete: authenticated,
-    read: anyone,
+    // STOP-GAP until the Payload 3.93 upgrade (GHSA-xx6w-jxg9-2wh8,
+    // GHSA-v49j-62m6-pgrr): was `anyone`. Pages read media through the Local
+    // API and the image files come from the Blob host, so visitors are not
+    // affected. A local copy has no Blob token and serves page images from
+    // /api/media/file/<name>, so there (and only there) reading a FILE stays
+    // open; lists and documents stay closed everywhere. To undo: put
+    // `read: anyone` back with its import. See servesLocalMediaFiles in
+    // src/access/stopgapGate.ts.
+    read: ({ isReadingStaticFile, req }) =>
+      Boolean(req.user) || (isReadingStaticFile === true && !process.env.BLOB_READ_WRITE_TOKEN),
     update: authenticated,
   },
   fields: [

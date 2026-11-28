@@ -26,6 +26,18 @@ import { FORM_FIELD_NAMES, FORM_IDS } from '@/utilities/formIds'
 import { RANDOM_FIELDS_TO_REFUSE, randomLookingFields } from '@/utilities/randomText'
 import { clientIp, withinRateLimit } from '@/utilities/rateLimit'
 import { verifyRecaptcha } from '@/utilities/recaptcha'
+import { authenticated } from '@/access/authenticated'
+
+// STOP-GAP until the Payload 3.93 upgrade (GHSA-xx6w-jxg9-2wh8,
+// GHSA-v49j-62m6-pgrr, GHSA-r488-j9vj-wx3q): the three `access` lines marked
+// STOP-GAP below close what the plugins leave open to callers without a
+// login (read on redirects, forms and search), and stop new forms being
+// built in the admin for now.
+// The site's own code reads these through the Local API, which skips access
+// rules. To undo: delete the three lines and the import above.
+// Not a stop-gap any more: create on form-submissions is open again (see
+// formSubmissionOverrides below). Payload 3.94.2 has the fix for
+// GHSA-r488-j9vj-wx3q, and visitors' enquiries are saved through it.
 
 // Free-text answers the random-letters check (step 6b) reads: names,
 // places, occupation and the description boxes of both enquiry forms.
@@ -66,6 +78,7 @@ export const plugins: Plugin[] = [
   redirectsPlugin({
     collections: ['pages', 'posts'],
     overrides: {
+      access: { read: authenticated }, // STOP-GAP: plugin default is anyone
       // @ts-expect-error - This is a valid override, mapped fields don't resolve to the same type
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
@@ -103,6 +116,13 @@ export const plugins: Plugin[] = [
     // spam checks and been saved, so the plugin must never send any.
     beforeEmail: () => [],
     formOverrides: {
+      // STOP-GAP: plugin default for read is anyone. `create` is off for
+      // everyone on purpose, so nobody builds a NEW form in the admin before
+      // the upgrade: such a form would work for the logged-in editor who
+      // tests it and fail for every visitor (403, nothing stored, no
+      // e-mail). No form exists in production today. The Local API (scripts)
+      // is not affected.
+      access: { read: authenticated, create: () => false },
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
           if ('name' in field && field.name === 'confirmationMessage') {
@@ -126,6 +146,10 @@ export const plugins: Plugin[] = [
     // Spam-protection hook — layered cheap checks before a submission
     // touches the DB. Mirrors the SS site's approach.
     formSubmissionOverrides: {
+      // Create stays at the plugin's default (anyone): both enquiry forms
+      // save through POST /api/form-submissions, guarded by the spam hook
+      // below. Read is the plugin's default too (admin users only). The
+      // STOP-GAP gate lets this one call through (src/access/stopgapGate.ts).
       // Admin only: an "Open file" button in the sidebar of a Personal
       // Consultation enquiry with an uploaded file. A 'ui' field stores
       // nothing, so it needs no database change.
@@ -449,6 +473,7 @@ export const plugins: Plugin[] = [
     collections: ['posts'],
     beforeSync: beforeSyncWithSearch,
     searchOverrides: {
+      access: { read: authenticated }, // STOP-GAP: plugin default is anyone
       fields: ({ defaultFields }) => {
         return [...defaultFields, ...searchFields]
       },

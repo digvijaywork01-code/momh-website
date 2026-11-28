@@ -1,5 +1,8 @@
 /* THIS FILE WAS GENERATED AUTOMATICALLY BY PAYLOAD. */
 /* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
+/* STOP-GAP until the Payload 3.93 upgrade: every handler except OPTIONS is
+   wrapped by gateRest (see src/access/stopgapGate.ts). To undo: remove the
+   import below and the gateRest(config, ...) wrappers. */
 import config from '@payload-config'
 import '@payloadcms/next/css'
 import {
@@ -11,10 +14,12 @@ import {
   REST_PUT,
 } from '@payloadcms/next/routes'
 
-export const GET = REST_GET(config)
-export const POST = REST_POST(config)
-export const DELETE = REST_DELETE(config)
-export const PATCH = REST_PATCH(config)
+import { gateRest } from '@/access/stopgapGate'
 
-export const PUT = REST_PUT(config)
+export const GET = gateRest(config, REST_GET(config))
+export const POST = gateRest(config, REST_POST(config))
+export const DELETE = gateRest(config, REST_DELETE(config))
+export const PATCH = gateRest(config, REST_PATCH(config))
+
+export const PUT = gateRest(config, REST_PUT(config))
 export const OPTIONS = REST_OPTIONS(config)

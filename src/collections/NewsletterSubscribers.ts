@@ -26,6 +26,9 @@ import { syncNewsletterSignupToCRM } from '../utilities/twentyCrm'
 export const NewsletterSubscribers: CollectionConfig = {
   slug: 'newsletter-subscribers',
   access: {
+    // Closed for good (not a stop-gap): public sign-ups go through
+    // /api/newsletter, which runs the spam checks and saves through the
+    // Local API. Nobody can post straight to /api/newsletter-subscribers.
     create: authenticated,
     read: authenticated,
     update: authenticated,
