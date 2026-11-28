@@ -193,8 +193,9 @@ export default function CookieSettingsModal() {
             {expanded === 'necessary' && (
               <p id="cookie-cat-necessary" className="m-0 border-t border-ink/10 px-4 py-3 pl-9 text-base leading-relaxed text-ink/80">
                 They keep the website working and secure: your cookie choice is remembered in your
-                browser, and Google reCAPTCHA protects the booking form from spam (on the Book Your
-                Appointment page only). They cannot be switched off here.
+                browser, and Google reCAPTCHA protects the booking, consultation and newsletter forms
+                from spam (it loads only on pages with one of those forms, and on the newsletter only
+                once you start using it). They cannot be switched off here.
               </p>
             )}
           </div>

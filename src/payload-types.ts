@@ -73,6 +73,7 @@ export interface Config {
     categories: Category;
     users: User;
     'newsletter-subscribers': NewsletterSubscriber;
+    'form-attempts': FormAttempt;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -91,6 +92,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'newsletter-subscribers': NewsletterSubscribersSelect<false> | NewsletterSubscribersSelect<true>;
+    'form-attempts': FormAttemptsSelect<false> | FormAttemptsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -2226,6 +2228,16 @@ export interface NewsletterSubscriber {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-attempts".
+ */
+export interface FormAttempt {
+  id: number;
+  key: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -2437,6 +2449,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'newsletter-subscribers';
         value: number | NewsletterSubscriber;
+      } | null)
+    | ({
+        relationTo: 'form-attempts';
+        value: number | FormAttempt;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -3397,6 +3413,15 @@ export interface NewsletterSubscribersSelect<T extends boolean = true> {
   email?: T;
   source?: T;
   subscribedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-attempts_select".
+ */
+export interface FormAttemptsSelect<T extends boolean = true> {
+  key?: T;
   updatedAt?: T;
   createdAt?: T;
 }

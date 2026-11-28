@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url'
 import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
 import { NewsletterSubscribers } from './collections/NewsletterSubscribers'
+import { FormAttempts } from './collections/FormAttempts'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
@@ -63,7 +64,7 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI || '',
     },
   }),
-  collections: [Pages, Posts, Media, Categories, Users, NewsletterSubscribers],
+  collections: [Pages, Posts, Media, Categories, Users, NewsletterSubscribers, FormAttempts],
   cors: [getServerSideURL()].filter(Boolean),
   // Boot-time bootstrap for the `newsletter_subscribers` collection.
   //
@@ -80,7 +81,12 @@ export default buildConfig({
   // Costs are ~one cheap query per cold start; warm requests skip it.
   onInit: async (payload) => {
     try {
+      // Gives up after 2 seconds if a table is locked (the daily backup
+      // holds a lock for minutes): a cold start never waits on it, and
+      // every other query on the table never queues behind this one.
+      // SET LOCAL lasts until the end of these statements only.
       await payload.db.drizzle.execute(sql`
+        SET LOCAL lock_timeout = '2s';
         CREATE TABLE IF NOT EXISTS "newsletter_subscribers" (
           "id" serial PRIMARY KEY NOT NULL,
           "email" varchar NOT NULL,
@@ -119,6 +125,48 @@ export default buildConfig({
       // permissions issue), the route will still return 500 cleanly on
       // signup and the rest of the admin keeps working.
       payload.logger.error({ err }, '[newsletter] onInit table bootstrap failed')
+    }
+    // The same for `form_attempts` (the per-connection cap on form sends,
+    // src/collections/FormAttempts.ts), with the same SQL as migration
+    // 20261127_173528_form_attempts. If the code goes live before that
+    // migration has run, this adds the table and the document-lock column
+    // the admin reads for every collection, so nothing breaks.
+    try {
+      await payload.db.drizzle.execute(sql`
+        SET LOCAL lock_timeout = '2s';
+        CREATE TABLE IF NOT EXISTS "form_attempts" (
+          "id" serial PRIMARY KEY NOT NULL,
+          "key" varchar NOT NULL,
+          "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+          "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+        );
+        ALTER TABLE "payload_locked_documents_rels"
+          ADD COLUMN IF NOT EXISTS "form_attempts_id" integer;
+        CREATE INDEX IF NOT EXISTS "form_attempts_key_idx"
+          ON "form_attempts" USING btree ("key");
+        CREATE INDEX IF NOT EXISTS "form_attempts_updated_at_idx"
+          ON "form_attempts" USING btree ("updated_at");
+        CREATE INDEX IF NOT EXISTS "form_attempts_created_at_idx"
+          ON "form_attempts" USING btree ("created_at");
+        DO $$
+        BEGIN
+          IF NOT EXISTS (
+            SELECT 1 FROM information_schema.table_constraints
+            WHERE constraint_name = 'payload_locked_documents_rels_form_attempts_fk'
+          ) THEN
+            ALTER TABLE "payload_locked_documents_rels"
+              ADD CONSTRAINT "payload_locked_documents_rels_form_attempts_fk"
+              FOREIGN KEY ("form_attempts_id")
+              REFERENCES "public"."form_attempts"("id")
+              ON DELETE cascade ON UPDATE no action;
+          END IF;
+        END$$;
+        CREATE INDEX IF NOT EXISTS "payload_locked_documents_rels_form_attempts_id_idx"
+          ON "payload_locked_documents_rels" USING btree ("form_attempts_id");
+      `)
+    } catch (err) {
+      // Non-fatal: the cap then fails open (src/utilities/rateLimit.ts).
+      payload.logger.error({ err }, '[form-attempts] onInit table bootstrap failed')
     }
   },
   email: resendAdapter({

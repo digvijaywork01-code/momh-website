@@ -20,7 +20,8 @@
  * GraphQL is switched off in src/app/(payload)/api/graphql/route.ts.
  *
  * NOT touched by this gate (separate route files, they keep working for
- * visitors): /api/email-forwarding, /api/newsletter, /api/form-token.
+ * visitors): /api/email-forwarding, /api/newsletter, /api/form-token,
+ * /api/consultation-upload.
  *
  * REMOVE this file and its three call sites in the same release that
  * upgrades Payload to 3.93.0 or later. Every other place to undo then
@@ -60,6 +61,10 @@ const OPEN_WITHOUT_LOGIN: ReadonlySet<string> = new Set([
   'GET users/init', // "does a first user exist?"
   'GET users/me', // session check on every admin page; answers { user: null }
   'POST users/login',
+  // Visitors' enquiries (Book An Appointment, Personal Consultation). Open
+  // again since Payload 3.94.2, which fixes GHSA-r488-j9vj-wx3q; the spam
+  // hook in src/plugins/index.ts guards it.
+  'POST form-submissions',
   ...(process.env.NODE_ENV === 'production' ? [] : ['POST users/first-register']),
 ])
 
@@ -72,6 +77,9 @@ const OPEN_WITHOUT_LOGIN: ReadonlySet<string> = new Set([
  * closed. The matching read rule is in src/collections/Media.ts.
  */
 const servesLocalMediaFiles = (): boolean => !process.env.BLOB_READ_WRITE_TOKEN
+
+/** Largest body POST form-submissions takes (see gateRest). */
+const MAX_ENQUIRY_BYTES = 64 * 1024
 
 /**
  * True when the request carries no valid Payload login. This is the same
@@ -140,6 +148,19 @@ export const gateRest =
       slug[1] === 'file'
     const openWithoutLogin =
       (OPEN_WITHOUT_LOGIN.has(call) || isLocalMediaFile) && !asksForMethodOverride
+
+    // Both enquiry forms send well under 64 KB. A larger body is refused
+    // before it is read. A body sent without a Content-Length goes on to the
+    // row check in the form-submissions beforeOperation hook.
+    if (call === 'POST form-submissions') {
+      const length = Number(request.headers.get('content-length'))
+      if (Number.isFinite(length) && length > MAX_ENQUIRY_BYTES) {
+        return Response.json(
+          { errors: [{ message: 'This enquiry is too large.' }] },
+          { status: 413 },
+        )
+      }
+    }
 
     if (!openWithoutLogin && (await hasNoLogin(config, request.headers))) {
       return refuse('no-login')

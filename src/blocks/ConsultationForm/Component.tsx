@@ -24,14 +24,85 @@
  * Wait — looking at the PDF render again: fields DO have a thin grey
  * box around them. So `border` + `rounded-none` per the PDF. Keeping
  * the boxed style.
+ *
+ * Validation and submission follow the SS site's Book an Appointment
+ * form (see src/utilities/enquiryForm.ts): browser checks, a red line
+ * under each box at fault, a phone filter + at least 10 digits, a signed
+ * time pass, a hidden trap box and an invisible reCAPTCHA v3 check
+ * (src/utilities/recaptchaClient.ts). The enquiry is saved in Form
+ * Submissions first, then emailed. A red star only on compulsory boxes.
  */
 
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import type { ConsultationFormBlock as ConsultationFormBlockProps } from '@/payload-types'
 
 import { cn } from '@/utilities/ui'
+import {
+  CONSULTATION_FIELDS_AFTER_IMAGE,
+  CONSULTATION_FIELDS_BEFORE_IMAGE,
+  CONSULTATION_REQUIRED_FIELDS,
+  FORM_IDS,
+  maxLengthOf,
+} from '@/utilities/formIds'
+import {
+  HONEYPOT_STYLE,
+  INIT_ERROR,
+  MIN_PHONE_DIGITS,
+  NOT_READY,
+  SUBMIT_FAILED,
+  countDigits,
+  filterPhoneInput,
+  focusFirstProblem,
+  formValue,
+  submitEnquiry,
+  uploadReferenceFile,
+  useFormToken,
+} from '@/utilities/enquiryForm'
+import { isValidEmail } from '@/utilities/emailFormat'
+import { RECAPTCHA_FAILED, getRecaptchaToken, loadRecaptcha } from '@/utilities/recaptchaClient'
+import { RecaptchaNotice } from '@/components/RecaptchaNotice'
+import {
+  MAX_UPLOAD_BYTES,
+  UPLOAD_ACCEPT,
+  UPLOAD_SIZE_ERROR,
+  UPLOAD_TYPE_ERROR,
+  uploadContentType,
+} from '@/utilities/uploadRules'
+
+// Every answer this form saves, in order. Compulsory ones carry the red
+// line shown under the box when it is left empty (SS validate()). The
+// reference image goes in between, only when one was chosen: it is
+// uploaded straight to S3 first (src/utilities/enquiryForm.ts
+// uploadReferenceFile) and the enquiry stores its S3 key and file name.
+// The compulsory answers are the shared list the server checks too
+// (src/utilities/formIds.ts), so the two can never differ.
+type RequiredName = (typeof CONSULTATION_REQUIRED_FIELDS)[number]
+const REQUIRED: Record<RequiredName, string> = {
+  firstName: 'Please enter your first name.',
+  email: 'Please enter your email.',
+  phone: 'Please enter your phone number.',
+  city: 'Please enter your city.',
+  country: 'Please enter your country.',
+  creation: 'Please select what you would like to create.',
+  recipient: 'Please select who this is for.',
+  timeline: 'Please select a timeline.',
+}
+type ErrorName = RequiredName | 'referenceImage'
+
+/** '' when the picked file can be uploaded, else the message to show. */
+const fileProblem = (file: File): string => {
+  if (!uploadContentType(file)) return UPLOAD_TYPE_ERROR
+  if (file.size < 1 || file.size > MAX_UPLOAD_BYTES) return UPLOAD_SIZE_ERROR
+  return ''
+}
+// Every field this form saves, in order (the lists the spam hook allows).
+const FIELDS_BEFORE_IMAGE = CONSULTATION_FIELDS_BEFORE_IMAGE
+const FIELDS_AFTER_IMAGE = CONSULTATION_FIELDS_AFTER_IMAGE
+
+const FieldError: React.FC<{ message?: string }> = ({ message }) =>
+  message ? <p className="mt-1 text-sm text-brand-red font-body">{message}</p> : null
 
 type BgKey = NonNullable<ConsultationFormBlockProps['backgroundColor']>
 
@@ -70,16 +141,17 @@ const FieldLabel: React.FC<FieldLabelProps> = ({ htmlFor, label, required }) => 
  *  shifts the border to brand-red. */
 const inputClass =
   'w-full px-4 py-3 bg-white border border-warm-gray/40 rounded-none font-body text-base text-ink ' +
-  'focus:outline-none focus:border-brand-red focus:ring-0 transition-colors duration-150'
+  'focus:outline-none focus:border-brand-red focus:ring-0 transition-colors duration-150 ' +
+  // When the browser's own check scrolls to an empty box, stop 128px short
+  // of the top so its label stays visible below the fixed MOMH logo.
+  // Changes only where the page scrolls to, never the layout.
+  'scroll-mt-32'
 
 const selectClass = inputClass + ' appearance-none pr-10 cursor-pointer'
 
 type SectionHeaderProps = { title: string }
 const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => (
-  <h3
-    className="font-body text-lg md:text-xl text-ink mb-6"
-    style={{ fontWeight: 600 }}
-  >
+  <h3 className="font-body text-lg md:text-xl text-ink mb-6" style={{ fontWeight: 600 }}>
     {title}
   </h3>
 )
@@ -131,8 +203,8 @@ const UploadIcon: React.FC = () => (
 export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
   submitLabel,
   // `endpoint` is retained on the block schema for backward compat but
-  // unused — submissions now route through /api/email-forwarding for
-  // the customer + owner email pair.
+  // unused: enquiries are saved through /api/form-submissions and then
+  // emailed by /api/email-forwarding.
   endpoint: _endpoint,
   successRedirect,
   backgroundColor,
@@ -143,55 +215,134 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [fileName, setFileName] = useState<string | null>(null)
+  const [errors, setErrors] = useState<Partial<Record<ErrorName, string>>>({})
+  const [notice, setNotice] = useState('')
+  const [honeypot, setHoneypot] = useState('')
+  const { token, tokenError, freshToken } = useFormToken()
+  // Google's script, ready before the visitor sends (this page is the form).
+  useEffect(() => {
+    void loadRecaptcha()
+  }, [])
+  // The last file S3 confirmed it stored. If the enquiry is then refused
+  // and the visitor presses the button again with the same file, its key
+  // is reused instead of uploading the file a second time.
+  const storedFile = useRef<{ id: string; key: string } | null>(null)
 
   const redirectTarget = successRedirect || '/thank-you'
+
+  // Runs only after the browser's own checks pass (starred boxes filled,
+  // email shape, an option picked in each starred dropdown). Empty boxes
+  // are re-checked here as a backup, and the phone needs at least 10
+  // digits (SS rules).
+  // Returns the names of the boxes with a problem ([] when all is well).
+  const validate = (fd: FormData): string[] => {
+    const next: Partial<Record<ErrorName, string>> = {}
+    for (const [name, message] of Object.entries(REQUIRED) as [RequiredName, string][]) {
+      if (!formValue(fd, name)) next[name] = message
+    }
+    const phone = formValue(fd, 'phone')
+    if (phone && countDigits(phone) < MIN_PHONE_DIGITS)
+      next.phone = 'Please enter at least 10 digits.'
+    // The browser's own email check lets through addresses the server
+    // refuses (no dot after the "@", longer than any real one), so say so
+    // here, under the email box. Same rule as the server (isValidEmail).
+    const email = formValue(fd, 'email')
+    if (email && !isValidEmail(email)) next.email = 'Please enter a valid email address.'
+    setErrors(next)
+    return Object.keys(next)
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (status === 'submitting') return
+    setStatus('idle')
+    setErrorMessage(null)
+    setNotice('')
 
-    // Build the `{ field, value }` payload shape expected by
-    // /api/email-forwarding. File uploads (reference image) aren't
-    // attached to the email yet — the file name is forwarded as text
-    // so the owner knows one was provided. Persisting the file itself
-    // requires a Payload-managed upload, which is a separate task.
-    const formEl = e.currentTarget
-    const fd = new FormData(formEl)
-    const submissionData: Array<{ field: string; value: string }> = []
-    for (const [key, value] of fd.entries()) {
-      if (value instanceof File) {
-        if (value.size > 0) {
-          submissionData.push({ field: key, value: value.name })
-        }
-      } else {
-        submissionData.push({ field: key, value })
-      }
+    const form = e.currentTarget
+    const fd = new FormData(form)
+    const problems = validate(fd)
+    if (problems.length) {
+      focusFirstProblem(form, problems)
+      return
+    }
+
+    // Without a valid pass the server refuses the enquiry.
+    if (!token) {
+      setNotice(tokenError ? INIT_ERROR : NOT_READY)
+      return
     }
 
     try {
       setStatus('submitting')
-      const res = await fetch('/api/email-forwarding', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          formType: 'consultation',
-          submissionData,
-        }),
+      const pass = await freshToken()
+      if (!pass) throw new Error(SUBMIT_FAILED)
+
+      // Optional reference image: upload it to S3 first. It never blocks
+      // the enquiry: if the upload fails, the enquiry is saved without it
+      // and the team's email says the file did not arrive.
+      const image = fd.get('referenceImage')
+      const imageFields: Array<{ field: string; value: string }> = []
+      if (image instanceof File && image.size > 0 && !fileProblem(image)) {
+        const id = `${image.name}|${image.size}|${image.lastModified}`
+        let key: string | null
+        if (storedFile.current?.id === id) {
+          key = storedFile.current.key
+        } else {
+          // The upload link needs its own reCAPTCHA token. If the check
+          // cannot run, the enquiry could not be sent either: say so now.
+          const uploadCaptcha = await getRecaptchaToken('upload')
+          if (uploadCaptcha === null) throw new Error(RECAPTCHA_FAILED)
+          const upload = await uploadReferenceFile({
+            file: image,
+            contentType: uploadContentType(image),
+            honeypot,
+            token: pass,
+            recaptchaToken: uploadCaptcha,
+          })
+          // stored: false means S3's answer could not be read; the key is
+          // kept and the email step checks whether the file is there.
+          key = upload?.key ?? null
+          storedFile.current = upload?.stored ? { id, key: upload.key } : null
+        }
+        imageFields.push(
+          { field: 'referenceImage', value: key ?? '' },
+          { field: 'referenceImageName', value: image.name.slice(0, 200) },
+        )
+        if (!key) {
+          imageFields.push({
+            field: 'referenceImageNote',
+            value: 'The file did not upload. Please ask the visitor to send it by email.',
+          })
+        }
+      }
+
+      const fields = [
+        ...FIELDS_BEFORE_IMAGE.map((name) => ({ field: name, value: formValue(fd, name) })),
+        ...imageFields,
+        ...FIELDS_AFTER_IMAGE.map((name) => ({ field: name, value: formValue(fd, name) })),
+      ]
+      // Asked for last: Google's token is single-use and lasts 2 minutes,
+      // and the upload above can take a while.
+      const recaptchaToken = await getRecaptchaToken('consultation')
+      if (recaptchaToken === null) throw new Error(RECAPTCHA_FAILED)
+      await submitEnquiry({
+        formId: FORM_IDS.consultation,
+        fields,
+        honeypot,
+        token: pass,
+        recaptchaToken,
       })
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
       router.push(redirectTarget)
     } catch (err) {
       setStatus('error')
-      setErrorMessage(err instanceof Error ? err.message : 'Submission failed.')
+      setErrorMessage(err instanceof Error ? err.message : 'Submission failed')
     }
   }
 
   return (
     <section
-      className={cn(
-        'w-full py-12 lg:py-16 px-6 md:px-12 lg:px-20',
-        bgClass[bg],
-      )}
+      className={cn('w-full py-12 lg:py-16 px-6 md:px-12 lg:px-20', bgClass[bg])}
       data-theme="light"
       aria-label="Personal consultation enquiry form"
     >
@@ -199,34 +350,81 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
         onSubmit={handleSubmit}
         className="w-full max-w-4xl mx-auto"
         encType="multipart/form-data"
-        noValidate
       >
         {/* ── 1. Personal Details ─────────────────────────────── */}
         <SectionHeader title="Personal Details" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
           <div>
             <FieldLabel htmlFor="firstName" label="First Name" required />
-            <input id="firstName" name="firstName" type="text" required className={inputClass} />
+            <input
+              id="firstName"
+              name="firstName"
+              maxLength={maxLengthOf('firstName')}
+              type="text"
+              required
+              className={inputClass}
+            />
+            <FieldError message={errors.firstName} />
           </div>
           <div>
             <FieldLabel htmlFor="lastName" label="Last Name" />
-            <input id="lastName" name="lastName" type="text" className={inputClass} />
+            <input
+              id="lastName"
+              name="lastName"
+              maxLength={maxLengthOf('lastName')}
+              type="text"
+              className={inputClass}
+            />
           </div>
           <div>
             <FieldLabel htmlFor="email" label="Email Address" required />
-            <input id="email" name="email" type="email" required className={inputClass} />
+            <input
+              id="email"
+              name="email"
+              maxLength={maxLengthOf('email')}
+              type="email"
+              required
+              className={inputClass}
+            />
+            <FieldError message={errors.email} />
           </div>
           <div>
             <FieldLabel htmlFor="phone" label="Phone Number/WhatsApp" required />
-            <input id="phone" name="phone" type="tel" required className={inputClass} />
+            <input
+              id="phone"
+              name="phone"
+              maxLength={maxLengthOf('phone')}
+              type="tel"
+              autoComplete="tel"
+              required
+              onChange={filterPhoneInput}
+              className={inputClass}
+            />
+            <FieldError message={errors.phone} />
           </div>
           <div>
             <FieldLabel htmlFor="city" label="City" required />
-            <input id="city" name="city" type="text" required className={inputClass} />
+            <input
+              id="city"
+              name="city"
+              maxLength={maxLengthOf('city')}
+              type="text"
+              required
+              className={inputClass}
+            />
+            <FieldError message={errors.city} />
           </div>
           <div>
             <FieldLabel htmlFor="country" label="Country" required />
-            <input id="country" name="country" type="text" required className={inputClass} />
+            <input
+              id="country"
+              name="country"
+              maxLength={maxLengthOf('country')}
+              type="text"
+              required
+              className={inputClass}
+            />
+            <FieldError message={errors.country} />
           </div>
         </div>
 
@@ -258,6 +456,7 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
               </select>
               <ChevronDown />
             </div>
+            <FieldError message={errors.creation} />
           </div>
           <div>
             <FieldLabel htmlFor="recipient" label="Is this for" required />
@@ -280,6 +479,7 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
               </select>
               <ChevronDown />
             </div>
+            <FieldError message={errors.recipient} />
           </div>
           <div>
             <FieldLabel
@@ -305,6 +505,7 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
               </select>
               <ChevronDown />
             </div>
+            <FieldError message={errors.timeline} />
           </div>
         </div>
 
@@ -318,6 +519,7 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
             <input
               id="designIdea"
               name="designIdea"
+              maxLength={maxLengthOf('designIdea')}
               type="text"
               className={inputClass}
             />
@@ -326,7 +528,6 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
             <FieldLabel
               htmlFor="referenceImage"
               label="Upload reference image / sketch (optional)"
-              required
             />
             <button
               type="button"
@@ -346,13 +547,20 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
               id="referenceImage"
               name="referenceImage"
               type="file"
-              accept="image/*,.pdf"
+              accept={UPLOAD_ACCEPT}
               className="hidden"
               onChange={(e) => {
                 const f = e.target.files?.[0]
-                setFileName(f ? f.name : null)
+                const problem = f ? fileProblem(f) : ''
+                // A file we cannot take is let go straight away, so the
+                // visitor is never stuck with it: the box shows "Upload"
+                // again and the red line says why.
+                if (problem) e.target.value = ''
+                setFileName(f && !problem ? f.name : null)
+                setErrors((prev) => ({ ...prev, referenceImage: problem || undefined }))
               }}
             />
+            <FieldError message={errors.referenceImage} />
           </div>
         </div>
 
@@ -364,12 +572,7 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
           <div className="md:col-span-2">
             <FieldLabel htmlFor="budget" label="Budget range" />
             <div className="relative md:max-w-[calc(50%-1rem)]">
-              <select
-                id="budget"
-                name="budget"
-                defaultValue=""
-                className={selectClass}
-              >
+              <select id="budget" name="budget" defaultValue="" className={selectClass}>
                 <option value="" disabled>
                   Select an option
                 </option>
@@ -415,11 +618,25 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
             <textarea
               id="additionalNotes"
               name="additionalNotes"
+              maxLength={maxLengthOf('additionalNotes')}
               rows={5}
               className={inputClass}
             />
           </div>
         </div>
+
+        {/* Spam protection: do not remove. Checked by the form-submissions
+            hook. Off-screen and out of the layout, so nothing moves. */}
+        <input
+          type="text"
+          name="website_url"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          style={HONEYPOT_STYLE}
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+        />
 
         {/* Submit + status ─────────────────────────────────────── */}
         <div className="mt-12 flex flex-col items-start gap-3">
@@ -439,10 +656,14 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
           </button>
           {status === 'error' && (
             <p className="text-sm text-brand-red font-body">
-              Sorry — {errorMessage || 'something went wrong'}. Please try again or email
-              us at info@momhindia.org.
+              Sorry — {errorMessage || 'something went wrong'}. Please try again or email us at
+              info@momhindia.org.
             </p>
           )}
+          {(notice || tokenError) && (
+            <p className="text-sm text-brand-red font-body">{notice || INIT_ERROR}</p>
+          )}
+          <RecaptchaNotice className="text-ink/80" />
         </div>
       </form>
     </section>

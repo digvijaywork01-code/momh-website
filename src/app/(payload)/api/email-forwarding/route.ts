@@ -2,11 +2,13 @@
  * /api/email-forwarding — sends customer confirmation + owner notification
  * emails after a form is submitted.
  *
- * Same pattern as the SS site (House of Sunita Shekhawat): the Payload
- * form-builder plugin persists the submission via `/api/form-submissions`,
- * and immediately after a successful POST the client calls this route to
- * dispatch the two emails. Persistence and email delivery are decoupled
- * so a Resend outage never blocks the form submission itself.
+ * Same pattern as the SS site (House of Sunita Shekhawat): the form saves
+ * the enquiry first through `/api/form-submissions` (where the spam checks
+ * in src/plugins/index.ts run), and only then calls this route with the
+ * saved submission's id. This route builds both emails from the STORED
+ * record, so a caller can choose neither the recipient nor the content.
+ * Saving and emailing are decoupled, so a Resend outage never loses an
+ * enquiry: it is in the admin under Form Submissions either way.
  *
  * Two HTML templates live here:
  *   1. Customer confirmation — a small, editorial "thank you" branded for
@@ -16,61 +18,43 @@
  *      info@momhindia.org. Intentionally simple so the team can scan
  *      enquiries quickly from any inbox / mobile preview.
  *
- * Hand-rolled forms (AppointmentForm, ConsultationForm) post directly
- * to this endpoint with a synthetic `submissionData` array; the generic
- * <FormBlock> posts after its successful `/api/form-submissions` call.
+ * Personal Consultation: the visitor's reference file stays in the private
+ * S3 bucket, and the team email carries it as an attachment (the sales team
+ * reads enquiries in the mailbox, not the admin), plus a 7-day view link.
+ *
+ * The checks run before the answer; the emails are sent right after it
+ * (next/server after()), team email first, so the visitor goes straight to
+ * the thank-you page and never waits for a large email to send.
+ *
+ * Callers: AppointmentForm, ConsultationForm and the generic <FormBlock>,
+ * each right after its successful `/api/form-submissions` call, with
+ * `{ submissionId }` only.
  */
 
-import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
+import { after, NextRequest, NextResponse } from 'next/server'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+import {
+  BRAND,
+  FROM_ADDRESS,
+  OWNER_EMAILS,
+  TYPE,
+  escapeHtml,
+  getResend,
+  renderFooter,
+  renderHeader,
+  sendOnce,
+  sleep,
+} from '@/utilities/momhEmail'
+import { FORM_IDS } from '@/utilities/formIds'
+import { isAllowedOrigin } from '@/utilities/formGuards'
+import { createViewLink, readUpload } from '@/utilities/s3Upload'
+import { isUploadType, safeFileName } from '@/utilities/uploadRules'
 
-// Lazy-init: the Resend constructor throws if called with no API key,
-// which happens during `next build` (Vercel statically analyses route
-// files before env vars are resolved). Construct on first request
-// instead so a missing key produces a clean runtime error rather than
-// a build failure.
-let _resend: Resend | null = null
-const getResend = (): Resend => {
-  if (!_resend) {
-    _resend = new Resend(process.env.RESEND_API_KEY || 're_placeholder')
-  }
-  return _resend
-}
-
-// Operational addresses.
-const OWNER_EMAILS = ['info@momhindia.org']
-const FROM_ADDRESS = 'Museum of Meenakari Heritage <no-reply@momhindia.org>'
-
-// MOMH brand palette — sourced from src/styles/tokens.css and
-// tailwind.config.mjs. Hex values are inlined (not CSS variables) because
-// email clients don't evaluate `var()` references.
-const BRAND = {
-  red: '#a60b1a',      // --color-founder-red — editorial accent
-  ink: '#1a1a1a',      // body text
-  muted: '#6b6b6b',    // secondary text
-  rule: '#e8e3da',     // hairline dividers
-  bg: '#fffefa',       // --color-ivory — page background
-  card: '#ffffff',     // email card background
-}
-
-// Email-safe type stack. Cormorant + Gill Sans are the site's actual
-// faces; both fall back cleanly to Georgia / Helvetica which most mail
-// clients render natively (Gmail, Outlook, Apple Mail, etc.).
-const TYPE = {
-  serif: "'Cormorant', 'Cormorant Garamond', Georgia, 'Times New Roman', serif",
-  sans: "'Gill Sans', 'GillSans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
-}
-
-// HTML-escape any user-supplied value before interpolating into markup.
-// Without this, a malicious submission body could inject markup into
-// either the customer or owner email.
-const escapeHtml = (value: unknown): string =>
-  String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
+// The sends run after the answer (after()), but inside this limit: reading
+// the uploaded file back from S3 and sending it to Resend can take a few
+// seconds. 60 is allowed on every Vercel plan.
+export const maxDuration = 60
 
 const extractNameParts = (fullName: string) => {
   const parts = fullName.trim().split(/\s+/)
@@ -117,6 +101,9 @@ const formatFieldName = (fieldName: string): string => {
     'visit date': 'Preferred Date',
     location: 'Preferred Location',
     recaptchatoken: 'Verification Token',
+    referenceimage: 'Reference Image',
+    referenceimagename: 'Reference File Name',
+    referenceimagenote: 'Upload Note',
   }
   const key = fieldName.toLowerCase().trim()
   if (map[key]) return map[key]
@@ -126,84 +113,14 @@ const formatFieldName = (fieldName: string): string => {
     .replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
-// Shared editorial wordmark — used at the top of both emails. Renders as
-// an HTML table for max email-client compatibility (flexbox is a no-go
-// in Outlook etc.).
-const renderHeader = (eyebrow: string) => `
-        <tr>
-          <td height="3" bgcolor="${BRAND.red}" style="height:3px; line-height:3px; font-size:0;">&nbsp;</td>
-        </tr>
-        <tr>
-          <td align="center" style="padding:48px 32px 14px;">
-            <div style="font-family:${TYPE.sans}; font-size:10px; letter-spacing:4px; color:${BRAND.red}; text-transform:uppercase;">Jaipur · Est. 2026</div>
-          </td>
-        </tr>
-        <tr>
-          <td align="center" style="padding:0 32px 4px;">
-            <div style="font-family:${TYPE.serif}; font-size:18px; line-height:1.25; letter-spacing:3px; color:${BRAND.ink}; text-transform:uppercase;">Museum of</div>
-            <div style="font-family:${TYPE.serif}; font-size:30px; line-height:1.15; letter-spacing:4px; color:${BRAND.ink}; text-transform:uppercase; margin-top:6px; font-weight:400;">Meenakari Heritage</div>
-          </td>
-        </tr>
-        <tr>
-          <td align="center" style="padding:24px 32px 0;">
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-              <tr>
-                <td width="56" height="1" bgcolor="${BRAND.red}" style="height:1px; line-height:1px; font-size:0;">&nbsp;</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td align="center" style="padding:14px 48px 28px;">
-            <div style="font-family:${TYPE.sans}; font-size:11px; letter-spacing:3px; color:${BRAND.muted}; text-transform:uppercase;">${escapeHtml(eyebrow)}</div>
-          </td>
-        </tr>
-`
-
-// Shared footer — operational details + a quiet sign-off.
-const renderFooter = () => `
-        <tr>
-          <td style="padding:0 48px;">
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-              <tr>
-                <td height="1" bgcolor="${BRAND.rule}" style="height:1px; line-height:1px; font-size:0;">&nbsp;</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td align="center" style="padding:24px 48px 6px; font-family:${TYPE.sans}; font-size:13px; line-height:1.7; color:${BRAND.muted};">
-            <a href="mailto:info@momhindia.org" style="color:${BRAND.muted}; text-decoration:none;">info@momhindia.org</a>
-            &nbsp;·&nbsp;
-            <a href="https://momhindia.org" style="color:${BRAND.muted}; text-decoration:none;">momhindia.org</a>
-          </td>
-        </tr>
-        <tr>
-          <td align="center" style="padding:6px 48px 8px; font-family:${TYPE.sans}; font-size:12px; line-height:1.7; color:${BRAND.muted};">
-            E141, Sardar Patel Marg, Jaipur, Rajasthan
-          </td>
-        </tr>
-        <tr>
-          <td align="center" style="padding:6px 48px 36px; font-family:${TYPE.sans}; font-size:10px; letter-spacing:3px; color:${BRAND.red}; text-transform:uppercase;">
-            A Living Archive of Meenakari
-          </td>
-        </tr>
-`
-
 // ── Customer confirmation ────────────────────────────────────────────
 // Sent to whoever filled out the form. Warm, editorial, no echo of the
 // submitted data (keeps the email looking like a museum acknowledgement
 // rather than a transactional receipt).
-const generateCustomerEmailHTML = (
-  firstName: string,
-  lastName: string,
-  formType: string,
-) => {
+const generateCustomerEmailHTML = (firstName: string, lastName: string, formType: string) => {
   const safeFirst = escapeHtml(firstName).trim()
   const safeLast = escapeHtml(lastName).trim()
-  const greeting = safeFirst
-    ? `Dear ${safeFirst}${safeLast ? ' ' + safeLast : ''},`
-    : 'Dear Guest,'
+  const greeting = safeFirst ? `Dear ${safeFirst}${safeLast ? ' ' + safeLast : ''},` : 'Dear Guest,'
 
   const isAppointment = formType === 'appointment'
   const isConsultation = formType === 'consultation'
@@ -258,14 +175,27 @@ const generateCustomerEmailHTML = (
 }
 
 // ── Owner notification ──────────────────────────────────────────────
+// How the consultation's reference file shows in the team email.
+type UploadDisplay =
+  | { kind: 'attached'; name: string; href: string | null }
+  | { kind: 'link'; href: string }
+  | { kind: 'note'; text: string }
+
+const FILE_NOT_ARRIVED = 'The file did not arrive. Please ask the visitor to send it by email.'
+
 // Simple two-column table of every submitted field. No editorial flourish
 // beyond the brand wordmark — the team needs to scan these quickly.
 const generateOwnerEmailHTML = (
   data: Record<string, unknown>,
   formType: string,
+  // Field name -> what to show instead of the stored value (the
+  // consultation's uploaded reference file).
+  display: Record<string, UploadDisplay> = {},
+  // When the enquiry was saved. Using it (not the send time) keeps the
+  // email identical if it is ever sent again under the same Resend key.
+  savedAt?: string,
 ) => {
-  const fields =
-    (data.submissionData as Array<{ field: string; value: unknown }>) || []
+  const fields = (data.submissionData as Array<{ field: string; value: unknown }>) || []
 
   const formLabel =
     formType === 'appointment'
@@ -277,15 +207,30 @@ const generateOwnerEmailHTML = (
           : 'Contact Enquiry'
 
   // Skip internal spam-protection markers from the owner-visible table.
+  // (The spam hook already strips them before saving; this is a backstop.)
   const visibleFields = fields.filter(
-    (f) => f.field !== '_hp' && f.field !== '_t' && f.field !== 'recaptchaToken',
+    (f) =>
+      f.field !== '_hp' &&
+      f.field !== '_t' &&
+      f.field !== 'recaptchaToken' &&
+      f.field !== 'g-recaptcha-response',
   )
 
   const fieldRows = visibleFields
     .map((field, idx) => {
       const label = escapeHtml(formatFieldName(field.field))
       const rawValue = field.value == null ? '' : String(field.value)
-      const safeValue = escapeHtml(rawValue).replace(/\r?\n/g, '<br />')
+      const shown = display[field.field]
+      const linkHtml = (href: string, text: string) =>
+        `<a href="${escapeHtml(href)}" style="color:${BRAND.red};">${text}</a> (link works for 7 days)`
+      const safeValue = !shown
+        ? escapeHtml(rawValue).replace(/\r?\n/g, '<br />')
+        : shown.kind === 'attached'
+          ? `Attached to this email: ${escapeHtml(shown.name)}` +
+            (shown.href ? `<br />${linkHtml(shown.href, 'Or view it online')}` : '')
+          : shown.kind === 'link'
+            ? linkHtml(shown.href, 'View the uploaded file')
+            : escapeHtml(shown.text)
       const isLast = idx === visibleFields.length - 1
       const borderBottom = isLast ? '' : `border-bottom:1px solid ${BRAND.rule};`
       return `
@@ -296,14 +241,18 @@ const generateOwnerEmailHTML = (
     })
     .join('')
 
-  const submittedAt = new Date().toLocaleString('en-IN', {
-    timeZone: 'Asia/Kolkata',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  const savedTime = savedAt ? Date.parse(savedAt) : NaN
+  const submittedAt = new Date(Number.isFinite(savedTime) ? savedTime : Date.now()).toLocaleString(
+    'en-IN',
+    {
+      timeZone: 'Asia/Kolkata',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    },
+  )
 
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
@@ -345,46 +294,33 @@ const generateOwnerEmailHTML = (
 </html>`
 }
 
-// ── Origin allowlist ────────────────────────────────────────────────
-// Defense in depth alongside the formSubmissionOverrides hook: a bot
-// that hits this route directly (skipping /api/form-submissions) still
-// gets a 403 if it isn't coming from one of our domains.
-const ALLOWED_ORIGINS = ['https://momhindia.org', 'https://www.momhindia.org']
-const VERCEL_PREVIEW_RE = /^https:\/\/[a-z0-9-]+\.vercel\.app$/
-const LOCALHOST_RE = /^http:\/\/localhost(:\d+)?$/
+// ── Gate: only a fresh, real, saved submission ───────────────────────
+//
+// How recently a submission must have been saved for this route to act on
+// it. Deliberately tight: Payload's postgres ids are SEQUENTIAL INTEGERS,
+// so the id is not a secret and this window, not the id, is what stops
+// someone replaying recent submissions. (Same value as the SS site.)
+const SUBMISSION_MAX_AGE_MS = 60_000
 
-const safeUrlOrigin = (input: string): string => {
-  try {
-    return input ? new URL(input).origin : ''
-  } catch {
-    return ''
-  }
-}
+// Best-effort replay guard. Serverless instances don't share memory and
+// cold starts reset it, so the window above is the real bound; this just
+// stops the cheap case of hammering one id against a warm instance.
+const processedSubmissions = new Set<string>()
 
-const isAllowedOrigin = (origin: string, referer: string): boolean => {
-  const refererOrigin = safeUrlOrigin(referer)
-  for (const candidate of [origin, refererOrigin]) {
-    if (!candidate) continue
-    if (ALLOWED_ORIGINS.includes(candidate)) return true
-    if (VERCEL_PREVIEW_RE.test(candidate)) return true
-    if (LOCALHOST_RE.test(candidate)) return true
-  }
-  return false
+type StoredSubmission = {
+  id: string | number
+  form?: unknown
+  submissionData?: unknown
+  createdAt?: string
 }
 
 // ── Handler ──────────────────────────────────────────────────────────
 //
-// Expected body shape (same as SS):
-//   {
-//     form?: number | string,      // Payload Form ID when from FormBlock; absent for hand-rolled forms
-//     formType?: string,           // explicit hint from hand-rolled forms: 'appointment' | 'consultation' | etc.
-//     submissionData: Array<{ field: string, value: unknown }>
-//   }
-//
-// The endpoint never throws back to the caller — email failures are
-// logged and a generic 200 is returned so submissions never appear to
-// "fail" because of a Resend hiccup. The form data is already safely
-// persisted in /api/form-submissions before this route is called.
+// Body: { submissionId: number | string }. Anything else in the body is
+// ignored. Order (as on the SS site): origin 403, id 400, replay 409,
+// unknown id 404, older than 60 s 410, then build both emails from the
+// stored record. Email failures do not change the answer: the enquiry is
+// already saved.
 export async function POST(request: NextRequest) {
   try {
     const origin = request.headers.get('origin') ?? ''
@@ -394,121 +330,274 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'Forbidden' }, { status: 403 })
     }
 
-    const data = await request.json()
-
-    if (!data?.submissionData || !Array.isArray(data.submissionData)) {
-      return NextResponse.json(
-        { message: 'Missing or malformed submissionData' },
-        { status: 400 },
-      )
+    const body = (await request.json().catch(() => null)) as { submissionId?: unknown } | null
+    const submissionId =
+      typeof body?.submissionId === 'string' || typeof body?.submissionId === 'number'
+        ? String(body.submissionId)
+        : ''
+    // Payload ids here are plain numbers. One spelling only ('0236' would
+    // otherwise load the same enquiry past the replay guard below).
+    if (!/^[1-9]\d{0,11}$/.test(submissionId)) {
+      return NextResponse.json({ message: 'Missing submissionId' }, { status: 400 })
+    }
+    if (processedSubmissions.has(submissionId)) {
+      console.warn('email-forwarding rejected: already processed', { submissionId })
+      return NextResponse.json({ message: 'Already processed' }, { status: 409 })
     }
 
-    // Look up the customer's email — try field-name first, then a
-    // shape-based fallback (anything that looks like name@host.tld).
-    const emailField = data.submissionData.find(
-      (item: { field: string; value: unknown }) => {
-        const fieldName = String(item.field || '').toLowerCase()
-        if (fieldName.includes('email') || fieldName.includes('mail')) return true
-        const v = item.value
-        if (typeof v === 'string' && /.+@.+\..+/.test(v)) return true
-        return false
-      },
-    )
-    const customerEmail =
-      emailField && typeof emailField.value === 'string'
-        ? emailField.value.trim()
-        : ''
+    const payload = await getPayload({ config: configPromise })
+    let submission: StoredSubmission | null = null
+    try {
+      submission = (await payload.findByID({
+        collection: 'form-submissions',
+        id: submissionId,
+        depth: 0,
+        overrideAccess: true,
+      })) as unknown as StoredSubmission
+    } catch {
+      // Unknown id, or one Payload cannot parse.
+      submission = null
+    }
+    if (!submission) {
+      console.warn('email-forwarding rejected: unknown submission', { submissionId })
+      return NextResponse.json({ message: 'Not found' }, { status: 404 })
+    }
 
-    // Pull a name for the personalised greeting. Try a `name` field
-    // first; otherwise stitch first + last together.
+    const createdAt = submission.createdAt ? Date.parse(submission.createdAt) : NaN
+    const age = Number.isFinite(createdAt) ? Date.now() - createdAt : Infinity
+    if (!(age >= 0 && age <= SUBMISSION_MAX_AGE_MS)) {
+      console.warn('email-forwarding rejected: submission too old', {
+        submissionId,
+        ageMs: Number.isFinite(age) ? age : null,
+      })
+      return NextResponse.json({ message: 'Expired' }, { status: 410 })
+    }
+    processedSubmissions.add(submissionId)
+
+    // Everything below reads from the STORED record only.
+    const storedFormId =
+      typeof submission.form === 'object' && submission.form !== null
+        ? (submission.form as { id?: unknown }).id
+        : submission.form
+    const formId = typeof storedFormId === 'string' ? Number(storedFormId) : storedFormId
+    const data: { submissionData: Array<{ field: string; value: unknown }> } = {
+      submissionData: Array.isArray(submission.submissionData)
+        ? (submission.submissionData as Array<{ field?: unknown; value?: unknown }>)
+            .filter((f) => typeof f?.field === 'string')
+            .map((f) => ({ field: f.field as string, value: f.value }))
+        : [],
+    }
+    if (!formId || !Array.isArray(submission.submissionData)) {
+      return NextResponse.json({ message: 'Missing required fields' }, { status: 400 })
+    }
+
+    // Which form, from the stored form number (src/utilities/formIds.ts).
+    const formType: 'appointment' | 'consultation' | 'contact' =
+      formId === FORM_IDS.appointment
+        ? 'appointment'
+        : formId === FORM_IDS.consultation
+          ? 'consultation'
+          : 'contact'
+
+    // The visitor's email: the first stored field whose name contains
+    // "email" or "mail".
+    const emailField = data.submissionData.find((item) => {
+      const fieldName = item.field.toLowerCase()
+      return fieldName.includes('email') || fieldName.includes('mail')
+    })
+    const customerEmail =
+      emailField && typeof emailField.value === 'string' ? emailField.value.trim() : ''
+
+    // Name for the greeting: a `name` field first, else first + last.
     let fullName = ''
-    const fullNameField = data.submissionData.find(
-      (item: { field: string; value: unknown }) => {
-        const n = String(item.field || '').toLowerCase()
-        return (
-          n === 'name' || n === 'fullname' || n === 'full name'
-        )
-      },
-    )
+    const fullNameField = data.submissionData.find((item) => {
+      const n = item.field.toLowerCase()
+      return n === 'name' || n === 'fullname' || n === 'full name'
+    })
     if (fullNameField && typeof fullNameField.value === 'string') {
       fullName = fullNameField.value
     } else {
-      const first = data.submissionData.find(
-        (item: { field: string; value: unknown }) =>
-          /first/.test(String(item.field || '').toLowerCase()),
-      )
-      const last = data.submissionData.find(
-        (item: { field: string; value: unknown }) =>
-          /last/.test(String(item.field || '').toLowerCase()),
-      )
+      const first = data.submissionData.find((item) => /first/.test(item.field.toLowerCase()))
+      const last = data.submissionData.find((item) => /last/.test(item.field.toLowerCase()))
       const a = first && typeof first.value === 'string' ? first.value : ''
       const b = last && typeof last.value === 'string' ? last.value : ''
       fullName = [a, b].filter(Boolean).join(' ').trim()
     }
     const { firstName, lastName } = extractNameParts(fullName)
 
-    // Resolve form type. Hand-rolled forms pass `formType` directly;
-    // the generic FormBlock passes `form` (Payload ID) which we map.
-    let formType: 'appointment' | 'consultation' | 'newsletter' | 'contact' = 'contact'
-    if (typeof data.formType === 'string') {
-      const t = data.formType.toLowerCase()
-      if (t === 'appointment' || t === 'consultation' || t === 'newsletter') {
-        formType = t
-      }
-    }
-
-    // Customer confirmation. Skipped silently if no email was captured
-    // (e.g. a hand-rolled form without an email field — owner still
-    // gets the notification below).
-    if (customerEmail) {
-      const customerSubject = 'Thank you for writing to the Museum of Meenakari Heritage'
-      try {
-        await getResend().emails.send({
-          from: FROM_ADDRESS,
-          to: customerEmail,
-          subject: customerSubject,
-          html: generateCustomerEmailHTML(firstName, lastName, formType),
-        })
-      } catch (emailError) {
-        console.error('momh email-forwarding: customer email failed', emailError)
-      }
-    }
-
     const ownerSubject =
       formType === 'appointment'
         ? 'New enquiry · Visit appointment'
         : formType === 'consultation'
           ? 'New enquiry · Private consultation'
-          : formType === 'newsletter'
-            ? 'New subscription · Newsletter'
-            : 'New enquiry · Contact form'
+          : 'New enquiry · Contact form'
+    const storedId = submission.id
+    const savedAt = submission.createdAt
 
-    for (const ownerEmail of OWNER_EMAILS) {
+    after(async () => {
       try {
-        await getResend().emails.send({
-          from: FROM_ADDRESS,
-          to: ownerEmail,
-          subject: ownerSubject,
-          html: generateOwnerEmailHTML(data, formType),
-        })
-      } catch (emailError) {
-        console.error(
-          `momh email-forwarding: owner email to ${ownerEmail} failed`,
-          emailError,
-        )
-      }
-    }
+        const resend = getResend()
+        if (!resend) return
 
-    return NextResponse.json({
-      ok: true,
-      customerEmailed: Boolean(customerEmail),
-      ownersNotified: OWNER_EMAILS.length,
+        // The consultation's uploaded reference file. It stays in the
+        // private bucket; the team email carries it as an attachment plus a
+        // 7-day view link.
+        //  - A key whose file is not in the bucket (the upload broke off, a
+        //    made-up key) gets a plain note.
+        //  - If the file cannot be read back (network, settings), the email
+        //    still gets the view link.
+        //  - A key an earlier enquiry already named (a bot reusing one
+        //    upload) gets the link only, so one upload never fills the
+        //    mailbox many times over; a visitor's own retry is the
+        //    exception (see below).
+        const display: Record<string, UploadDisplay> = {}
+        let attachment: { filename: string; content: string; contentType?: string } | null = null
+        const upload = data.submissionData.find((f) => f.field === 'referenceImage')
+        if (formType === 'consultation' && typeof upload?.value === 'string' && upload.value) {
+          const key = upload.value
+          // Attach the file only to the first enquiry that names it. One
+          // exception: the same visitor sending again within 30 minutes (the
+          // answer to their first try was lost, so that one was never
+          // emailed) still gets the attachment.
+          let firstUse = true
+          try {
+            const earlier = await payload.find({
+              collection: 'form-submissions',
+              where: {
+                and: [{ 'submissionData.value': { equals: key } }, { id: { less_than: storedId } }],
+              },
+              depth: 0,
+              limit: 2,
+              sort: '-id',
+              overrideAccess: true,
+            })
+            if (earlier.totalDocs === 1) {
+              const prev = earlier.docs[0] as unknown as StoredSubmission
+              const prevRows = Array.isArray(prev.submissionData)
+                ? (prev.submissionData as Array<{ field?: unknown; value?: unknown }>)
+                : []
+              const prevEmail = prevRows.find((f) => {
+                const n = String(f?.field ?? '').toLowerCase()
+                return n.includes('email') || n.includes('mail')
+              })?.value
+              const prevAge = prev.createdAt ? Date.now() - Date.parse(prev.createdAt) : Infinity
+              firstUse =
+                Boolean(customerEmail) &&
+                typeof prevEmail === 'string' &&
+                prevEmail.trim().toLowerCase() === customerEmail.toLowerCase() &&
+                prevAge >= 0 &&
+                prevAge < 30 * 60 * 1000
+            } else {
+              firstUse = earlier.totalDocs === 0
+            }
+          } catch (countError) {
+            console.error(
+              'momh email-forwarding: could not check earlier use of the upload',
+              countError,
+            )
+          }
+          let file: Awaited<ReturnType<typeof readUpload>> | undefined
+          if (firstUse) {
+            try {
+              file = await readUpload(key)
+            } catch (readError) {
+              console.error('momh email-forwarding: could not read the uploaded file', readError)
+            }
+          }
+          if (file === null) {
+            display.referenceImage = { kind: 'note', text: FILE_NOT_ARRIVED }
+          } else {
+            let href: string | null = null
+            try {
+              href = await createViewLink(key)
+            } catch (linkError) {
+              console.error('momh email-forwarding: upload view link failed', linkError)
+            }
+            if (file) {
+              const visitorName = data.submissionData.find(
+                (f) => f.field === 'referenceImageName',
+              )?.value
+              const filename = safeFileName(visitorName, key)
+              attachment = {
+                filename,
+                content: file.bytes.toString('base64'),
+                ...(isUploadType(file.contentType) ? { contentType: file.contentType } : {}),
+              }
+              display.referenceImage = { kind: 'attached', name: filename, href }
+            } else if (href) {
+              display.referenceImage = { kind: 'link', href }
+            }
+          }
+        }
+
+        // Without the attachment: the same email with the view link only,
+        // used when the email with the file still fails after its retry.
+        const displayWithoutFile: Record<string, UploadDisplay> = { ...display }
+        const shown = display.referenceImage
+        if (shown?.kind === 'attached') {
+          if (shown.href) displayWithoutFile.referenceImage = { kind: 'link', href: shown.href }
+          else delete displayWithoutFile.referenceImage
+        }
+
+        // Team first: near Resend's daily limit the last send goes to the
+        // sales team rather than to the visitor's thank-you.
+        for (const [i, ownerEmail] of OWNER_EMAILS.entries()) {
+          const base = { from: FROM_ADDRESS, to: ownerEmail, subject: ownerSubject }
+          const key = `momh-owner-${storedId}-${i}`
+          let problem = await sendOnce(
+            resend,
+            {
+              ...base,
+              html: generateOwnerEmailHTML(data, formType, display, savedAt),
+              ...(attachment ? { attachments: [attachment] } : {}),
+            },
+            key,
+          )
+          // Link-only copy only when Resend refused the email itself, never
+          // for a 409 about its key (that could send the team a duplicate).
+          if (problem && attachment && problem.statusCode !== 409) {
+            console.error(
+              `momh email-forwarding: owner email with attachment to ${ownerEmail} failed; sending without it`,
+              problem,
+            )
+            await sleep(1000)
+            problem = await sendOnce(
+              resend,
+              {
+                ...base,
+                html: generateOwnerEmailHTML(data, formType, displayWithoutFile, savedAt),
+              },
+              `${key}-nofile`,
+            )
+          }
+          if (problem) {
+            console.error(`momh email-forwarding: owner email to ${ownerEmail} failed`, problem)
+          }
+        }
+
+        // Customer confirmation. Skipped if no email was stored.
+        if (customerEmail) {
+          const problem = await sendOnce(
+            resend,
+            {
+              from: FROM_ADDRESS,
+              to: customerEmail,
+              subject: 'Thank you for writing to the Museum of Meenakari Heritage',
+              html: generateCustomerEmailHTML(firstName, lastName, formType),
+            },
+            `momh-customer-${storedId}`,
+          )
+          if (problem) console.error('momh email-forwarding: customer email failed', problem)
+        }
+      } catch (sendError) {
+        console.error('momh email-forwarding: unexpected error while sending', sendError)
+      }
     })
+
+    // The emails go out right after this answer (see after() above).
+    return NextResponse.json({ ok: true, queued: true })
   } catch (error) {
     console.error('momh email-forwarding: unexpected error', error)
-    return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 },
-    )
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
   }
 }

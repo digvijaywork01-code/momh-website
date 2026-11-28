@@ -1,31 +1,34 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../access/authenticated'
+import { syncNewsletterSignupToCRM } from '../utilities/twentyCrm'
 
 /**
  * Newsletter Subscribers — captures email signups from the home-page
  * "Our Newsletter" widget (and any future newsletter blocks).
  *
- * The public site posts to `/api/newsletter` (a thin route that wraps
- * Payload's local API). That route is what actually creates docs here,
- * so the only "public" access this collection needs is `create`
- * (admin/list/update/delete remain authenticated-only).
+ * The public site posts to `/api/newsletter`, which runs the spam checks
+ * (origin, hidden trap box, signed time pass, throwaway domains) and then
+ * creates the doc here through Payload's local API with overrideAccess.
+ * So the collection itself needs no public access at all: create is
+ * staff-only, which stops anyone adding addresses through the raw
+ * `/api/newsletter-subscribers` REST/GraphQL endpoints and skipping those
+ * checks (same pattern as the SS site's Unsubscribes collection).
  *
  * Drafts are intentionally off — every signup is a finalised record;
  * there's no editor workflow to gate.
  *
- * Email uniqueness is enforced at the DB level. The route catches the
- * resulting duplicate-key error and returns success anyway, so a
- * returning subscriber gets the same friendly UX without exposing
- * whether their address is already in the list.
+ * Email uniqueness is enforced at the DB level. The route checks for an
+ * existing address first (and again if a save races another one) and
+ * answers a returning subscriber exactly like a new one, so the list
+ * never reveals who is on it.
  */
 export const NewsletterSubscribers: CollectionConfig = {
   slug: 'newsletter-subscribers',
   access: {
-    // STOP-GAP until the Payload 3.93 upgrade: was `anyone`. Public sign-ups
-    // go through /api/newsletter, which uses the Local API and so does not
-    // need this. Closed, nobody can post straight to
-    // /api/newsletter-subscribers without a login.
+    // Closed for good (not a stop-gap): public sign-ups go through
+    // /api/newsletter, which runs the spam checks and saves through the
+    // Local API. Nobody can post straight to /api/newsletter-subscribers.
     create: authenticated,
     read: authenticated,
     update: authenticated,
@@ -86,6 +89,17 @@ export const NewsletterSubscribers: CollectionConfig = {
           data.email = data.email.trim().toLowerCase()
         }
         return data
+      },
+    ],
+    afterChange: [
+      // Mirror every new subscriber into the Twenty CRM (newsletterStatus =
+      // SUBSCRIBED; person created email-only if missing), as the SS site
+      // does for its newsletter. This collection stays the source of record.
+      // Best-effort: a CRM outage never fails the saved sign-up.
+      async ({ doc, req, operation }) => {
+        if (operation !== 'create') return
+        if (typeof doc?.email !== 'string' || !doc.email.includes('@')) return
+        await syncNewsletterSignupToCRM(doc.email, req.payload.logger)
       },
     ],
   },
