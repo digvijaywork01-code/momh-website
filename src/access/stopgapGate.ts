@@ -20,7 +20,8 @@
  * GraphQL is switched off in src/app/(payload)/api/graphql/route.ts.
  *
  * NOT touched by this gate (separate route files, they keep working for
- * visitors): /api/email-forwarding, /api/newsletter, /api/form-token.
+ * visitors): /api/email-forwarding, /api/newsletter, /api/form-token,
+ * /api/consultation-upload.
  *
  * REMOVE this file and its three call sites in the same release that
  * upgrades Payload to 3.93.0 or later. Every other place to undo then
@@ -60,6 +61,10 @@ const OPEN_WITHOUT_LOGIN: ReadonlySet<string> = new Set([
   'GET users/init', // "does a first user exist?"
   'GET users/me', // session check on every admin page; answers { user: null }
   'POST users/login',
+  // Visitors' enquiries (Book An Appointment, Personal Consultation). Open
+  // again since Payload 3.94.2, which fixes GHSA-r488-j9vj-wx3q; the spam
+  // hook in src/plugins/index.ts guards it.
+  'POST form-submissions',
   ...(process.env.NODE_ENV === 'production' ? [] : ['POST users/first-register']),
 ])
 

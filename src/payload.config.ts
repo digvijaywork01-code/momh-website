@@ -123,7 +123,7 @@ export default buildConfig({
     }
     // The same for `form_attempts` (the per-connection cap on form sends,
     // src/collections/FormAttempts.ts), with the same SQL as migration
-    // 20261124_052511_form_attempts. If the code goes live before that
+    // 20261127_173528_form_attempts. If the code goes live before that
     // migration has run, this adds the table and the document-lock column
     // the admin reads for every collection, so nothing breaks.
     try {

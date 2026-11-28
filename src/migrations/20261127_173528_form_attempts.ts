@@ -8,10 +8,14 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
  * key and index Payload's document-lock table keeps for every collection.
  * Every statement is guarded, so running it on a database that already has
  * any of them changes nothing. Generated with migrate:create, then guarded
- * by hand.
+ * by hand. lock_timeout, as in 20261126_114800_upgrade_394: the ALTER on
+ * payload_locked_documents_rels takes a brief exclusive lock, so if live
+ * queries hold that table for more than 10 s the migration (and the build)
+ * fails with nothing changed, instead of queueing requests behind it.
  */
 export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
+  SET LOCAL lock_timeout = '10s';
   CREATE TABLE IF NOT EXISTS "form_attempts" (
   	"id" serial PRIMARY KEY NOT NULL,
   	"key" varchar NOT NULL,
@@ -32,6 +36,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
 
 export async function down({ db }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
+  SET LOCAL lock_timeout = '10s';
   ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT IF EXISTS "payload_locked_documents_rels_form_attempts_fk";
   DROP INDEX IF EXISTS "payload_locked_documents_rels_form_attempts_id_idx";
   ALTER TABLE "payload_locked_documents_rels" DROP COLUMN IF EXISTS "form_attempts_id";

@@ -110,9 +110,9 @@ export const plugins: Plugin[] = [
     fields: {
       payment: false,
     },
-    // The plugin's own email step runs BEFORE the spam hook below and would
-    // send whatever emails a form record lists. MOMH's emails are sent by
-    // /api/email-forwarding instead, after the submission has passed the
+    // The plugin's own email step (an afterChange hook since Payload 3.90)
+    // would send whatever emails a form record lists. MOMH's emails are sent
+    // by /api/email-forwarding instead, after the submission has passed the
     // spam checks and been saved, so the plugin must never send any.
     beforeEmail: () => [],
     formOverrides: {
