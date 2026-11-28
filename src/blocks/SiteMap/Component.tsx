@@ -82,6 +82,9 @@ const SECTION =
   '[--sm-ic:max(32px,calc(44*var(--sm-u)))] ' +
   '[--sm-off:calc(60.83*var(--sm-u))] [--sm-row:calc(2*var(--fs-body))] md:[--sm-row:calc(1.6667*var(--fs-body))] [--sm-cap:max(14px,calc(0.5833*var(--fs-body)))] ' +
   'pt-8 pb-6 md:pt-[max(16px,calc(6.2125*var(--pp-vw)_-_3rem_-_0.4202*var(--fs-body)))] ' +
+  // Phones, under a lotus divider: the divider already owns the 48px gap,
+  // so only the house's own clearance is added above the tree.
+  '[@media(max-width:767px)]:[.lotus-divider+&]:pt-[6px] ' +
   // From the bottom of the last row: the caption's baseline sits 0.301em of
   // its own size below the row's middle (Gill Sans Light Italic, measured),
   // and the Text Section below starts with its baseline 1.0798em of the body

@@ -35,6 +35,28 @@ const prefersReducedMotion = () =>
  *  and Press carousels. */
 const HOLD_AFTER = 8000
 
+/** Phones (below 768) only: the photo box, and the arrows-and-dots box laid
+ *  over it, are 16:9 instead of the flat 16:5 banner, so the photo is not a
+ *  thin strip on a narrow screen. The wide source photos fill it the same way
+ *  (object-cover), so only their left and right edges are trimmed. Tablet
+ *  and desktop keep 16:5, and so does a 640-767 landscape window at least
+ *  480 tall (`sbs` in tailwind.config): that is a small window, not a phone,
+ *  and a 16:9 photo would fill most of its height. Tailwind's `max-md:` is
+ *  not generated here (the custom raw screens turn max-* off), and it drops
+ *  media queries written with commas, so the two conditions are stacked. */
+const PHONE_PHOTO_RATIO =
+  '[@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:aspect-video'
+
+/** Which photo file the browser loads. Filling the taller phone box zooms the
+ *  ~3.15:1 photo to about 1.78 times the screen width (3.15 / 1.78), so phones
+ *  ask for a file that wide and the photo stays sharp. From 768 up it is the
+ *  full width, which is what the browser already used there (Media's default
+ *  list is all `w` values, which `sizes` ignores, leaving 100vw). The
+ *  phone screens are listed as the three ways of being under 768 and not
+ *  side by side, matching PHONE_PHOTO_RATIO. */
+const PHONE_PHOTO_SIZES =
+  '(max-width: 639px) 178vw, (max-width: 767px) and (orientation: portrait) 178vw, (max-width: 767px) and (max-height: 479px) 178vw, 100vw'
+
 // `backgroundColor` is kept on the schema for forward-compatibility,
 // but the component no longer paints the section bg — per design
 // direction the carousel images bleed full viewport width on a
@@ -374,7 +396,7 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
                   className="shrink-0 grow-0 w-full"
                 >
                   <div className="flex flex-col items-center text-center">
-                    {/* Image — full viewport width, ~16:5 aspect
+                    {/* Image — full viewport width, ~16:5 aspect (16:9 on phones, see PHONE_PHOTO_RATIO)
                         (3.2:1 — flat editorial banner). Matches the
                         natural crop of the supplied source files
                         (7990 × 2537 ≈ 3.15:1). Was 16:10 (1.6:1)
@@ -383,10 +405,11 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
                         in one viewport view; the flatter crop frees
                         ~450px of column height on a 1440 viewport. */}
                     {resource && (
-                      <div className="relative w-full aspect-[16/5] overflow-hidden">
+                      <div className={cn('relative w-full aspect-[16/5] overflow-hidden', PHONE_PHOTO_RATIO)}>
                         <Media
                           fill
                           loading="eager"
+                          size={PHONE_PHOTO_SIZES}
                           imgClassName="absolute inset-0 w-full h-full object-cover"
                           resource={resource}
                           alt={
@@ -459,7 +482,7 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
           </div>
 
           {/* Controls overlay — exactly the image box: full card width,
-              same 16:5 ratio, top 0 (the image is every slide's first
+              same ratio (16:5; 16:9 on phones), top 0 (the image is every slide's first
               child and `image` is a required field). One shared set of
               arrows and dots (not one per slide), so they stay put while
               the slides fade underneath. The box itself ignores the
@@ -468,11 +491,14 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
               that starts on an arrow or the dots still moves the slides
               (Embla cancels the click after a real drag, over 10px). */}
           {slideList.length > 1 && (
-            <div className="pointer-events-none absolute inset-x-0 top-0 z-10 aspect-[16/5]">
+            <div className={cn('pointer-events-none absolute inset-x-0 top-0 z-10 aspect-[16/5]', PHONE_PHOTO_RATIO)}>
               {/* Prev / Next — on the image at mid-height, left + right
                   edges. Solid brand-red circles, darkening to
                   brand-red-dark on hover (as the InfoHero red buttons
-                  do). */}
+                  do). Hover only where there is a mouse
+                  (`hover: hover`): a touch screen keeps the last tapped
+                  button "hovered" until the next tap elsewhere, so a
+                  tapped arrow (or dot) stayed dark. */}
               <button
                 type="button"
                 onClick={() => go('prev')}
@@ -481,7 +507,7 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
                 className={cn(
                   'pointer-events-auto absolute left-3 md:left-6 top-1/2 -translate-y-1/2 z-10',
                   'h-11 w-11 md:h-12 md:w-12 flex items-center justify-center rounded-full',
-                  'bg-brand-red hover:bg-brand-red-dark text-offwhite transition-colors duration-200',
+                  'bg-brand-red [@media(hover:hover)]:hover:bg-brand-red-dark text-offwhite transition-colors duration-200',
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-offwhite',
                 )}
               >
@@ -507,7 +533,7 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
                 className={cn(
                   'pointer-events-auto absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-10',
                   'h-11 w-11 md:h-12 md:w-12 flex items-center justify-center rounded-full',
-                  'bg-brand-red hover:bg-brand-red-dark text-offwhite transition-colors duration-200',
+                  'bg-brand-red [@media(hover:hover)]:hover:bg-brand-red-dark text-offwhite transition-colors duration-200',
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-offwhite',
                 )}
               >
@@ -545,7 +571,7 @@ export const ProcessCarouselBlock: React.FC<ProcessCarouselBlockProps> = ({
                         'h-2 rounded-full transition-all duration-300',
                         active
                           ? 'w-6 bg-brand-red'
-                          : 'w-2 bg-offwhite/50 hover:bg-offwhite/80',
+                          : 'w-2 bg-offwhite/50 [@media(hover:hover)]:hover:bg-offwhite/80',
                       )}
                     />
                   )
