@@ -39,16 +39,23 @@ const HOLD_AFTER = 8000
  *  over it, are 16:9 instead of the flat 16:5 banner, so the photo is not a
  *  thin strip on a narrow screen. The wide source photos fill it the same way
  *  (object-cover), so only their left and right edges are trimmed. Tablet
- *  and desktop keep 16:5. Tailwind's `max-md:` is not generated here (the
- *  custom raw screens turn max-* off), hence the explicit media query. */
-const PHONE_PHOTO_RATIO = '[@media(max-width:767px)]:aspect-video'
+ *  and desktop keep 16:5, and so does a 640-767 landscape window at least
+ *  480 tall (`sbs` in tailwind.config): that is a small window, not a phone,
+ *  and a 16:9 photo would fill most of its height. Tailwind's `max-md:` is
+ *  not generated here (the custom raw screens turn max-* off), and it drops
+ *  media queries written with commas, so the two conditions are stacked. */
+const PHONE_PHOTO_RATIO =
+  '[@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:aspect-video'
 
 /** Which photo file the browser loads. Filling the taller phone box zooms the
  *  ~3.15:1 photo to about 1.78 times the screen width (3.15 / 1.78), so phones
  *  ask for a file that wide and the photo stays sharp. From 768 up it is the
  *  full width, which is what the browser already used there (Media's default
- *  list is all `w` values, which `sizes` ignores, leaving 100vw). */
-const PHONE_PHOTO_SIZES = '(max-width: 767px) 178vw, 100vw'
+ *  list is all `w` values, which `sizes` ignores, leaving 100vw). The
+ *  phone screens are listed as the three ways of being under 768 and not
+ *  side by side, matching PHONE_PHOTO_RATIO. */
+const PHONE_PHOTO_SIZES =
+  '(max-width: 639px) 178vw, (max-width: 767px) and (orientation: portrait) 178vw, (max-width: 767px) and (max-height: 479px) 178vw, 100vw'
 
 // `backgroundColor` is kept on the schema for forward-compatibility,
 // but the component no longer paints the section bg — per design

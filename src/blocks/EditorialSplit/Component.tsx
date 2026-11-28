@@ -94,7 +94,13 @@ const bottomSpacingClass: Record<BottomSpacingKey, string> = {
  *  the whole gap: from the photo to the first line, and from the last line
  *  to the next photo or colour. Below, 46px: the last line (Read More, a
  *  link) carries about 2px of its own line box under the letters. */
-const PHONE_TEXT_GAP = '[@media(max-width:767px)]:!flex-none [@media(max-width:767px)]:!pt-12 [@media(max-width:767px)]:!pb-[46px]'
+// Phones, stacked layout only. Every phone rule in this file carries two
+// variants: under 768 AND not `sbs` (tailwind.config: 640+ wide, landscape,
+// 480+ tall). From 640 a landscape window already shows the panel side by
+// side, and these rules would break that layout (a phone turned sideways
+// on a Surface Duo, a small browser window). Tailwind drops media queries
+// written with commas, so the two conditions are stacked; it nests them.
+const PHONE_TEXT_GAP = '[@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:!flex-none [@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:!pt-12 [@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:!pb-[46px]'
 
 /** Portrait tablets (768 up, portrait: the stacked layout), full-screen
  *  panels only (default variant). The panel is one screen and the home page
@@ -388,22 +394,22 @@ export const EditorialSplitBlock: React.FC<
         bgClass[bg],
         // Phones (<768), cream panels (evenTextGap): the panel hugs its
         // photo + text, so the text sits in an even 48px gap (PHONE_TEXT_GAP).
-        evenTextGap && '[@media(max-width:767px)]:!min-h-0',
+        evenTextGap && '[@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:!min-h-0',
         // `editorial-split` names the block (no styles of its own). A band's
         // 3vw padding would add to that gap on phones: none below the text,
         // and none above the photo when another panel ends right above it.
         'editorial-split',
         band &&
-          '[@media(max-width:767px)]:!pb-0 [@media(max-width:767px)]:[.editorial-split+&]:!pt-0',
+          '[@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:!pb-0 [@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:[.editorial-split+&]:!pt-0',
         // The block after a panel (a photo slider, a page intro) adds no top
         // padding of its own on phones; the panel's gap below is the space.
-        evenTextGap && '[@media(max-width:767px)]:[&+section]:!pt-0',
+        evenTextGap && '[@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:[&+section]:!pt-0',
         // ...and when that block opens with a heading rather than a photo
         // (a page intro, or a band whose heading sits over its photo), it
         // moves up the ~6px its first line box leaves above the letters.
         evenTextGap &&
-          '[@media(max-width:767px)]:[&+section:not(.editorial-split):not(:has(img))]:!-mt-[6px]',
-        headingOverImage && '[@media(max-width:767px)]:[.editorial-split+&]:!-mt-[6px]',
+          '[@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:[&+section:not(.editorial-split):not(:has(img))]:!-mt-[6px]',
+        headingOverImage && '[@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:[.editorial-split+&]:!-mt-[6px]',
         topSpacingClass[topSpacing as TopSpacingKey],
         bottomSpacingClass[bottomSpacing as BottomSpacingKey],
       )}
@@ -421,7 +427,7 @@ export const EditorialSplitBlock: React.FC<
           // as tall as the taller of its two columns.
           band ? '' : fifty ? 'sbs:min-h-svh' : 'min-h-svh',
           !band && !fifty && TABLET_FIT_WRAP,
-          evenTextGap && '[@media(max-width:767px)]:!min-h-0',
+          evenTextGap && '[@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:!min-h-0',
         )}
       >
         {/* Image column — height matches section, width = height × image
@@ -642,13 +648,13 @@ export const EditorialSplitBlock: React.FC<
               imageFirst ? 'sbs:ml-auto' : '',
               // Phones: no leftover to anchor in, and the last line keeps no
               // margin of its own, so the gap below is PHONE_TEXT_GAP alone.
-              evenTextGap && '[@media(max-width:767px)]:!my-0 [@media(max-width:767px)]:[&>*:last-child]:!mb-0',
+              evenTextGap && '[@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:!my-0 [@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:[&>*:last-child]:!mb-0',
               // A first line of text starts below its own line box (Cormorant
               // and Gill Sans leave about 6px above the letters, the 32px
               // display heading 4px), so it moves up by that much and the
               // letters, not the line box, sit 48px under the photo.
               evenTextGap &&
-                '[@media(max-width:767px)]:[&>:first-child:not(img)]:!-mt-[6px] [@media(max-width:767px)]:[&>.editorial-display:first-child]:!-mt-[4px]',
+                '[@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:[&>:first-child:not(img)]:!-mt-[6px] [@media(max-width:767px)]:[@media_not_all_and_(min-width:640px)_and_(orientation:landscape)_and_(min-height:480px)]:[&>.editorial-display:first-child]:!-mt-[4px]',
             )}
           >
             {/* Mobile-only icon — sits directly above the eyebrow.

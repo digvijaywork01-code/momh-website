@@ -39,7 +39,7 @@ type Props = {
   /** Extra className applied to the toggle button. Defaults to an
    *  editorial italic underline. */
   toggleClassName?: string
-  /** Phones (<768) only, opt-in: the element whose `margin-top: auto` is the
+  /** Phones (<768, stacked layout, not side by side) only, opt-in: the element whose `margin-top: auto` is the
    *  spare room in a full-screen panel (EditorialSplit's content stack).
    *  The text then fills that room: in full, with no Read More, when it all
    *  fits; otherwise as many lines as fit (never fewer than
@@ -112,7 +112,11 @@ export const ExpandableText: React.FC<Props> = ({
     const stack = fillSpaceRef?.current
     const box = boxRef.current
     if (!stack || !box || expanded) return
-    const phones = window.matchMedia('(max-width: 767px)')
+    // Phones in the stacked layout: under 768 and not side by side (`sbs` in
+    // tailwind.config), the same screens EditorialSplit's phone rules use.
+    const narrow = window.matchMedia('(max-width: 767px)')
+    const sideBySide = window.matchMedia('(min-width: 640px) and (orientation: landscape) and (min-height: 480px)')
+    const isPhone = () => narrow.matches && !sideBySide.matches
     let frame = 0
     // Set on cleanup, so a late callback (fonts.ready, a queued observer) from
     // this run does nothing after Read More is tapped or the text unmounts.
@@ -122,7 +126,7 @@ export const ExpandableText: React.FC<Props> = ({
       cancelAnimationFrame(frame)
       frame = requestAnimationFrame(() => {
         if (cancelled) return
-        if (!phones.matches) {
+        if (!isPhone()) {
           setFit(null)
           return
         }
@@ -155,13 +159,15 @@ export const ExpandableText: React.FC<Props> = ({
     // The photo above sets the room left for the text; it can size late.
     const panel = stack.closest('section')
     if (panel) watch.observe(panel)
-    phones.addEventListener('change', measure)
+    narrow.addEventListener('change', measure)
+    sideBySide.addEventListener('change', measure)
     document.fonts?.ready.then(measure)
     return () => {
       cancelled = true
       cancelAnimationFrame(frame)
       watch.disconnect()
-      phones.removeEventListener('change', measure)
+      narrow.removeEventListener('change', measure)
+      sideBySide.removeEventListener('change', measure)
     }
   }, [fillSpaceRef, mobileLineClamp, expanded])
 
