@@ -21,20 +21,21 @@ import {
   isHoneypotFilled,
 } from '@/utilities/formGuards'
 import { UPLOAD_KEY_RE } from '@/utilities/uploadRules'
-import { isEmailTooLong } from '@/utilities/emailFormat'
-import { FORM_FIELD_NAMES, FORM_IDS } from '@/utilities/formIds'
+import { isEmailTooLong, isValidEmail } from '@/utilities/emailFormat'
+import { FORM_FIELD_NAMES, FORM_IDS, FORM_REQUIRED_FIELDS, maxLengthOf } from '@/utilities/formIds'
 import { RANDOM_FIELDS_TO_REFUSE, randomLookingFields } from '@/utilities/randomText'
 import { clientIp, withinRateLimit } from '@/utilities/rateLimit'
 import { verifyRecaptcha } from '@/utilities/recaptcha'
 import { authenticated } from '@/access/authenticated'
 
 // STOP-GAP until the Payload 3.93 upgrade (GHSA-xx6w-jxg9-2wh8,
-// GHSA-v49j-62m6-pgrr, GHSA-r488-j9vj-wx3q): the three `access` lines marked
+// GHSA-v49j-62m6-pgrr, GHSA-r488-j9vj-wx3q): the four `access` rules marked
 // STOP-GAP below close what the plugins leave open to callers without a
 // login (read on redirects, forms and search), and stop new forms being
 // built in the admin for now.
 // The site's own code reads these through the Local API, which skips access
-// rules. To undo: delete the three lines and the import above.
+// rules. To undo: delete the four rules and the import above (forms keeps
+// its `delete` rule, which is not a stop-gap).
 // Not a stop-gap any more: create on form-submissions is open again (see
 // formSubmissionOverrides below). Payload 3.94.2 has the fix for
 // GHSA-r488-j9vj-wx3q, and visitors' enquiries are saved through it.
@@ -59,6 +60,21 @@ const UPLOAD_FIELDS = new Set(['referenceImage', 'referenceImageName', 'referenc
 // The longest field name any form may send. The site's own are under 30
 // characters; 200 leaves room for names typed into a CMS form.
 const MAX_FIELD_NAME_LENGTH = 200
+
+// The most rows any form may send. The Personal Consultation sends 16
+// answers plus the three spam markers (19 rows); 40 leaves room for a form
+// built in the CMS.
+const MAX_SUBMISSION_ROWS = 40
+
+// The spam-protection markers the forms send with their answers. The spam
+// hook reads them and strips them before saving.
+const SPAM_MARKERS: ReadonlySet<string> = new Set(['_hp', '_t', '_rc'])
+
+/** The form record number an enquiry names (1, or { id: 1 }); NaN if none. */
+const formIdOf = (formRef: unknown): number =>
+  Number(
+    typeof formRef === 'object' && formRef !== null ? (formRef as { id?: unknown }).id : formRef,
+  )
 
 // Spam-protection checks (origin, honeypot, signed time pass, throwaway
 // domains) live in src/utilities/formGuards.ts, shared with /api/newsletter
@@ -122,7 +138,15 @@ export const plugins: Plugin[] = [
       // tests it and fail for every visitor (403, nothing stored, no
       // e-mail). No form exists in production today. The Local API (scripts)
       // is not affected.
-      access: { read: authenticated, create: () => false },
+      access: {
+        read: authenticated, // STOP-GAP (see above)
+        create: () => false, // STOP-GAP (see above)
+        // Not a stop-gap: keep. The enquiry forms save into form records 1
+        // and 2 (src/utilities/formIds.ts); with one deleted, every enquiry
+        // for that form fails. No form can be deleted in the admin or the
+        // API; scripts/page-content/form-records.mts can undo its own records.
+        delete: () => false,
+      },
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
           if ('name' in field && field.name === 'confirmationMessage') {
@@ -170,6 +194,84 @@ export const plugins: Plugin[] = [
         },
       ],
       hooks: {
+        // Runs before Payload reads a single row. Payload's own field pass
+        // walks every row of submissionData BEFORE the beforeChange hook
+        // below, so one anonymous request with a few hundred thousand rows
+        // held up the server for seconds and ran it out of memory. Only a
+        // short list of { field: text } rows goes any further.
+        beforeOperation: [
+          ({ args, operation, req }) => {
+            if (operation !== 'create') return args
+            const rows: unknown = (args?.data as { submissionData?: unknown } | undefined)
+              ?.submissionData
+            const shapeOk =
+              Array.isArray(rows) &&
+              rows.length <= MAX_SUBMISSION_ROWS &&
+              rows.every(
+                (row) =>
+                  typeof row === 'object' &&
+                  row !== null &&
+                  !Array.isArray(row) &&
+                  typeof (row as { field?: unknown }).field === 'string' &&
+                  (row as { field: string }).field.length <= MAX_FIELD_NAME_LENGTH,
+              )
+            if (!shapeOk) {
+              req.payload.logger.warn({ msg: 'Form spam blocked: too many rows or not rows' })
+              throw new APIError('Submission rejected.', 400, null, true)
+            }
+            const data = args.data as { form?: unknown; submissionData: unknown[] }
+
+            // Every answer is text. The forms only send text; a list, an
+            // object or a number would slip past every rule below, which
+            // only read text.
+            const sent = data.submissionData as Array<{ field: string; value?: unknown }>
+            if (sent.some((row) => typeof row.value !== 'string')) {
+              req.payload.logger.warn({ msg: 'Form spam blocked: answer not text' })
+              throw new APIError('Submission rejected.', 400, null, true)
+            }
+
+            // Spaces at either end are removed from every answer (not from
+            // the spam markers: a trap box filled with spaces is still
+            // filled). Each answer then fits its field's limit
+            // (src/utilities/formIds.ts), which the form's boxes also set.
+            const answers = sent.map((row) => ({
+              field: row.field,
+              value: SPAM_MARKERS.has(row.field)
+                ? (row.value as string)
+                : (row.value as string).trim(),
+            }))
+            const tooLong = answers.find((a) => a.value.length > maxLengthOf(a.field))
+            if (tooLong) {
+              req.payload.logger.warn({
+                msg: 'Form spam blocked: answer too long',
+                field: tooLong.field,
+              })
+              throw new APIError('Submission rejected.', 400, null, true)
+            }
+
+            // The two hand-built forms: every compulsory answer is there and
+            // is more than spaces. The forms show a red line first.
+            const required = FORM_REQUIRED_FIELDS[formIdOf(data.form)]
+            if (required) {
+              const filled = new Set(answers.filter((a) => a.value !== '').map((a) => a.field))
+              const missing = required.filter((name) => !filled.has(name))
+              if (missing.length) {
+                req.payload.logger.warn({
+                  msg: 'Form spam blocked: compulsory answer empty',
+                  fields: missing,
+                })
+                throw new APIError('Submission rejected.', 400, null, true)
+              }
+            }
+
+            // Only the form and its answers are taken from the sender. The
+            // dates (createdAt, updatedAt) are Payload's own: a back-dated
+            // enquiry would never be emailed (/api/email-forwarding sends
+            // only for one saved in the last 60 seconds).
+            args.data = { form: data.form, submissionData: answers }
+            return args
+          },
+        ],
         beforeChange: [
           async ({ data, req }) => {
             const submissionData: Array<{ field: string; value: unknown }> = Array.isArray(
@@ -227,15 +329,10 @@ export const plugins: Plugin[] = [
             // made-up or look-alike label (another alphabet, '1' for 'I')
             // can reach the team email, and the upload fields can only
             // come with a Personal Consultation enquiry.
-            const formRef = data?.form as unknown
-            const formId = Number(
-              typeof formRef === 'object' && formRef !== null
-                ? (formRef as { id?: unknown }).id
-                : formRef,
-            )
+            const formId = formIdOf(data?.form)
             const allowedNames = FORM_FIELD_NAMES[formId]
             if (allowedNames) {
-              const allowed = new Set<string>([...allowedNames, '_hp', '_t', '_rc'])
+              const allowed = new Set<string>([...allowedNames, ...SPAM_MARKERS])
               if (
                 submissionData.some((f) => typeof f.field !== 'string' || !allowed.has(f.field))
               ) {
@@ -278,16 +375,6 @@ export const plugins: Plugin[] = [
                 ip,
               })
               throw new Error('Submission rejected.')
-            }
-
-            // (1b) A cap per connection (src/utilities/rateLimit.ts) on
-            // saved enquiries. It runs on this save's own database
-            // connection, in a savepoint, so it never waits for a second
-            // connection and a counter problem never spoils the save (it
-            // fails open). A refused enquiry's count is rolled back with it.
-            if (!(await withinRateLimit(req.payload, 'enquiry', req?.headers, req))) {
-              req.payload.logger.warn({ msg: 'Form spam blocked: rate limit', ip })
-              throw new APIError('Too many forms sent from this connection.', 429, null, true)
             }
 
             // (2) Honeypot — any non-empty value means a bot filled the trap.
@@ -351,6 +438,18 @@ export const plugins: Plugin[] = [
             }
             if (emailFields.some((f) => typeof f.value === 'string' && isEmailTooLong(f.value))) {
               req.payload.logger.warn({ msg: 'Form spam blocked: email too long', ip })
+              throw new Error('Submission rejected.')
+            }
+            //   - not one address of the usual shape (isValidEmail, the rule
+            //     /api/newsletter uses): no list ("a@x, b@x"), no display
+            //     name ("Name <x@y>"), no line break, no text without an "@".
+            //     The visitor's email is sent to this address.
+            if (
+              emailFields.some(
+                (f) => typeof f.value === 'string' && f.value !== '' && !isValidEmail(f.value),
+              )
+            ) {
+              req.payload.logger.warn({ msg: 'Form spam blocked: email not valid', ip })
               throw new Error('Submission rejected.')
             }
 
@@ -456,6 +555,22 @@ export const plugins: Plugin[] = [
             ) {
               req.payload.logger.warn({ msg: 'Form spam blocked: bad upload key', ip })
               throw new Error('Submission rejected.')
+            }
+
+            // (8) A cap per connection (src/utilities/rateLimit.ts) on
+            // saved enquiries, checked LAST: after the reCAPTCHA call (3b)
+            // and every refusal rule above. Its count runs under a database
+            // lock per connection that lasts until this save ends, so it must
+            // never be taken before a slow step: held across Google's answer,
+            // a burst of junk tokens from one connection queued every other
+            // database request (admin, forms, newsletter) behind it. It runs
+            // on this save's own database connection, in a savepoint, so it
+            // never waits for a second connection and a counter problem never
+            // spoils the save (it fails open). A refused enquiry's count is
+            // rolled back with it.
+            if (!(await withinRateLimit(req.payload, 'enquiry', req?.headers, req))) {
+              req.payload.logger.warn({ msg: 'Form spam blocked: rate limit', ip })
+              throw new APIError('Too many forms sent from this connection.', 429, null, true)
             }
 
             // Strip spam-protection markers (and any reCAPTCHA token) from

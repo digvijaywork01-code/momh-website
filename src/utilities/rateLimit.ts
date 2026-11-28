@@ -24,7 +24,9 @@ import type { Payload, PayloadRequest } from 'payload'
  * The caps leave room for a real visitor who makes a few mistakes, and for
  * many people on one shared connection (mobile networks in India, a venue's
  * Wi-Fi). Count and add happen under a lock per key, so a burst of
- * simultaneous sends cannot slip past the cap.
+ * simultaneous sends cannot slip past the cap. Inside a hook that lock lasts
+ * until the save ends, so call this as the hook's last step, never before a
+ * slow one such as the reCAPTCHA check.
  *
  * Fails open: if the count cannot be read or written (database trouble, or
  * the table not created yet), the send goes ahead and a warning is logged.

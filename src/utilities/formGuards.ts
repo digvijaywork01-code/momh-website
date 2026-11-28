@@ -20,8 +20,13 @@ import disposableDomains from 'disposable-email-domains'
 // Forgeable, but stops direct-API bots that don't bother spoofing.
 
 const ALLOWED_ORIGINS: readonly string[] = ['https://momhindia.org', 'https://www.momhindia.org']
+// Preview sites and a developer's own machine, accepted everywhere except
+// the live site (Vercel sets VERCEL_ENV to "production" there). Anyone can
+// put a page on *.vercel.app, so on the live site only the two addresses
+// above count.
 const VERCEL_PREVIEW_RE = /^https:\/\/[a-z0-9-]+\.vercel\.app$/
 const LOCALHOST_RE = /^http:\/\/localhost(:\d+)?$/
+const acceptsTestOrigins = (): boolean => process.env.VERCEL_ENV !== 'production'
 
 const safeUrlOrigin = (input: string): string => {
   try {
@@ -36,6 +41,7 @@ export const isAllowedOrigin = (origin: string, referer: string): boolean => {
   for (const candidate of [origin, refererOrigin]) {
     if (!candidate) continue
     if (ALLOWED_ORIGINS.includes(candidate)) return true
+    if (!acceptsTestOrigins()) continue
     if (VERCEL_PREVIEW_RE.test(candidate)) return true
     if (LOCALHOST_RE.test(candidate)) return true
   }

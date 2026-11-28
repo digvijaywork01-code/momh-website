@@ -6,7 +6,8 @@ import { isAllowedOrigin } from './formGuards'
  *
  * The three public forms get a token from Google when they are sent
  * (src/utilities/recaptchaClient.ts) and the server asks Google about it
- * here. Refused: no token, a token Google rejects (fake, reused, older than
+ * here, as does the Personal Consultation's upload link
+ * (/api/consultation-upload, action "upload"). Refused: no token, a token Google rejects (fake, reused, older than
  * 2 minutes), a token made for another form or another website, or a score
  * below RECAPTCHA_MIN_SCORE (default 0.5).
  *
@@ -27,7 +28,7 @@ import { isAllowedOrigin } from './formGuards'
  * Google; it is ignored in production.
  */
 
-export type RecaptchaAction = 'appointment' | 'consultation' | 'newsletter'
+export type RecaptchaAction = 'appointment' | 'consultation' | 'newsletter' | 'upload'
 
 export type RecaptchaResult =
   | { ok: true; outcome: 'passed'; score: number }

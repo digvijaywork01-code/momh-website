@@ -78,6 +78,9 @@ const OPEN_WITHOUT_LOGIN: ReadonlySet<string> = new Set([
  */
 const servesLocalMediaFiles = (): boolean => !process.env.BLOB_READ_WRITE_TOKEN
 
+/** Largest body POST form-submissions takes (see gateRest). */
+const MAX_ENQUIRY_BYTES = 64 * 1024
+
 /**
  * True when the request carries no valid Payload login. This is the same
  * check, with the same options, that Payload runs for every request.
@@ -145,6 +148,19 @@ export const gateRest =
       slug[1] === 'file'
     const openWithoutLogin =
       (OPEN_WITHOUT_LOGIN.has(call) || isLocalMediaFile) && !asksForMethodOverride
+
+    // Both enquiry forms send well under 64 KB. A larger body is refused
+    // before it is read. A body sent without a Content-Length goes on to the
+    // row check in the form-submissions beforeOperation hook.
+    if (call === 'POST form-submissions') {
+      const length = Number(request.headers.get('content-length'))
+      if (Number.isFinite(length) && length > MAX_ENQUIRY_BYTES) {
+        return Response.json(
+          { errors: [{ message: 'This enquiry is too large.' }] },
+          { status: 413 },
+        )
+      }
+    }
 
     if (!openWithoutLogin && (await hasNoLogin(config, request.headers))) {
       return refuse('no-login')

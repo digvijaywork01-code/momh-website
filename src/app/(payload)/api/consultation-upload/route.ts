@@ -2,10 +2,12 @@
  * /api/consultation-upload — hands the Personal Consultation form a
  * presigned S3 upload link for its optional reference image / sketch.
  *
- * Body: { contentType, size, _hp, _t }. Same spam gate as the forms
+ * Body: { contentType, size, _hp, _t, _rc }. Same spam gate as the forms
  * (src/utilities/formGuards.ts): origin, a cap per connection
- * (src/utilities/rateLimit.ts), hidden trap box, signed time pass.
- * Then the file must be an accepted type and at most MAX_UPLOAD_BYTES.
+ * (src/utilities/rateLimit.ts), hidden trap box, signed time pass. Then
+ * the file must be an accepted type and at most MAX_UPLOAD_BYTES, and
+ * Google's reCAPTCHA must pass (src/utilities/recaptcha.ts, action
+ * "upload"; skipped while the keys are not set, as on the forms).
  * Answers { url, fields, key }: the browser POSTs the file to `url` with
  * `fields` (S3 enforces the key, type and size) and sends `key` with the
  * enquiry. Nothing is stored here.
@@ -23,7 +25,8 @@ import {
   isHoneypotFilled,
   requestIp,
 } from '@/utilities/formGuards'
-import { withinRateLimit } from '@/utilities/rateLimit'
+import { clientIp, withinRateLimit } from '@/utilities/rateLimit'
+import { verifyRecaptcha } from '@/utilities/recaptcha'
 import { createUploadLink, isUploadConfigured, newUploadKey } from '@/utilities/s3Upload'
 import {
   MAX_UPLOAD_BYTES,
@@ -34,7 +37,7 @@ import {
 
 const GENERIC_ERROR = 'Upload failed.'
 
-type Body = { contentType?: unknown; size?: unknown; _hp?: unknown; _t?: unknown }
+type Body = { contentType?: unknown; size?: unknown; _hp?: unknown; _t?: unknown; _rc?: unknown }
 
 const refuse = (status: number, error: string) =>
   NextResponse.json({ ok: false, error }, { status })
@@ -84,6 +87,19 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
   if (!isUploadConfigured()) {
     console.warn('[consultation-upload] S3 not configured; upload skipped')
     return refuse(503, GENERIC_ERROR)
+  }
+
+  // Asked last, once everything else is in order: each token is single-use.
+  const captcha = await verifyRecaptcha(body._rc, 'upload', clientIp(req.headers))
+  if (!captcha.ok) {
+    console.warn(`[consultation-upload] blocked: recaptcha ${captcha.reason}`, {
+      ...(captcha.score !== undefined ? { score: captcha.score } : {}),
+      ip,
+    })
+    return refuse(400, GENERIC_ERROR)
+  }
+  if (captcha.outcome !== 'passed') {
+    console.warn(`[consultation-upload] recaptcha ${captcha.outcome}`)
   }
 
   try {

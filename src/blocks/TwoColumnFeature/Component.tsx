@@ -24,6 +24,7 @@ import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { EditorialCta } from '@/components/EditorialCta'
 import { NewsletterWidget } from '@/components/NewsletterWidget'
+import { RecaptchaNotice } from '@/components/RecaptchaNotice'
 import { FormBlock } from '@/blocks/Form/Component'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import { accentLastWord } from '@/utilities/accentLastWord'
@@ -230,6 +231,7 @@ const Column: React.FC<{
           endpoint={column.newsletterEndpoint || ''}
           dark={dark}
           errorInFlow={inCarousel}
+          noticeElsewhere={inCarousel}
         />
       )}
     </div>
@@ -276,8 +278,17 @@ const MobileColumnCarousel: React.FC<{
     [emblaApi],
   )
 
+  // Google's reCAPTCHA notice for the newsletter column. The carousel clips
+  // at the newsletter button, so the notice sits under the dots instead,
+  // out of the flow (absolute) in the section's bottom padding, so nothing
+  // moves. Always shown, whichever column is on screen: moving into the
+  // email box with the keyboard scrolls the carousel without changing the
+  // selected dot, so a notice tied to the dot could be hidden while the
+  // visitor types.
+  const hasNewsletter = columns.some((col) => col.type === 'newsletter')
+
   return (
-    <div className="lg:hidden">
+    <div className="lg:hidden relative">
       <div ref={emblaRef} className="overflow-hidden">
         <div className="flex">
           {columns.map((col, i) => (
@@ -321,6 +332,17 @@ const MobileColumnCarousel: React.FC<{
             )
           })}
         </div>
+      )}
+
+      {hasNewsletter && (
+        <RecaptchaNotice
+          className={cn(
+            // 2px gap and 14px lines: one line fits the 16px bottom padding
+            // of a short (landscape) phone screen, two lines fit portrait.
+            'absolute inset-x-0 top-full mt-0.5 text-center leading-[14px]',
+            dark ? 'text-offwhite' : 'text-warm-gray',
+          )}
+        />
       )}
     </div>
   )

@@ -37,7 +37,7 @@ import { useRouter } from 'next/navigation'
 import type { AppointmentFormBlock as AppointmentFormBlockProps } from '@/payload-types'
 
 import { cn } from '@/utilities/ui'
-import { APPOINTMENT_FIELD_NAMES, FORM_IDS } from '@/utilities/formIds'
+import { APPOINTMENT_FIELD_NAMES, FORM_IDS, maxLengthOf } from '@/utilities/formIds'
 import {
   HONEYPOT_STYLE,
   INIT_ERROR,
@@ -51,7 +51,7 @@ import {
   submitEnquiry,
   useFormToken,
 } from '@/utilities/enquiryForm'
-import { isEmailTooLong } from '@/utilities/emailFormat'
+import { isValidEmail } from '@/utilities/emailFormat'
 import { RECAPTCHA_FAILED, getRecaptchaToken, loadRecaptcha } from '@/utilities/recaptchaClient'
 import { RecaptchaNotice } from '@/components/RecaptchaNotice'
 
@@ -205,10 +205,11 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
     const phone = formValue(fd, 'phone')
     if (phone && countDigits(phone) < MIN_PHONE_DIGITS)
       next.phone = 'Please enter at least 10 digits.'
-    // The browser lets any length through; the server refuses an address
-    // longer than any real one, so say so here, under the email box.
+    // The browser's own email check lets through addresses the server
+    // refuses (no dot after the "@", longer than any real one), so say so
+    // here, under the email box. Same rule as the server (isValidEmail).
     const email = formValue(fd, 'email')
-    if (email && isEmailTooLong(email)) next.email = 'Please enter a valid email address.'
+    if (email && !isValidEmail(email)) next.email = 'Please enter a valid email address.'
     setErrors(next)
     return Object.keys(next)
   }
@@ -279,6 +280,7 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
             <input
               id="firstName"
               name="firstName"
+              maxLength={maxLengthOf('firstName')}
               type="text"
               required
               className={textInputClass}
@@ -287,12 +289,26 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
           </div>
           <div>
             <FieldLabel htmlFor="lastName" label="Last Name" required />
-            <input id="lastName" name="lastName" type="text" required className={textInputClass} />
+            <input
+              id="lastName"
+              name="lastName"
+              maxLength={maxLengthOf('lastName')}
+              type="text"
+              required
+              className={textInputClass}
+            />
             <FieldError message={errors.lastName} />
           </div>
           <div>
             <FieldLabel htmlFor="email" label="Email Address" required />
-            <input id="email" name="email" type="email" required className={textInputClass} />
+            <input
+              id="email"
+              name="email"
+              maxLength={maxLengthOf('email')}
+              type="email"
+              required
+              className={textInputClass}
+            />
             <FieldError message={errors.email} />
           </div>
           <div>
@@ -300,6 +316,7 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
             <input
               id="phone"
               name="phone"
+              maxLength={maxLengthOf('phone')}
               type="tel"
               autoComplete="tel"
               required
@@ -310,12 +327,26 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
           </div>
           <div>
             <FieldLabel htmlFor="city" label="City" required />
-            <input id="city" name="city" type="text" required className={textInputClass} />
+            <input
+              id="city"
+              name="city"
+              maxLength={maxLengthOf('city')}
+              type="text"
+              required
+              className={textInputClass}
+            />
             <FieldError message={errors.city} />
           </div>
           <div>
             <FieldLabel htmlFor="country" label="Country" required />
-            <input id="country" name="country" type="text" required className={textInputClass} />
+            <input
+              id="country"
+              name="country"
+              maxLength={maxLengthOf('country')}
+              type="text"
+              required
+              className={textInputClass}
+            />
             <FieldError message={errors.country} />
           </div>
           <div>
@@ -323,6 +354,7 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
             <input
               id="occupation"
               name="occupation"
+              maxLength={maxLengthOf('occupation')}
               type="text"
               required
               className={textInputClass}
@@ -352,6 +384,7 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
             <textarea
               id="hearAboutUs"
               name="hearAboutUs"
+              maxLength={maxLengthOf('hearAboutUs')}
               rows={4}
               required
               className={textareaClass}
@@ -363,6 +396,7 @@ export const AppointmentFormBlock: React.FC<AppointmentFormBlockProps> = ({
             <textarea
               id="queriesComments"
               name="queriesComments"
+              maxLength={maxLengthOf('queriesComments')}
               rows={5}
               required
               className={textareaClass}

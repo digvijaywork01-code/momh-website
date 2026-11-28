@@ -151,8 +151,10 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
       ).docs.length > 0
 
     // 6. Already on the list: same answer as a new sign-up. The CRM is
-    // told again (SUBSCRIBED), as the SS site does on every sign-up; a new
-    // subscriber is sent by the collection's afterChange hook instead.
+    // asked again: a person still missing from it (the CRM was down at the
+    // first sign-up) is added now; anyone already in it is left unchanged
+    // (src/utilities/twentyCrm.ts). A new subscriber is sent by the
+    // collection's afterChange hook instead.
     if (await isSubscribed()) {
       await syncNewsletterSignupToCRM(email, payload.logger)
       return NextResponse.json({ ok: true })

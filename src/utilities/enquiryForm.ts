@@ -44,10 +44,15 @@ export const filterPhoneInput = (e: React.ChangeEvent<HTMLInputElement>): void =
   if (clean !== e.target.value) e.target.value = clean
 }
 
-/** A form value as text: '' for a missing entry (the database never takes null). */
+/**
+ * A form value as text: '' for a missing entry (the database never takes
+ * null). Spaces at either end are removed, as the server does, so an
+ * answer of only spaces counts as empty; line breaks are sent as one
+ * character each, so a box's maxLength is the length the server counts.
+ */
 export const formValue = (fd: FormData, name: string): string => {
   const v = fd.get(name)
-  return typeof v === 'string' ? v : ''
+  return typeof v === 'string' ? v.replace(/\r\n?/g, '\n').trim() : ''
 }
 
 // One pass request shared by every form on the page (the home page renders
@@ -228,8 +233,10 @@ export const submitEnquiry = async ({
 /**
  * Upload the Personal Consultation reference file straight to S3:
  * ask /api/consultation-upload for a one-file presigned POST (it runs the
- * same spam gate as the forms), then POST the file to S3 with the returned
- * fields. Never throws. Resolves with:
+ * same spam gate as the forms, including reCAPTCHA: `recaptchaToken` is a
+ * fresh token for the action "upload", '' when reCAPTCHA is not set up),
+ * then POST the file to S3 with the returned fields. Never throws.
+ * Resolves with:
  *   { key, stored: true }   S3 said the file is stored.
  *   { key, stored: false }  No answer could be read (the bucket's CORS
  *                           rule, a dropped connection, the time limit):
@@ -242,18 +249,26 @@ export const uploadReferenceFile = async ({
   contentType,
   honeypot,
   token,
+  recaptchaToken,
 }: {
   file: File
   contentType: string
   honeypot: string
   token: string
+  recaptchaToken: string
 }): Promise<{ key: string; stored: boolean } | null> => {
   let link: { url?: unknown; fields?: unknown; key?: unknown } | null
   try {
     const linkRes = await fetch('/api/consultation-upload', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contentType, size: file.size, _hp: honeypot, _t: token }),
+      body: JSON.stringify({
+        contentType,
+        size: file.size,
+        _hp: honeypot,
+        _t: token,
+        ...(recaptchaToken ? { _rc: recaptchaToken } : {}),
+      }),
     })
     if (!linkRes.ok) return null
     link = await linkRes.json().catch(() => null)

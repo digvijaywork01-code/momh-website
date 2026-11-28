@@ -15,7 +15,10 @@
  * ORDER (this script ships in the same PR as the form-validation code):
  *   0. Not while production runs Payload older than 3.90.0: the form
  *      builder there has a critical security hole (advisory
- *      GHSA-r488-j9vj-wx3q, CVSS 10). Upgrade and deploy that first.
+ *      GHSA-r488-j9vj-wx3q, CVSS 10). Upgrade and deploy that first. The
+ *      script checks it: it refuses to create the records unless the
+ *      database has run the upgrade's migration (UPGRADE_MIGRATION below,
+ *      Payload 3.94.2).
  *   1. BEFORE merging, check out the PR's branch (pnpm install) and run this
  *      script on production: a dry run, then APPLY (below). The live site
  *      still runs the old code then, and no page reads these records, so
@@ -33,7 +36,9 @@
  *     that its "database:" line is production's before copying the name into
  *     CONFIRM_DB: when DATABASE_URI is not set in the shell, it comes from the
  *     .env in this checkout (your local database).
- *   - Writes only with APPLY=1 and CONFIRM_DB=<the database name it prints>.
+ *   - Writes only with APPLY=1 and CONFIRM_DB=<host:port/name>, exactly as
+ *     its "database:" line prints it. The name alone is not enough: the MOMH
+ *     and SS production databases are both called "railway".
  *   - Each record: the title above, "after submit: go to /thank-you", no
  *     questions, no emails. A record already exactly like that is left alone.
  *     It stops, having written nothing, if either number holds anything else,
@@ -51,8 +56,8 @@
  *
  * RUN from the repo root (Node 22), with production's DATABASE_URI:
  *   pnpm payload run scripts/page-content/form-records.mts                                  dry run
- *   APPLY=1 CONFIRM_DB=<database> pnpm payload run scripts/page-content/form-records.mts    create them
- *   UNDO=<record folder> pnpm payload run scripts/page-content/form-records.mts             (dry run; add APPLY=1 CONFIRM_DB=<database> to delete them)
+ *   APPLY=1 CONFIRM_DB=<host:port/name> pnpm payload run scripts/page-content/form-records.mts    create them
+ *   UNDO=<record folder> pnpm payload run scripts/page-content/form-records.mts                   (dry run; add APPLY=1 CONFIRM_DB=<host:port/name> to delete them)
  */
 import fs from 'node:fs'
 import os from 'node:os'
@@ -74,6 +79,10 @@ const RECORDS: readonly Rec[] = [
   { id: 2, title: 'Personal Consultation' },
 ]
 const CONFIRMATION_TYPE = 'redirect'
+// The Payload 3.94.2 upgrade's migration (main, PR #25). Its row in
+// payload_migrations shows the database already runs a Payload without the
+// form-builder hole of step 0.
+const UPGRADE_MIGRATION = '20261126_114800_upgrade_394'
 const REDIRECT_URL = '/thank-you'
 
 // Tables that hang off a form record (questions and emails).
@@ -140,12 +149,17 @@ if (!dbHost || dbHost.startsWith('/') || dbHost.toLowerCase().startsWith('%2f'))
   fail('DATABASE_URI names no network host. Nothing was written.')
 }
 if (!dbName) fail('DATABASE_URI names no database. Nothing was written.')
-console.log(`database: ${dbName} on ${dbHost}:${dbPort}`)
+// What CONFIRM_DB must say: host, port and name, since the MOMH and SS
+// production databases share a name.
+const CONFIRM = `${dbHost}:${dbPort}/${dbName}`
+console.log(`database: ${CONFIRM}`)
 console.log(
   `mode: ${UNDO ? `undo ${path.resolve(UNDO)}` : 'create the form records'}, ${APPLY ? 'WRITING' : 'dry run, nothing is written'}`,
 )
-if (APPLY && process.env.CONFIRM_DB !== dbName) {
-  fail(`APPLY=1 needs CONFIRM_DB=${dbName} (the database above). Nothing was written.`)
+if (APPLY && process.env.CONFIRM_DB !== CONFIRM) {
+  fail(
+    `APPLY=1 needs CONFIRM_DB=${CONFIRM} (the database above: host:port/name). Nothing was written.`,
+  )
 }
 
 // ── which records ──────────────────────────────────────────────────────
@@ -280,6 +294,26 @@ try {
   const rows = await readForms(client, ids)
   problems.push(...(await childCounts(client, ids)))
 
+  // Step 0 of ORDER: Payload 3.90.0 or later must already run on this
+  // database, shown by the upgrade's migration in payload_migrations.
+  if (!UNDO) {
+    const hasTable = (
+      await client.query('select to_regclass($1)::text as t', ['public.payload_migrations'])
+    ).rows[0]?.t
+    const upgraded =
+      hasTable &&
+      (
+        await client.query('select 1 from payload_migrations where name = $1 limit 1', [
+          UPGRADE_MIGRATION,
+        ])
+      ).rows.length > 0
+    if (!upgraded) {
+      fail(
+        `${dbName} has not run ${UPGRADE_MIGRATION} (the Payload 3.94.2 upgrade). Upgrade and deploy that first (step 0). Nothing was written.`,
+      )
+    }
+  }
+
   if (!UNDO) {
     for (const want of wanted) {
       const row = rows.get(want.id)
@@ -358,7 +392,7 @@ if (!todo.length) {
 if (!APPLY) {
   close(client)
   console.log(
-    `Dry run: nothing was written. To make the change: APPLY=1 CONFIRM_DB=${dbName} (and the same command).`,
+    `Dry run: nothing was written. To make the change: APPLY=1 CONFIRM_DB=${CONFIRM} (and the same command).`,
   )
   process.exit(0)
 }
@@ -508,7 +542,7 @@ if (!UNDO) {
   console.log(
     `Id counter: next form made in the admin gets ${Number(next.last_value) + (next.is_called ? 1 : 0)}.`,
   )
-  console.log(`To undo: UNDO=${recordDir} (dry run; add APPLY=1 CONFIRM_DB=${dbName}).`)
+  console.log(`To undo: UNDO=${recordDir} (dry run; add APPLY=1 CONFIRM_DB=${CONFIRM}).`)
   console.log(
     'Next: merge the PR, then deploy main with vercel deploy --prod (its build runs the migration).',
   )

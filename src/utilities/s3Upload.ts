@@ -17,7 +17,8 @@
  *   S3_UPLOAD_ACCESS_KEY_ID      an IAM key allowed s3:PutObject and
  *   S3_UPLOAD_SECRET_ACCESS_KEY  s3:GetObject on <bucket>/consultation-uploads/*
  *   S3_UPLOAD_ENDPOINT           optional, only for an S3-compatible test
- *                                server on a developer machine
+ *                                server on a developer machine; ignored in
+ *                                a production build
  * (Not AWS_*: Vercel reserves those names.)
  *
  * The bucket also needs a CORS rule, because the visitor's browser posts
@@ -51,7 +52,9 @@ const config = () => {
   const region = process.env.S3_UPLOAD_REGION || ''
   const accessKeyId = process.env.S3_UPLOAD_ACCESS_KEY_ID || ''
   const secretAccessKey = process.env.S3_UPLOAD_SECRET_ACCESS_KEY || ''
-  const endpoint = process.env.S3_UPLOAD_ENDPOINT || ''
+  // A test server's address, honoured on a developer machine only (like
+  // the other test-only settings), never in a production build.
+  const endpoint = process.env.NODE_ENV !== 'production' ? process.env.S3_UPLOAD_ENDPOINT || '' : ''
   return { bucket, region, accessKeyId, secretAccessKey, endpoint }
 }
 

@@ -42,7 +42,9 @@ import { cn } from '@/utilities/ui'
 import {
   CONSULTATION_FIELDS_AFTER_IMAGE,
   CONSULTATION_FIELDS_BEFORE_IMAGE,
+  CONSULTATION_REQUIRED_FIELDS,
   FORM_IDS,
+  maxLengthOf,
 } from '@/utilities/formIds'
 import {
   HONEYPOT_STYLE,
@@ -58,7 +60,7 @@ import {
   uploadReferenceFile,
   useFormToken,
 } from '@/utilities/enquiryForm'
-import { isEmailTooLong } from '@/utilities/emailFormat'
+import { isValidEmail } from '@/utilities/emailFormat'
 import { RECAPTCHA_FAILED, getRecaptchaToken, loadRecaptcha } from '@/utilities/recaptchaClient'
 import { RecaptchaNotice } from '@/components/RecaptchaNotice'
 import {
@@ -74,7 +76,10 @@ import {
 // reference image goes in between, only when one was chosen: it is
 // uploaded straight to S3 first (src/utilities/enquiryForm.ts
 // uploadReferenceFile) and the enquiry stores its S3 key and file name.
-const REQUIRED = {
+// The compulsory answers are the shared list the server checks too
+// (src/utilities/formIds.ts), so the two can never differ.
+type RequiredName = (typeof CONSULTATION_REQUIRED_FIELDS)[number]
+const REQUIRED: Record<RequiredName, string> = {
   firstName: 'Please enter your first name.',
   email: 'Please enter your email.',
   phone: 'Please enter your phone number.',
@@ -83,8 +88,7 @@ const REQUIRED = {
   creation: 'Please select what you would like to create.',
   recipient: 'Please select who this is for.',
   timeline: 'Please select a timeline.',
-} as const
-type RequiredName = keyof typeof REQUIRED
+}
 type ErrorName = RequiredName | 'referenceImage'
 
 /** '' when the picked file can be uploaded, else the message to show. */
@@ -239,10 +243,11 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
     const phone = formValue(fd, 'phone')
     if (phone && countDigits(phone) < MIN_PHONE_DIGITS)
       next.phone = 'Please enter at least 10 digits.'
-    // The browser lets any length through; the server refuses an address
-    // longer than any real one, so say so here, under the email box.
+    // The browser's own email check lets through addresses the server
+    // refuses (no dot after the "@", longer than any real one), so say so
+    // here, under the email box. Same rule as the server (isValidEmail).
     const email = formValue(fd, 'email')
-    if (email && isEmailTooLong(email)) next.email = 'Please enter a valid email address.'
+    if (email && !isValidEmail(email)) next.email = 'Please enter a valid email address.'
     setErrors(next)
     return Object.keys(next)
   }
@@ -284,11 +289,16 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
         if (storedFile.current?.id === id) {
           key = storedFile.current.key
         } else {
+          // The upload link needs its own reCAPTCHA token. If the check
+          // cannot run, the enquiry could not be sent either: say so now.
+          const uploadCaptcha = await getRecaptchaToken('upload')
+          if (uploadCaptcha === null) throw new Error(RECAPTCHA_FAILED)
           const upload = await uploadReferenceFile({
             file: image,
             contentType: uploadContentType(image),
             honeypot,
             token: pass,
+            recaptchaToken: uploadCaptcha,
           })
           // stored: false means S3's answer could not be read; the key is
           // kept and the email step checks whether the file is there.
@@ -346,16 +356,36 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
           <div>
             <FieldLabel htmlFor="firstName" label="First Name" required />
-            <input id="firstName" name="firstName" type="text" required className={inputClass} />
+            <input
+              id="firstName"
+              name="firstName"
+              maxLength={maxLengthOf('firstName')}
+              type="text"
+              required
+              className={inputClass}
+            />
             <FieldError message={errors.firstName} />
           </div>
           <div>
             <FieldLabel htmlFor="lastName" label="Last Name" />
-            <input id="lastName" name="lastName" type="text" className={inputClass} />
+            <input
+              id="lastName"
+              name="lastName"
+              maxLength={maxLengthOf('lastName')}
+              type="text"
+              className={inputClass}
+            />
           </div>
           <div>
             <FieldLabel htmlFor="email" label="Email Address" required />
-            <input id="email" name="email" type="email" required className={inputClass} />
+            <input
+              id="email"
+              name="email"
+              maxLength={maxLengthOf('email')}
+              type="email"
+              required
+              className={inputClass}
+            />
             <FieldError message={errors.email} />
           </div>
           <div>
@@ -363,6 +393,7 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
             <input
               id="phone"
               name="phone"
+              maxLength={maxLengthOf('phone')}
               type="tel"
               autoComplete="tel"
               required
@@ -373,12 +404,26 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
           </div>
           <div>
             <FieldLabel htmlFor="city" label="City" required />
-            <input id="city" name="city" type="text" required className={inputClass} />
+            <input
+              id="city"
+              name="city"
+              maxLength={maxLengthOf('city')}
+              type="text"
+              required
+              className={inputClass}
+            />
             <FieldError message={errors.city} />
           </div>
           <div>
             <FieldLabel htmlFor="country" label="Country" required />
-            <input id="country" name="country" type="text" required className={inputClass} />
+            <input
+              id="country"
+              name="country"
+              maxLength={maxLengthOf('country')}
+              type="text"
+              required
+              className={inputClass}
+            />
             <FieldError message={errors.country} />
           </div>
         </div>
@@ -471,7 +516,13 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
         <div className="flex flex-col gap-6">
           <div>
             <FieldLabel htmlFor="designIdea" label="Tell us about the piece you have in mind" />
-            <input id="designIdea" name="designIdea" type="text" className={inputClass} />
+            <input
+              id="designIdea"
+              name="designIdea"
+              maxLength={maxLengthOf('designIdea')}
+              type="text"
+              className={inputClass}
+            />
           </div>
           <div>
             <FieldLabel
@@ -564,7 +615,13 @@ export const ConsultationFormBlock: React.FC<ConsultationFormBlockProps> = ({
               htmlFor="additionalNotes"
               label="Anything else you would like us to know?"
             />
-            <textarea id="additionalNotes" name="additionalNotes" rows={5} className={inputClass} />
+            <textarea
+              id="additionalNotes"
+              name="additionalNotes"
+              maxLength={maxLengthOf('additionalNotes')}
+              rows={5}
+              className={inputClass}
+            />
           </div>
         </div>
 

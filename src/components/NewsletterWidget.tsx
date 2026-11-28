@@ -55,6 +55,13 @@ type Props = {
    * off. The panel then grows by the line while an error shows.
    */
   errorInFlow?: boolean
+  /**
+   * The parent shows Google's reCAPTCHA notice itself, so the widget leaves
+   * it out. The home page's phone carousel does this: it clips at the
+   * button's bottom edge and has no room under it, so its notice sits
+   * under the carousel's dots (src/blocks/TwoColumnFeature/Component.tsx).
+   */
+  noticeElsewhere?: boolean
 }
 
 export const NewsletterWidget: React.FC<Props> = ({
@@ -67,6 +74,7 @@ export const NewsletterWidget: React.FC<Props> = ({
   endpoint: _endpoint,
   dark,
   errorInFlow = false,
+  noticeElsewhere = false,
 }) => {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
@@ -217,25 +225,34 @@ export const NewsletterWidget: React.FC<Props> = ({
         onChange={(e) => setHoneypot(e.target.value)}
       />
 
-      {/* Google's reCAPTCHA notice, 8px under the button (-mt-4 turns the
-          form's 24px gap into 8px). Always there once the keys are set, so it
-          never makes the form jump; nothing at all before that. */}
-      {RECAPTCHA_SITE_KEY && <RecaptchaNotice className={cn('-mt-4', inkClass)} />}
+      {/* Under the button, 8px below it and out of the flow (absolute), so
+          the email box and button never move: the panels centre or
+          bottom-align this form, so any line added to the flow moved
+          everything around it. First Google's reCAPTCHA notice (once the
+          keys are set; nothing at all before that), then the error line
+          when something went wrong. Darker red on light panels so the small
+          text stays readable on cream (5.6:1). */}
+      {((RECAPTCHA_SITE_KEY && !noticeElsewhere) || (shownError && !errorInFlow)) && (
+        <div className="absolute left-0 right-0 top-full mt-2 flex flex-col gap-2">
+          {!noticeElsewhere && <RecaptchaNotice className={inkClass} />}
+          {shownError && !errorInFlow && (
+            <p
+              role="alert"
+              className={cn('font-body text-sm', dark ? 'text-offwhite' : 'text-brand-red-dark')}
+            >
+              {shownError}
+            </p>
+          )}
+        </div>
+      )}
 
-      {/* Only shown when something went wrong, 8px under the last line.
-          Normally taken out of the flow (absolute) so the email box and
-          button never move: the panels centre or bottom-align this form.
-          In flow when `errorInFlow` (-mt-4 turns the form's 24px gap into
-          8px). Darker red on light panels so the small text stays readable
-          on cream (5.6:1). */}
-      {shownError && (
+      {/* The error line in the flow (errorInFlow), 8px under the button
+          (-mt-4 turns the form's 24px gap into 8px), for a box that clips
+          at the button's bottom edge. */}
+      {shownError && errorInFlow && (
         <p
           role="alert"
-          className={cn(
-            'font-body text-sm',
-            errorInFlow ? '-mt-4' : 'absolute left-0 top-full mt-2',
-            dark ? 'text-offwhite' : 'text-brand-red-dark',
-          )}
+          className={cn('font-body text-sm -mt-4', dark ? 'text-offwhite' : 'text-brand-red-dark')}
         >
           {shownError}
         </p>

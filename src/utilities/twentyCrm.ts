@@ -1,10 +1,12 @@
 /**
  * Twenty CRM sync for the newsletter (server-side only).
  *
- * Same as the SS site (utils/twentyCrm.ts there): every newsletter sign-up
- * marks the person's `newsletterStatus` SELECT field as SUBSCRIBED in the
- * self-hosted Twenty CRM, creating the person with their email only if they
- * are not in the CRM yet.
+ * A newsletter sign-up adds the person to the self-hosted Twenty CRM, which
+ * the SS site shares, with their email only and `newsletterStatus`
+ * SUBSCRIBED. Anyone already in the CRM is left exactly as they are: their
+ * status may be UNSUBSCRIBED, MANUALLY_ADDED or NOT_ENGAGED, set by SS or by
+ * the team, and a museum sign-up must never overwrite it. (Unlike the SS
+ * site's own sync, which sets SUBSCRIBED on everyone who signs up there.)
  *
  * Best-effort by design: a CRM outage must never break a sign-up, so nothing
  * here throws. Callers get a result object for logging. The whole sync (the
@@ -14,7 +16,7 @@
  * No retry, as on SS: a sign-up made while the CRM is down or refusing the
  * key is logged ('Twenty CRM newsletter sync failed') and stays only in
  * Newsletter Subscribers, which remains the full record. It reaches the CRM
- * the next time that person signs up.
+ * the next time that person signs up (if they are still not in it).
  *
  * Required env (set on Vercel by the site owner; with either missing, every
  * call is skipped and logged, which is the case on developer machines):
@@ -22,10 +24,8 @@
  *   TWENTY_API_KEY  – Twenty API key (Bearer)
  */
 
-export type NewsletterCrmStatus = 'SUBSCRIBED' | 'UNSUBSCRIBED'
-
 export type CrmSyncResult =
-  | { ok: true; action: 'updated' | 'created' | 'skipped_internal' | 'not_found' }
+  | { ok: true; action: 'created' | 'already_in_crm' | 'skipped_internal' }
   | { ok: false; skipped: true; reason: string }
   | { ok: false; skipped: false; status: number; detail: string }
 
@@ -41,11 +41,11 @@ const getConfig = () => {
 const INTERNAL_DOMAINS = ['@momhindia.org', '@sunitashekhawat.com']
 const isInternal = (email: string) => INTERNAL_DOMAINS.some((d) => email.endsWith(d))
 
-export async function setNewsletterStatusInCRM(
-  email: string,
-  status: NewsletterCrmStatus,
-  options: { createIfMissing?: boolean } = {},
-): Promise<CrmSyncResult> {
+/**
+ * Adds a person (email only, SUBSCRIBED) unless the CRM already has
+ * someone with this primary email. Never changes an existing person.
+ */
+export async function addNewsletterSubscriberToCRM(email: string): Promise<CrmSyncResult> {
   const { baseUrl, apiKey } = getConfig()
   if (!baseUrl || !apiKey) {
     return { ok: false, skipped: true, reason: 'Twenty CRM env not configured' }
@@ -79,29 +79,20 @@ export async function setNewsletterStatusInCRM(
     const found = (await findRes.json()) as {
       data?: { people?: Array<{ id: string }> }
     }
-    const personId = found.data?.people?.[0]?.id
-
-    if (personId) {
-      const patch = await request(`${baseUrl}/rest/people/${encodeURIComponent(personId)}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ newsletterStatus: status }),
-      })
-      if (!patch.ok) {
-        return { ok: false, skipped: false, status: patch.status, detail: 'person update failed' }
-      }
-      return { ok: true, action: 'updated' }
+    const people = found.data?.people
+    if (!Array.isArray(people)) {
+      // Not the answer the CRM gives: never guess that the person is new.
+      return { ok: false, skipped: false, status: findRes.status, detail: 'unreadable lookup' }
     }
-
-    if (!options.createIfMissing) {
-      return { ok: true, action: 'not_found' }
-    }
+    // Already in the CRM: leave them exactly as they are.
+    if (people.length > 0) return { ok: true, action: 'already_in_crm' }
 
     // Create with email only: all other fields stay empty by policy.
     const create = await request(`${baseUrl}/rest/people`, {
       method: 'POST',
       body: JSON.stringify({
         emails: { primaryEmail: normalized },
-        newsletterStatus: status,
+        newsletterStatus: 'SUBSCRIBED',
       }),
     })
     if (!create.ok) {
@@ -126,13 +117,13 @@ type Logger = {
 }
 
 /**
- * Mirror one newsletter sign-up into the CRM (SUBSCRIBED; the person is
- * created email-only if missing) and log the outcome, exactly as the SS
- * site's form-submissions afterChange hook does. Never throws.
+ * Mirror one newsletter sign-up into the CRM (a new person is created
+ * email-only as SUBSCRIBED; an existing one is left unchanged) and log the
+ * outcome. Never throws.
  */
 export async function syncNewsletterSignupToCRM(email: string, logger: Logger): Promise<void> {
   try {
-    const crm = await setNewsletterStatusInCRM(email, 'SUBSCRIBED', { createIfMissing: true })
+    const crm = await addNewsletterSubscriberToCRM(email)
     if (crm.ok) {
       logger.info({ msg: 'Twenty CRM newsletter sync ok', action: crm.action })
     } else if (crm.skipped) {

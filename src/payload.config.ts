@@ -81,7 +81,12 @@ export default buildConfig({
   // Costs are ~one cheap query per cold start; warm requests skip it.
   onInit: async (payload) => {
     try {
+      // Gives up after 2 seconds if a table is locked (the daily backup
+      // holds a lock for minutes): a cold start never waits on it, and
+      // every other query on the table never queues behind this one.
+      // SET LOCAL lasts until the end of these statements only.
       await payload.db.drizzle.execute(sql`
+        SET LOCAL lock_timeout = '2s';
         CREATE TABLE IF NOT EXISTS "newsletter_subscribers" (
           "id" serial PRIMARY KEY NOT NULL,
           "email" varchar NOT NULL,
@@ -128,6 +133,7 @@ export default buildConfig({
     // the admin reads for every collection, so nothing breaks.
     try {
       await payload.db.drizzle.execute(sql`
+        SET LOCAL lock_timeout = '2s';
         CREATE TABLE IF NOT EXISTS "form_attempts" (
           "id" serial PRIMARY KEY NOT NULL,
           "key" varchar NOT NULL,
